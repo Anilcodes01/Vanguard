@@ -58,7 +58,6 @@ const authHandlers = {
   },
 
   async handleResetPassword(email: string) {
-    // We'll implement this in Part 3
   },
 };
 
@@ -104,7 +103,6 @@ export const authOptions: NextAuthOptions = {
         
         if (error) throw error;
         
-        // Return null because we don't want to sign in the user yet
         return null;
       } catch (error) {
         console.error("Reset password error:", error);

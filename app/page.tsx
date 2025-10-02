@@ -1,13 +1,26 @@
-'use client';
+import { createClient } from './utils/supabase/server';
+import { PrismaClient } from '@prisma/client'
 
-import { signOut } from 'next-auth/react';
+const prisma = new PrismaClient()
 
-export default function SignOutButton() {
-  const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/auth/signin' });
-  };
+export default async function UserDashboard() {
+  const supabase =await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  return <div className='flex items-center justify-center min-h-screen'>
-    <button className='bg-red-500 rounded-2xl px-4 py-2' onClick={handleSignOut}>Sign Out</button>
-  </div>
+  if (!user) {
+    return <div>Please log in.</div>;
+  }
+
+  const userProfile = await prisma.profiles.findUnique({
+    where: { id: user.id },
+  });
+
+  return (
+    <div>
+      <h1>Welcome, {userProfile?.name}!</h1>
+      <h2>Your username is, {userProfile?.username}</h2>
+
+      <p>Your email is: {user.email}</p>
+    </div>
+  );
 }

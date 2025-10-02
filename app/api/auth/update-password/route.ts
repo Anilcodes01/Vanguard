@@ -19,7 +19,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Establish a session using the tokens provided in the URL
     const { error: sessionError } = await supabase.auth.setSession({
       access_token,
       refresh_token,
@@ -32,7 +31,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Now perform the update using the (now-valid) access token
     const { error } = await supabase.auth.updateUser({
       password,
     });

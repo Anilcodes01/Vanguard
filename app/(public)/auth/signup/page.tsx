@@ -13,7 +13,6 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Note that we call signIn with mode='signup' 
       const result = await signIn('credentials', {
         email,
         password,
@@ -24,7 +23,6 @@ export default function RegisterPage() {
       if (result?.error) {
         setError(result.error);
       } else {
-        // On success, redirect anywhere, e.g. home page
          router.push('/');
       }
     } catch (err) {
