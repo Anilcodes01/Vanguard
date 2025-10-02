@@ -29,7 +29,7 @@ export default function SignUpPage() {
       setError(data.error || 'Something went wrong.');
     } else {
       setMessage(data.message);
-      setTimeout(() => router.push('/login'), 2000);
+      setTimeout(() => router.push('/onboarding'), 2000);
     }
   };
 

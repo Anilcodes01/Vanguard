@@ -13,6 +13,10 @@ model Profiles {
   username   String? @unique
   avatar_url String?
 
+  domain       String?
+  college_name String?
+  onboarded    Boolean   @default(false)
+
  @@map("profiles") 
 }
 

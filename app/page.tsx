@@ -1,10 +1,8 @@
 import { createClient } from './utils/supabase/server';
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import {prisma} from '@/lib/prisma';
 
 export default async function UserDashboard() {
-  const supabase =await createClient();
+  const supabase =await createClient(); 
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -16,7 +14,7 @@ export default async function UserDashboard() {
   });
 
   return (
-    <div>
+    <div className='flex flex-col items-center justify-center min-h-screen bg-white text-black'>
       <h1>Welcome, {userProfile?.name}!</h1>
       <h2>Your username is, {userProfile?.username}</h2>
 
