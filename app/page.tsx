@@ -1,7 +1,6 @@
 import UserLoggedInLanding from './components/Landing/UserLoggedinLanding';
 import UsernotLoggedInLanding from './components/Landing/UserNotLoggedinLanding';
 import { createClient } from './utils/supabase/server';
-import {prisma} from '@/lib/prisma';
 
 export default async function UserDashboard() {
    const supabase = await createClient();
