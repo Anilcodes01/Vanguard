@@ -61,7 +61,15 @@ export default function UserAvatar({ user }: { user: UserProfile }) {
             <p className="font-semibold">Signed in as</p>
             <p className="truncate font-medium">{user.name || 'User'}</p>
           </div>
-          <div className="border-t border-gray-100 my-1"></div>
+          <div className="border-t flex flex-col border-gray-100 my-1"></div>
+          <button
+          onClick={() => {
+            router.push('/profile')
+          }}
+            className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50 hover:text-green-700"
+          >
+            Profile
+          </button>
           <button
             onClick={handleSignOut}
             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700"

@@ -1,6 +1,6 @@
 'use client'; 
 
-import { createClient } from '../utils/supabase/client';
+import { createClient } from '@/app/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 
 export default function SignOutButton() {
@@ -15,14 +15,7 @@ export default function SignOutButton() {
   return (
     <button
       onClick={handleSignOut}
-      style={{
-        marginTop: '20px',
-        padding: '10px 20px',
-        backgroundColor: 'tomato',
-        color: 'white',
-        border: 'none',
-        cursor: 'pointer',
-      }}
+     className='text-white bg-red-400 rounded-2xl px-4 py-2'
     >
       Sign Out
     </button>

@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const supabase =await createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -29,11 +29,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  if (data.user && !data.user.email_confirmed_at) {
-    return NextResponse.json({
-      message: 'Sign up successful! Please check your email to confirm your account.',
-    });
-  }
-
-  return NextResponse.json({ message: 'Sign up successful!' });
+  // With email confirmation disabled, a user and session are created immediately.
+  // The Supabase server-side client automatically handles setting the auth cookie.
+  return NextResponse.json({ message: 'Sign up successful! You are now logged in.' });
 }
