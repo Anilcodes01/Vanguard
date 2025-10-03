@@ -3,7 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     domains: [
-      'avatar.iran.liara.run'
+      'avatar.iran.liara.run',
+      'bkplqkefnkgjirnuasqi.supabase.co'
     ]
   }
 };

@@ -1,29 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function OnboardingPage() {
   const [domain, setDomain] = useState('');
   const [collegeName, setCollegeName] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
+      }
+    };
+  }, [avatarPreview]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
 
+    const formData = new FormData();
+    formData.append('domain', domain);
+    formData.append('college_name', collegeName);
+    if (avatarFile) {
+      formData.append('avatar', avatarFile);
+    }
+
     const response = await fetch('/api/onboarding', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        domain,
-        college_name: collegeName,
-        avatar_url: avatarUrl,
-      }),
+      body: formData,
     });
 
     const data = await response.json();
@@ -58,7 +77,7 @@ export default function OnboardingPage() {
               value={domain}
               onChange={(e) => setDomain(e.target.value)}
               required
-              className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-800 placeholder-gray-400 focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200"
             />
           </div>
 
@@ -72,23 +91,32 @@ export default function OnboardingPage() {
               value={collegeName}
               onChange={(e) => setCollegeName(e.target.value)}
               required
-              className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-800 placeholder-gray-400 focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200"
             />
           </div>
 
           <div>
-            <label htmlFor="avatarUrl" className="block text-sm font-medium text-gray-600">
-              Avatar URL <span className="text-gray-400">(Optional)</span>
+            <label htmlFor="avatar" className="block text-sm font-medium text-gray-600">
+              Avatar <span className="text-gray-400">(Optional)</span>
             </label>
             <input
-              id="avatarUrl"
-              type="url"
-              value={avatarUrl}
-              onChange={(e) => setAvatarUrl(e.target.value)}
-              placeholder="https://your-avatar-link.com"
-              className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-800 placeholder-gray-400 focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+              id="avatar"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="mt-1 w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-600 hover:file:bg-indigo-100"
             />
           </div>
+
+          {avatarPreview && (
+            <div className="mt-4 flex justify-center">
+              <img
+                src={avatarPreview}
+                alt="Avatar Preview"
+                className="h-24 w-24 rounded-full object-cover"
+              />
+            </div>
+          )}
 
           <button
             type="submit"

@@ -1,11 +1,10 @@
 import { createClient } from '@/app/utils/supabase/server';
-import {prisma} from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
-  const supabase =await createClient();
+  const supabase = await createClient();
 
-  // Get the current user from the session
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -14,9 +13,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { domain, college_name, avatar_url } = await request.json();
+  const formData = await request.formData();
+  const domain = formData.get('domain') as string;
+  const college_name = formData.get('college_name') as string;
+  const avatarFile = formData.get('avatar') as File | null;
 
-  // Validate the input
   if (!domain || !college_name) {
     return NextResponse.json(
       { error: 'Domain and College Name are required.' },
@@ -24,17 +25,41 @@ export async function POST(request: Request) {
     );
   }
 
+  let avatar_url: string | null = null;
+  if (avatarFile) {
+    const fileExtension = avatarFile.name.split('.').pop();
+    const fileName = `${user.id}.${fileExtension}`; 
+    const filePath = `${user.id}/${fileName}`; 
+
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, avatarFile, {
+        upsert: true, 
+      });
+
+    if (uploadError) {
+      console.error('Supabase upload error:', uploadError);
+      return NextResponse.json(
+        { error: 'Failed to upload avatar.' },
+        { status: 500 }
+      );
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+    
+    avatar_url = urlData.publicUrl;
+  }
+
   try {
-    // Update the user's profile in the public.profiles table
     await prisma.profiles.update({
-      where: {
-        id: user.id,
-      },
+      where: { id: user.id },
       data: {
         domain,
         college_name,
-        avatar_url: avatar_url || null, // Set to null if empty
-        onboarded: true, // This is the crucial step!
+        avatar_url,
+        onboarded: true,
       },
     });
 
