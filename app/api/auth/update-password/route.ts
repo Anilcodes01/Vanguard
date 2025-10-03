@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
+  } catch (err) {
     console.error('Error in update-password API:', err);
     return NextResponse.json(
       { error: 'Unexpected error occurred.' },
