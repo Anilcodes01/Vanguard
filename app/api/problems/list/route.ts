@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       totalCount,
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Prisma query error:', error);
     return NextResponse.json({ error: 'Failed to fetch data from the database.' }, { status: 500 });
   }
