@@ -42,11 +42,16 @@ export default function Problems() {
           setHasMore(false);
         }
 
-      } catch (err: any) {
-        setError(err.response?.data?.error || 'Failed to fetch problems.');
-      } finally {
-        setIsLoading(false);
-      }
+    } catch (err) {
+  if (axios.isAxiosError(err)) {
+    setError(err.response?.data?.error || 'Failed to fetch problems.');
+  } else if (err instanceof Error) {
+    setError(err.message);
+  } else {
+    setError('An unknown error occurred.');
+  }
+}
+
     };
 
     fetchProblems();
