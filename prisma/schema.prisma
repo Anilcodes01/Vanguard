@@ -394,8 +394,6 @@ enum one_time_token_type {
 }
 
 
-// --- PASTE THIS AT THE VERY END OF YOUR schema.prisma FILE ---
-
 model Profiles {
   id           String  @id @db.Uuid
   name         String?
@@ -405,14 +403,12 @@ model Profiles {
   college_name String?
   onboarded    Boolean @default(false)
 
-  // This links to the `users` model that prisma db pull created for you
   users users @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@map("profiles")
-  @@schema("public") // Ensure it's in the public schema
+  @@schema("public") 
 }
 
-// schema.prisma
 
 enum Difficulty {
   Beginner
@@ -423,7 +419,8 @@ enum Difficulty {
 }
 
 model Problem {
-  id           String     @id
+    id           String     @id @default(uuid()) @db.Uuid
+   slug         String     @unique
   title        String
   description  String     @db.Text
   difficulty   Difficulty
@@ -439,10 +436,10 @@ model Problem {
 
 model Example {
   id        Int     @id @default(autoincrement())
-  input     String
-  output    String
+  input     String?
+  output    String?
   problem   Problem @relation(fields: [problemId], references: [id])
-  problemId String
+   problemId String  @db.Uuid
 
   @@map("examples")
   @@schema("public")
@@ -450,10 +447,10 @@ model Example {
 
 model TestCase {
   id        Int     @id @default(autoincrement())
-  input     String
-  expected  String
+  input     String?
+  expected  String?
   problem   Problem @relation(fields: [problemId], references: [id])
-  problemId String
+   problemId String  @db.Uuid
 description String?
   @@map("test_cases")
   @@schema("public")

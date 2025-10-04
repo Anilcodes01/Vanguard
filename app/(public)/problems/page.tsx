@@ -23,39 +23,56 @@ export default function Problems() {
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchProblems = async () => {
-      setIsLoading(true); 
-      setError(null);
 
-      try {
-        const response = await axios.get<ApiResponse>('/api/problems/list', {
-          params: { page },
+useEffect(() => {
+  let isMounted = true; 
+
+  const fetchProblems = async () => {
+    setIsLoading(true); 
+    setError(null);
+
+    try {
+      const response = await axios.get<ApiResponse>('/api/problems/list', {
+        params: { page },
+      });
+
+      const { problems: newProblems, totalCount } = response.data;
+
+      if (isMounted) {
+        setProblems(prev => {
+          const existingIds = new Set(prev.map(p => p.id));
+          const uniqueNewProblems = newProblems.filter(p => !existingIds.has(p.id));
+          return [...prev, ...uniqueNewProblems];
         });
-
-        const { problems: newProblems, totalCount } = response.data;
-
-        setProblems(prev => [...prev, ...newProblems]);
         
-        const totalFetched = page * 50; 
+        const totalFetched = (problems.length + newProblems.length);
         if (totalFetched >= totalCount) {
           setHasMore(false);
         }
+      }
 
     } catch (err) {
-  if (axios.isAxiosError(err)) {
-    setError(err.response?.data?.error || 'Failed to fetch problems.');
-  } else if (err instanceof Error) {
-    setError(err.message);
-  } else {
-    setError('An unknown error occurred.');
-  }
-}
+      if (isMounted) {
+        if (axios.isAxiosError(err)) {
+          setError(err.response?.data?.error || 'Failed to fetch problems.');
+        } else if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred.');
+        }
+      }
+    } finally {
+        if (isMounted) {
+        }
+    }
+  };
 
-    };
+  fetchProblems();
 
-    fetchProblems();
-  }, [page]); 
+  return () => {
+    isMounted = false;
+  };
+}, [page, problems.length]); 
 
   const loadMoreProblems = () => {
     setPage(prevPage => prevPage + 1);
@@ -80,7 +97,7 @@ export default function Problems() {
           <ul className="divide-y divide-gray-200">
             {problems.map(problem => (
               <li key={problem.id}>
-                <Link href={`/problems/${problem.id}`} className="block hover:bg-gray-50 transition-colors">
+                <Link key={problem.id} href={`/problems/${problem.id}`} className="block hover:bg-gray-50 transition-colors">
                   <div className="flex items-center justify-between p-4">
                     <p className="font-medium text-gray-900 truncate">{problem.title}</p>
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${

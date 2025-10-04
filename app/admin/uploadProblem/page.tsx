@@ -73,19 +73,23 @@ export default function UploadProblems() {
 
     for (const problem of problems) {
       try {
-        const { examples, test_cases, ...problemData } = problem;
+        const { id: slug, examples, test_cases, ...problemData } = problem;
 
-        const { error: problemError } = await supabase
+        const { data: newProblem, error: problemError } = await supabase
           .from('problems')
-          .insert([problemData]);
+          .insert([{ ...problemData, slug }])
+          .select('id')
+          .single(); 
 
         if (problemError) {
-          throw new Error(`Failed to insert problem "${problem.id}": ${problemError.message}`);
+          throw new Error(`Failed to insert problem with slug "${slug}": ${problemError.message}`);
         }
+        
+        const newProblemId = newProblem.id;
 
         const examplesToInsert = examples.map(ex => ({
           ...ex,
-          problemId: problem.id,
+          problemId: newProblemId,
         }));
         
         const { error: examplesError } = await supabase
@@ -93,12 +97,12 @@ export default function UploadProblems() {
           .insert(examplesToInsert);
 
         if (examplesError) {
-          throw new Error(`Failed to insert examples for problem "${problem.id}": ${examplesError.message}`);
+          throw new Error(`Failed to insert examples for slug "${slug}": ${examplesError.message}`);
         }
 
         const testCasesToInsert = test_cases.map(tc => ({
           ...tc,
-          problemId: problem.id,
+          problemId: newProblemId,
         }));
 
         const { error: testCasesError } = await supabase
@@ -106,21 +110,16 @@ export default function UploadProblems() {
           .insert(testCasesToInsert);
         
         if (testCasesError) {
-            throw new Error(`Failed to insert test cases for problem "${problem.id}": ${testCasesError.message}`);
+            throw new Error(`Failed to insert test cases for slug "${slug}": ${testCasesError.message}`);
         }
 
+
         uploadedCount++;
-     } catch (err) {
-  let message = 'An unknown error occurred.';
-  if (err instanceof Error) {
-    message = err.message;
-  }
-
-  setError(`An error occurred during upload: ${message}. ${uploadedCount} problems were uploaded before the error.`);
-  setIsLoading(false);
-  return;
-}
-
+      } catch (err: any) {
+        setError(`An error occurred during upload: ${err.message}. ${uploadedCount} problems were uploaded before the error.`);
+        setIsLoading(false);
+        return;
+      }
     }
 
     setSuccessMessage(`Successfully uploaded ${uploadedCount} problems to the database!`);
