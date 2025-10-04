@@ -110,11 +110,17 @@ export default function UploadProblems() {
         }
 
         uploadedCount++;
-      } catch (err: any) {
-        setError(`An error occurred during upload: ${err.message}. ${uploadedCount} problems were uploaded before the error.`);
-        setIsLoading(false);
-        return;
-      }
+     } catch (err) {
+  let message = 'An unknown error occurred.';
+  if (err instanceof Error) {
+    message = err.message;
+  }
+
+  setError(`An error occurred during upload: ${message}. ${uploadedCount} problems were uploaded before the error.`);
+  setIsLoading(false);
+  return;
+}
+
     }
 
     setSuccessMessage(`Successfully uploaded ${uploadedCount} problems to the database!`);
