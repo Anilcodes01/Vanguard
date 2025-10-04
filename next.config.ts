@@ -4,7 +4,8 @@ const nextConfig: NextConfig = {
   images: {
     domains: [
       'avatar.iran.liara.run',
-      'bkplqkefnkgjirnuasqi.supabase.co'
+      'bkplqkefnkgjirnuasqi.supabase.co',
+      "dnxtgqrbukffopqeobrw.supabase.co"
     ]
   }
 };
