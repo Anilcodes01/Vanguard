@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest, 
-  { params }: { params: Promise<{ problemId: string }> } 
+  { params }: { params: Promise<{ problemId: string } >} 
 ) {
   try {
     const { problemId } =await params;
@@ -14,8 +14,6 @@ export async function GET(
       },
       include: {
         examples: true,
-        test_cases: true,
-        
       }
     });
 
@@ -25,16 +23,21 @@ export async function GET(
         { status: 404 }
       );
     }
-
+    
     return NextResponse.json(problem);
 
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to fetch problem:", error);
+
+    let errorMessage = "An unknown error occurred";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
 
     return NextResponse.json(
       {
         message: "An error occurred while fetching the problem",
-        error: error.message,
+        error: errorMessage, 
       },
       { status: 500 }
     );

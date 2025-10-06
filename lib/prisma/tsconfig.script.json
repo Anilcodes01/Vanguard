@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "es2017",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    // From lib/prisma, go up two levels to get to the project root
+    "baseUrl": "../..",
+    // The paths are relative to the baseUrl (the project root)
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  // Since this file is in the same directory as seed.ts, we just name the file.
+  "include": ["seed.ts"]
+}

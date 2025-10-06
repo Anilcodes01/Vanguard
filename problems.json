@@ -1,0 +1,1084 @@
+[
+  {
+    "slug": "JS-001",
+    "title": "Reverse That String!",
+    "description": "Write a function `reverseString(str)` that takes a string as input and returns a new string with the characters in the reverse order. This is a classic first problem to get you warmed up with string manipulation.",
+    "difficulty": "Beginner",
+    "minTime": 3,
+    "maxTime": 10,
+    "starterCode": "function reverseString(str) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(reverseString({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'hello'", "output": "'olleh'" },
+      { "input": "'JavaScript'", "output": "'tpircSavaJ'" }
+    ],
+    "testCases": [
+      { "input": "'hello'", "expected": "\"olleh\"" },
+      { "input": "'world'", "expected": "\"dlrow\"" },
+      { "input": "''", "expected": "\"\"" },
+      { "input": "'12345'", "expected": "\"54321\"" }
+    ]
+  },
+  {
+    "slug": "JS-002",
+    "title": "The Sum of All Numbers",
+    "description": "Create a function `sumArray(arr)` that calculates and returns the sum of all the numbers in an array. The array may contain positive and negative numbers. If the array is empty, it should return 0.",
+    "difficulty": "Beginner",
+    "minTime": 3,
+    "maxTime": 10,
+    "starterCode": "function sumArray(arr) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(sumArray({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[1, 2, 3]", "output": "6" },
+      { "input": "[10, -5, 2]", "output": "7" }
+    ],
+    "testCases": [
+      { "input": "[1, 2, 3, 4, 5]", "expected": "15" },
+      { "input": "[-1, -2, -3]", "expected": "-6" },
+      { "input": "[]", "expected": "0" },
+      { "input": "[100]", "expected": "100" }
+    ]
+  },
+  {
+    "slug": "JS-003",
+    "title": "Find the Biggest Number",
+    "description": "Write a function `findMax(arr)` that takes an array of numbers and returns the largest number in the array. You can assume the array is not empty.",
+    "difficulty": "Beginner",
+    "minTime": 4,
+    "maxTime": 12,
+    "starterCode": "function findMax(arr) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(findMax({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[1, 5, 2, 9, 3]", "output": "9" },
+      { "input": "[-1, -5, -2]", "output": "-1" }
+    ],
+    "testCases": [
+      { "input": "[1, 2, 3]", "expected": "3" },
+      { "input": "[10, 20, 5]", "expected": "20" },
+      { "input": "[-10, -5, -25]", "expected": "-5" },
+      { "input": "[5]", "expected": "5" }
+    ]
+  },
+  {
+    "slug": "JS-004",
+    "title": "FizzBuzz Fiesta",
+    "description": "Write a function `fizzBuzz(n)` that returns an array of strings. For numbers from 1 to `n` (inclusive), the array should contain 'Fizz' if the number is divisible by 3, 'Buzz' if it's divisible by 5, 'FizzBuzz' if it's divisible by both 3 and 5, and the number itself (as a string) otherwise. This is a famous interview question to test basic conditional logic and loops.",
+    "difficulty": "Beginner",
+    "minTime": 5,
+    "maxTime": 15,
+    "starterCode": "function fizzBuzz(n) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(fizzBuzz({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "5", "output": "['1', '2', 'Fizz', '4', 'Buzz']" },
+      { "input": "15", "output": "['1', '2', 'Fizz', '4', 'Buzz', 'Fizz', '7', '8', 'Fizz', 'Buzz', '11', 'Fizz', '13', '14', 'FizzBuzz']" }
+    ],
+    "testCases": [
+      { "input": "3", "expected": "[\"1\",\"2\",\"Fizz\"]" },
+      { "input": "5", "expected": "[\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\"]" },
+      { "input": "15", "expected": "[\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\",\"Fizz\",\"7\",\"8\",\"Fizz\",\"Buzz\",\"11\",\"Fizz\",\"13\",\"14\",\"FizzBuzz\"]" },
+      { "input": "1", "expected": "[\"1\"]" }
+    ]
+  },
+  {
+    "slug": "JS-005",
+    "title": "The Palindrome Puzzler",
+    "description": "A palindrome is a word that reads the same forwards and backwards. Write a function `isPalindrome(str)` that checks if a given string is a palindrome. The function should be case-insensitive and should return `true` if it's a palindrome and `false` otherwise.",
+    "difficulty": "Beginner",
+    "minTime": 5,
+    "maxTime": 15,
+    "starterCode": "function isPalindrome(str) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(isPalindrome({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'racecar'", "output": "true" },
+      { "input": "'Madam'", "output": "true" }
+    ],
+    "testCases": [
+      { "input": "'racecar'", "expected": "true" },
+      { "input": "'level'", "expected": "true" },
+      { "input": "'hello'", "expected": "false" },
+      { "input": "'A man a plan a canal Panama'", "expected": "true" }
+    ]
+  },
+  {
+    "slug": "JS-006",
+    "title": "Character Counter",
+    "description": "Write a function `countChars(str)` that takes a string and returns an object where keys are the characters in the string and values are the number of times each character appears. The counting should be case-sensitive.",
+    "difficulty": "Beginner",
+    "minTime": 5,
+    "maxTime": 15,
+    "starterCode": "function countChars(str) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(countChars({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'hello'", "output": "{ h: 1, e: 1, l: 2, o: 1 }" },
+      { "input": "'aabbc'", "output": "{ a: 2, b: 2, c: 1 }" }
+    ],
+    "testCases": [
+      { "input": "'hello'", "expected": "{\"h\":1,\"e\":1,\"l\":2,\"o\":1}" },
+      { "input": "'programming'", "expected": "{\"p\":1,\"r\":2,\"o\":1,\"g\":2,\"a\":1,\"m\":2,\"i\":1,\"n\":1}" },
+      { "input": "''", "expected": "{}" },
+      { "input": "'aA'", "expected": "{\"a\":1,\"A\":1}" }
+    ]
+  },
+  {
+    "slug": "JS-007",
+    "title": "Remove Duplicates",
+    "description": "Write a function `removeDuplicates(arr)` that takes an array of items (numbers or strings) and returns a new array with all duplicate items removed. The order of the items in the output array should be the same as their first appearance in the input array.",
+    "difficulty": "Beginner",
+    "minTime": 5,
+    "maxTime": 15,
+    "starterCode": "function removeDuplicates(arr) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(removeDuplicates({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[1, 2, 2, 3, 1]", "output": "[1, 2, 3]" },
+      { "input": "['a', 'b', 'a']", "output": "['a', 'b']" }
+    ],
+    "testCases": [
+      { "input": "[1, 1, 2, 2, 3, 3]", "expected": "[1,2,3]" },
+      { "input": "['apple', 'banana', 'apple']", "expected": "[\"apple\",\"banana\"]" },
+      { "input": "[1, '1', 2]", "expected": "[1,\"1\",2]" },
+      { "input": "[]", "expected": "[]" }
+    ]
+  },
+  {
+    "slug": "JS-008",
+    "title": "Factorial Finder",
+    "description": "The factorial of a non-negative integer `n`, denoted by `n!`, is the product of all positive integers less than or equal to `n`. For example, `5! = 5 * 4 * 3 * 2 * 1 = 120`. By convention, the factorial of 0 is 1. Write a function `factorial(n)` that calculates the factorial of a given number `n`.",
+    "difficulty": "Beginner",
+    "minTime": 5,
+    "maxTime": 15,
+    "starterCode": "function factorial(n) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(factorial({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "5", "output": "120" },
+      { "input": "0", "output": "1" }
+    ],
+    "testCases": [
+      { "input": "5", "expected": "120" },
+      { "input": "0", "expected": "1" },
+      { "input": "1", "expected": "1" },
+      { "input": "10", "expected": "3628800" }
+    ]
+  },
+  {
+    "slug": "JS-009",
+    "title": "Even Number Filter",
+    "description": "Write a function `filterEvenNumbers(arr)` that takes an array of integers and returns a new array containing only the even numbers from the original array. The order of the numbers should be preserved.",
+    "difficulty": "Beginner",
+    "minTime": 3,
+    "maxTime": 10,
+    "starterCode": "function filterEvenNumbers(arr) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(filterEvenNumbers({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[1, 2, 3, 4, 5, 6]", "output": "[2, 4, 6]" },
+      { "input": "[1, 3, 5]", "output": "[]" }
+    ],
+    "testCases": [
+      { "input": "[1, 2, 3, 4, 5, 6]", "expected": "[2,4,6]" },
+      { "input": "[10, 21, 32, 43, 54]", "expected": "[10,32,54]" },
+      { "input": "[1, 3, 5, 7]", "expected": "[]" },
+      { "input": "[]", "expected": "[]" }
+    ]
+  },
+  {
+    "slug": "JS-010",
+    "title": "Capitalize First Letter",
+    "description": "Write a function `capitalize(str)` that takes a string and returns a new string with the first letter capitalized. The rest of the string should remain unchanged. If the input is an empty string, it should return an empty string.",
+    "difficulty": "Beginner",
+    "minTime": 3,
+    "maxTime": 10,
+    "starterCode": "function capitalize(str) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(capitalize({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'hello'", "output": "'Hello'" },
+      { "input": "'world'", "output": "'World'" }
+    ],
+    "testCases": [
+      { "input": "'javascript'", "expected": "\"Javascript\"" },
+      { "input": "'a'", "expected": "\"A\"" },
+      { "input": "'HELLO'", "expected": "\"HELLO\"" },
+      { "input": "''", "expected": "\"\"" }
+    ]
+  },
+  {
+    "slug": "JS-011",
+    "title": "Chunk an Array",
+    "description": "Write a function `chunkArray(arr, size)` that splits an array `arr` into groups the length of `size`. It should return a two-dimensional array containing the chunks. If the original array cannot be split evenly, the final chunk will be the remaining elements.",
+    "difficulty": "Beginner",
+    "minTime": 8,
+    "maxTime": 20,
+    "starterCode": "function chunkArray(arr, size) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(chunkArray({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[1, 2, 3, 4], 2", "output": "[[1, 2], [3, 4]]" },
+      { "input": "[1, 2, 3, 4, 5], 2", "output": "[[1, 2], [3, 4], [5]]" }
+    ],
+    "testCases": [
+      { "input": "[1, 2, 3, 4, 5, 6], 3", "expected": "[[1,2,3],[4,5,6]]" },
+      { "input": "[1, 2, 3], 1", "expected": "[[1],[2],[3]]" },
+      { "input": "[1, 2, 3, 4, 5], 4", "expected": "[[1,2,3,4],[5]]" },
+      { "input": "[1, 2, 3], 5", "expected": "[[1,2,3]]" },
+      { "input": "[], 2", "expected": "[]" }
+    ]
+  },
+  {
+    "slug": "JS-012",
+    "title": "Anagram Checker",
+    "description": "Write a function `isAnagram(str1, str2)` that checks if two strings are anagrams of each other. Anagrams are words that contain the exact same letters, but in a different order. The comparison should be case-insensitive and ignore spaces. For example, 'listen' and 'silent' are anagrams.",
+    "difficulty": "Beginner",
+    "minTime": 10,
+    "maxTime": 20,
+    "starterCode": "function isAnagram(str1, str2) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(isAnagram({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'listen', 'silent'", "output": "true" },
+      { "input": "'Dormitory', 'dirty room'", "output": "true" }
+    ],
+    "testCases": [
+      { "input": "'anagram', 'nagaram'", "expected": "true" },
+      { "input": "'rat', 'car'", "expected": "false" },
+      { "input": "'rail safety', 'fairy tales'", "expected": "true" },
+      { "input": "'Hello', 'olleh'", "expected": "true" },
+      { "input": "'apple', 'apply'", "expected": "false" }
+    ]
+  },
+  {
+    "slug": "JS-013",
+    "title": "Title Case Transformation",
+    "description": "Write a function `toTitleCase(str)` that takes a string and converts it to title case, where the first letter of each word is capitalized and the rest of the letters are lowercase. Words are separated by spaces.",
+    "difficulty": "Beginner",
+    "minTime": 8,
+    "maxTime": 18,
+    "starterCode": "function toTitleCase(str) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(toTitleCase({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'i\\'m a little tea pot'", "output": "I'm A Little Tea Pot" },
+      { "input": "'sHoRt AnD sToUt'", "output": "Short And Stout" }
+    ],
+    "testCases": [
+      { "input": "'hello world'", "expected": "\"Hello World\"" },
+      { "input": "'JAVASCRIPT is AWESOME'", "expected": "\"Javascript Is Awesome\"" },
+      { "input": "'a'", "expected": "\"A\"" },
+      { "input": "''", "expected": "\"\"" }
+    ]
+  },
+  {
+    "slug": "JS-014",
+    "title": "Find the Missing Number",
+    "description": "You are given an array `arr` containing `n` distinct numbers taken from the range `0, 1, 2, ..., n`. Since the array has only `n` numbers out of the total `n+1` numbers, there is exactly one number missing. Write a function `findMissingNumber(arr)` that finds and returns the missing number.",
+    "difficulty": "Beginner",
+    "minTime": 10,
+    "maxTime": 25,
+    "starterCode": "function findMissingNumber(arr) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(findMissingNumber({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[3, 0, 1]", "output": "2" },
+      { "input": "[9, 6, 4, 2, 3, 5, 7, 0, 1]", "output": "8" }
+    ],
+    "testCases": [
+      { "input": "[0, 1, 3, 4]", "expected": "2" },
+      { "input": "[0]", "expected": "1" },
+      { "input": "[1, 2, 3]", "expected": "0" },
+      { "input": "[8, 6, 4, 2, 3, 5, 7, 0, 1]", "expected": "9" }
+    ]
+  },
+  {
+    "slug": "JS-015",
+    "title": "Fibonacci Sequence Generator",
+    "description": "The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones, usually starting with 0 and 1. So, the sequence goes: 0, 1, 1, 2, 3, 5, 8, ... Write a function `fibonacci(n)` that returns the `n`-th number in the Fibonacci sequence. For example, `fibonacci(5)` should return 5.",
+    "difficulty": "Beginner",
+    "minTime": 10,
+    "maxTime": 20,
+    "starterCode": "function fibonacci(n) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(fibonacci({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "2", "output": "1" },
+      { "input": "8", "output": "21" }
+    ],
+    "testCases": [
+      { "input": "0", "expected": "0" },
+      { "input": "1", "expected": "1" },
+      { "input": "7", "expected": "13" },
+      { "input": "10", "expected": "55" }
+    ]
+  },
+  {
+    "slug": "JS-016",
+    "title": "Object Key-Value Flipper",
+    "description": "Write a function `invertObject(obj)` that takes an object and returns a new object where the keys and values have been swapped. You can assume that all values in the input object are unique and can be converted to valid object keys (i.e., strings).",
+    "difficulty": "Beginner",
+    "minTime": 5,
+    "maxTime": 15,
+    "starterCode": "function invertObject(obj) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(invertObject({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "{ a: 1, b: 2, c: 3 }", "output": "{ '1': 'a', '2': 'b', '3': 'c' }" },
+      { "input": "{ name: 'John', age: 30 }", "output": "{ '30': 'age', 'John': 'name' }" }
+    ],
+    "testCases": [
+      { "input": "{ \"key1\": \"value1\", \"key2\": \"value2\" }", "expected": "{\"value1\":\"key1\",\"value2\":\"key2\"}" },
+      { "input": "{ \"fruit\": \"apple\", \"color\": \"red\" }", "expected": "{\"apple\":\"fruit\",\"red\":\"color\"}" },
+      { "input": "{}", "expected": "{}" }
+    ]
+  },
+  {
+    "slug": "JS-017",
+    "title": "Array Intersection",
+    "description": "Write a function `arrayIntersection(arr1, arr2)` that takes two arrays and returns a new array containing elements that are present in both arrays. The returned array should not have any duplicates.",
+    "difficulty": "Beginner",
+    "minTime": 8,
+    "maxTime": 20,
+    "starterCode": "function arrayIntersection(arr1, arr2) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  let result = arrayIntersection({{TEST_INPUT}});\n  if(Array.isArray(result)) result.sort();\n  console.log(JSON.stringify(result));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[1, 2, 3], [2, 3, 4]", "output": "[2, 3]" },
+      { "input": "['a', 'b', 'c'], ['b', 'd', 'e']", "output": "['b']" }
+    ],
+    "testCases": [
+      { "input": "[1, 2, 2, 1], [2, 2]", "expected": "[2]" },
+      { "input": "[4, 9, 5], [9, 4, 9, 8, 4]", "expected": "[4,9]" },
+      { "input": "[1, 2, 3], [4, 5, 6]", "expected": "[]" },
+      { "input": "[], [1, 2]", "expected": "[]" }
+    ]
+  },
+  {
+    "slug": "JS-018",
+    "title": "Longest Word Finder",
+    "description": "Write a function `findLongestWord(str)` that takes a sentence as a string and returns the length of the longest word in that sentence. If there are multiple words with the same maximum length, return that length. Ignore punctuation.",
+    "difficulty": "Beginner",
+    "minTime": 8,
+    "maxTime": 18,
+    "starterCode": "function findLongestWord(str) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(findLongestWord({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'The quick brown fox jumped over the lazy dog'", "output": "6" },
+      { "input": "'JavaScript is fun'", "output": "10" }
+    ],
+    "testCases": [
+      { "input": "'May the force be with you'", "expected": "5" },
+      { "input": "'What is the average airspeed velocity of an unladen swallow'", "expected": "8" },
+      { "input": "'Hi'", "expected": "2" },
+      { "input": "''", "expected": "0" }
+    ]
+  },
+  {
+    "slug": "JS-019",
+    "title": "Count the Vowels",
+    "description": "Write a function `countVowels(str)` that takes a string and returns the number of vowels it contains. For this challenge, vowels are 'a', 'e', 'i', 'o', 'u', and the check should be case-insensitive.",
+    "difficulty": "Beginner",
+    "minTime": 5,
+    "maxTime": 15,
+    "starterCode": "function countVowels(str) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(countVowels({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'hello world'", "output": "3" },
+      { "input": "'AEIOU'", "output": "5" }
+    ],
+    "testCases": [
+      { "input": "'javascript'", "expected": "3" },
+      { "input": "'Why do you ask?'", "expected": "4" },
+      { "input": "'rhythm'", "expected": "0" },
+      { "input": "''", "expected": "0" }
+    ]
+  },
+  {
+    "slug": "JS-020",
+    "title": "Caesar Cipher",
+    "description": "Write a function `caesarCipher(str, shift)` that implements the Caesar cipher, a simple substitution cipher. The function should take a string and a shift amount, and it should return the shifted string. Each letter should be 'shifted' by the given amount through the alphabet, wrapping around from 'z' to 'a' if necessary. The function should handle both uppercase and lowercase letters, and non-alphabetic characters should be left unchanged.",
+    "difficulty": "Beginner",
+    "minTime": 15,
+    "maxTime": 30,
+    "starterCode": "function caesarCipher(str, shift) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(caesarCipher({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'abc', 1", "output": "'bcd'" },
+      { "input": "'Hello, World!', 5", "output": "'Mjqqt, Btwqi!'" }
+    ],
+    "testCases": [
+      { "input": "'Z', 1", "expected": "\"A\"" },
+      { "input": "'A', -1", "expected": "\"Z\"" },
+      { "input": "'middle-Outz', 2", "expected": "\"okffng-Qwvb\"" },
+      { "input": "'Ciphering.', 26", "expected": "\"Ciphering.\"" }
+    ]
+  },
+  {
+    "slug": "JS-021",
+    "title": "Valid Parentheses",
+    "description": "Write a function `isValid(s)` that takes a string `s` containing just the characters '(', ')', '{', '}', '[' and ']'. The function should determine if the input string is valid. An input string is valid if: 1. Open brackets must be closed by the same type of brackets. 2. Open brackets must be closed in the correct order. 3. Every close bracket has a corresponding open bracket of the same type.",
+    "difficulty": "Intermediate",
+    "minTime": 15,
+    "maxTime": 30,
+    "starterCode": "function isValid(s) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(isValid({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'()[]{}'", "output": "true" },
+      { "input": "'(]'", "output": "false" }
+    ],
+    "testCases": [
+      { "input": "'()'", "expected": "true" },
+      { "input": "'([)]'", "expected": "false" },
+      { "input": "'{[]}'", "expected": "true" },
+      { "input": "')('", "expected": "false" },
+      { "input": "''", "expected": "true" }
+    ]
+  },
+  {
+    "slug": "JS-022",
+    "title": "Flatten a Nested Array",
+    "description": "Write a function `flattenArray(arr)` that takes a nested array and returns a new, single-level array containing all the elements of the original array. The input array can be nested to any depth.",
+    "difficulty": "Intermediate",
+    "minTime": 15,
+    "maxTime": 30,
+    "starterCode": "function flattenArray(arr) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(flattenArray({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[1, [2, 3], 4]", "output": "[1, 2, 3, 4]" },
+      { "input": "[1, [2, [3, [4]]], 5]", "output": "[1, 2, 3, 4, 5]" }
+    ],
+    "testCases": [
+      { "input": "[[1, 2], [3, 4]]", "expected": "[1,2,3,4]" },
+      { "input": "[1, [], [2, 3]]", "expected": "[1,2,3]" },
+      { "input": "[1, 2, 3]", "expected": "[1,2,3]" },
+      { "input": "[]", "expected": "[]" },
+      { "input": "[[[[[5]]]]]", "expected": "[5]" }
+    ]
+  },
+  {
+    "slug": "JS-023",
+    "title": "Most Frequent Character",
+    "description": "Write a function `mostFrequentChar(str)` that takes a string and returns the character that appears most frequently. If there's a tie, return the character that appears first in the string.",
+    "difficulty": "Intermediate",
+    "minTime": 10,
+    "maxTime": 25,
+    "starterCode": "function mostFrequentChar(str) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(mostFrequentChar({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'javascript'", "output": "'a'" },
+      { "input": "'apple pie'", "output": "'p'" }
+    ],
+    "testCases": [
+      { "input": "'abcccccccd'", "expected": "\"c\"" },
+      { "input": "'apple 1231111'", "expected": "\"1\"" },
+      { "input": "'aabbc'", "expected": "\"a\"" },
+      { "input": "'hello'", "expected": "\"l\"" }
+    ]
+  },
+  {
+    "slug": "JS-024",
+    "title": "Two Sum",
+    "description": "Given an array of integers `nums` and an integer `target`, write a function `twoSum(nums, target)` that returns the indices of the two numbers in the array that add up to the target. You may assume that each input would have exactly one solution, and you may not use the same element twice. The order of the indices in the output array does not matter.",
+    "difficulty": "Intermediate",
+    "minTime": 15,
+    "maxTime": 30,
+    "starterCode": "function twoSum(nums, target) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  let result = twoSum({{TEST_INPUT}});\n  if (Array.isArray(result)) result.sort((a,b) => a-b);\n  console.log(JSON.stringify(result));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[2, 7, 11, 15], 9", "output": "[0, 1]" },
+      { "input": "[3, 2, 4], 6", "output": "[1, 2]" }
+    ],
+    "testCases": [
+      { "input": "[2, 7, 11, 15], 9", "expected": "[0,1]" },
+      { "input": "[3, 2, 4], 6", "expected": "[1,2]" },
+      { "input": "[3, 3], 6", "expected": "[0,1]" },
+      { "input": "[-1, -2, -3, -4, -5], -8", "expected": "[2,4]" }
+    ]
+  },
+  {
+    "slug": "JS-025",
+    "title": "The Anagram Grouper",
+    "description": "Given an array of strings `strs`, write a function `groupAnagrams(strs)` that groups the anagrams together. An anagram is a word formed by rearranging the letters of another word. You can return the answer in any order, but the strings within each group should be sorted alphabetically.",
+    "difficulty": "Intermediate",
+    "minTime": 20,
+    "maxTime": 35,
+    "starterCode": "function groupAnagrams(strs) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  let result = groupAnagrams({{TEST_INPUT}});\n  if (Array.isArray(result)) {\n    result.forEach(group => group.sort());\n    result.sort((a, b) => a[0].localeCompare(b[0]));\n  }\n  console.log(JSON.stringify(result));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "['eat', 'tea', 'tan', 'ate', 'nat', 'bat']", "output": "[['bat'], ['nat', 'tan'], ['ate', 'eat', 'tea']]" }
+    ],
+    "testCases": [
+      { "input": "['eat', 'tea', 'tan', 'ate', 'nat', 'bat']", "expected": "[[\"ate\",\"eat\",\"tea\"],[\"bat\"],[\"nat\",\"tan\"]]" },
+      { "input": "['a']", "expected": "[[\"a\"]]" },
+      { "input": "['cab', 'tin', 'pew', 'duh', 'may', 'ill', 'buy', 'bar', 'max', 'doc']", "expected": "[[\"bar\"],[\"buy\"],[\"cab\"],[\"doc\"],[\"duh\"],[\"ill\"],[\"max\"],[\"may\"],[\"pew\"],[\"tin\"]]" }
+    ]
+  },
+  {
+  "slug": "JS-026",
+  "title": "Array Rotation",
+  "description": "Write a function `rotateArray(arr, k)` that rotates an array to the right by `k` steps. `k` is a non-negative integer. Try to come up with a solution that does this in-place or with minimal extra space.",
+  "difficulty": "Intermediate",
+  "minTime": 15,
+  "maxTime": 30,
+  "starterCode": "function rotateArray(arr, k) {\n  // write your code here\n}",
+  "languageId": 93,
+  "testStrategy": "DRIVER_CODE",
+  "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  let arr = {{TEST_INPUT}};\n  rotateArray(arr, {{TEST_INPUT_K}});\n  console.log(JSON.stringify(arr));\n} catch (e) {\n  console.error(e.toString());\n}",
+  "examples": [
+    { "input": "[1, 2, 3, 4, 5, 6, 7], 3", "output": "[5, 6, 7, 1, 2, 3, 4]" }
+  ],
+  "testCases": [
+    { "input": "[1, 2, 3, 4, 5], 2", "expected": "[4,5,1,2,3]" },
+    { "input": "[1, 2, 3], 0", "expected": "[1,2,3]" },
+    { "input": "[1, 2, 3], 3", "expected": "[1,2,3]" },
+    { "input": "[-1,-100,3,99], 2", "expected": "[3,99,-1,-100]" }
+  ]
+},
+  {
+    "slug": "JS-027",
+    "title": "Deep Object Comparison",
+    "description": "Write a function `deepEqual(obj1, obj2)` that performs a deep comparison between two objects to check if they are equal. The function should return `true` if the objects have the same keys and corresponding values, including nested objects and arrays. The order of keys in objects does not matter, but the order of elements in arrays does.",
+    "difficulty": "Intermediate",
+    "minTime": 20,
+    "maxTime": 40,
+    "starterCode": "function deepEqual(obj1, obj2) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(deepEqual({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "{ a: 1, b: { c: 2 } }, { a: 1, b: { c: 2 } }", "output": "true" }
+    ],
+    "testCases": [
+      { "input": "{ a: 1, b: 2 }, { b: 2, a: 1 }", "expected": "true" },
+      { "input": "{ a: 1, b: { c: 3 } }, { a: 1, b: { c: 4 } }", "expected": "false" },
+      { "input": "[1, [2, 3]], [1, [2, 3]]", "expected": "true" },
+      { "input": "1, 1", "expected": "true" },
+      { "input": "null, {}", "expected": "false" }
+    ]
+  },
+  {
+    "slug": "JS-028",
+    "title": "Memoized Fibonacci",
+    "description": "Enhance the Fibonacci function from the 'Easy' section. The standard recursive Fibonacci solution is very inefficient (exponential time complexity). Write a function `memoizedFib` that uses memoization (a form of caching) to calculate the `n`-th Fibonacci number efficiently. It should return a function that, when called with `n`, computes the result quickly, even for large `n`.",
+    "difficulty": "Intermediate",
+    "minTime": 15,
+    "maxTime": 30,
+    "starterCode": "function memoizedFib() {\n  const cache = {};\n  return function fib(n) {\n    // write your code here\n  }\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  const fib = memoizedFib();\n  console.log(JSON.stringify(fib({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "const fib = memoizedFib(); fib(10);", "output": "55" }
+    ],
+    "testCases": [
+      { "input": "0", "expected": "0" },
+      { "input": "1", "expected": "1" },
+      { "input": "15", "expected": "610" },
+      { "input": "50", "expected": "12586269025" }
+    ]
+  },
+  {
+    "slug": "JS-029",
+    "title": "Spiral Matrix Generator",
+    "description": "Write a function `generateSpiralMatrix(n)` that generates an `n x n` matrix filled with elements from 1 to `n*n` in a spiral order. For example, for n=3, the matrix should look like: [[1, 2, 3], [8, 9, 4], [7, 6, 5]].",
+    "difficulty": "Intermediate",
+    "minTime": 20,
+    "maxTime": 40,
+    "starterCode": "function generateSpiralMatrix(n) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(generateSpiralMatrix({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "3", "output": "[[1, 2, 3], [8, 9, 4], [7, 6, 5]]" }
+    ],
+    "testCases": [
+      { "input": "3", "expected": "[[1,2,3],[8,9,4],[7,6,5]]" },
+      { "input": "4", "expected": "[[1,2,3,4],[12,13,14,5],[11,16,15,6],[10,9,8,7]]" },
+      { "input": "1", "expected": "[[1]]" },
+      { "input": "2", "expected": "[[1,2],[4,3]]" }
+    ]
+  },
+  {
+    "slug": "JS-030",
+    "title": "Promise.all Polyfill",
+    "description": "Implement your own version of `Promise.all`. Write a function `myPromiseAll(promises)` that takes an array of promises and returns a single promise. This returned promise should resolve when all of the input promises have resolved, with an array of their results. It should reject if any of the input promises reject, with the reason of the first promise that rejected.",
+    "difficulty": "Intermediate",
+    "minTime": 20,
+    "maxTime": 40,
+    "starterCode": "function myPromiseAll(promises) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  myPromiseAll({{TEST_INPUT}})\n    .then(result => console.log(JSON.stringify(`Resolves with ${JSON.stringify(result)}`)))\n    .catch(error => console.log(JSON.stringify(`Rejects with ${JSON.stringify(error)}`)));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[Promise.resolve(1), Promise.resolve(2)]", "output": "Promise that resolves to [1, 2]" }
+    ],
+    "testCases": [
+      { "input": "[Promise.resolve(1), Promise.resolve('hello'), Promise.resolve(true)]", "expected": "\"Resolves with [1,\\\"hello\\\",true]\"" },
+      { "input": "[Promise.resolve(1), Promise.reject('Fail'), Promise.resolve(true)]", "expected": "\"Rejects with \\\"Fail\\\"\"" },
+      { "input": "[]", "expected": "\"Resolves with []\"" },
+      { "input": "[new Promise(res => setTimeout(() => res(100), 10)), new Promise(res => setTimeout(() => res(200), 20))]", "expected": "\"Resolves with [100,200]\"" }
+    ]
+  },
+  {
+    "slug": "JS-031",
+    "title": "Longest Substring Without Repeating Characters",
+    "description": "Given a string `s`, write a function `lengthOfLongestSubstring(s)` to find the length of the longest substring without repeating characters. A substring is a contiguous sequence of characters within a string.",
+    "difficulty": "Advanced",
+    "minTime": 25,
+    "maxTime": 45,
+    "starterCode": "function lengthOfLongestSubstring(s) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(lengthOfLongestSubstring({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'abcabcbb'", "output": "3" }
+    ],
+    "testCases": [
+      { "input": "'abcabcbb'", "expected": "3" },
+      { "input": "'bbbbb'", "expected": "1" },
+      { "input": "'pwwkew'", "expected": "3" },
+      { "input": "''", "expected": "0" },
+      { "input": "'au'", "expected": "2" },
+      { "input": "'dvdf'", "expected": "3" }
+    ]
+  },
+  {
+    "slug": "JS-032",
+    "title": "String Permutations",
+    "description": "Write a function `permuteString(str)` that returns an array of all possible permutations of a given string. The array should not contain duplicate permutations if the input string has repeated characters.",
+    "difficulty": "Advanced",
+    "minTime": 30,
+    "maxTime": 60,
+    "starterCode": "function permuteString(str) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  let result = permuteString({{TEST_INPUT}});\n  if(Array.isArray(result)) result.sort();\n  console.log(JSON.stringify(result));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'abc'", "output": "['abc', 'acb', 'bac', 'bca', 'cab', 'cba']" }
+    ],
+    "testCases": [
+      { "input": "'ab'", "expected": "[\"ab\",\"ba\"]" },
+      { "input": "'a'", "expected": "[\"a\"]" },
+      { "input": "'abc'", "expected": "[\"abc\",\"acb\",\"bac\",\"bca\",\"cab\",\"cba\"]" },
+      { "input": "'aab'", "expected": "[\"aab\",\"aba\",\"baa\"]" }
+    ]
+  },
+  {
+    "slug": "JS-033",
+    "title": "Word Search",
+    "description": "Given an `m x n` grid of characters `board` and a string `word`, write a function `wordSearch(board, word)` that returns `true` if `word` exists in the grid. The word can be constructed from letters of sequentially adjacent cells, where 'adjacent' cells are horizontally or vertically neighboring. The same letter cell may not be used more than once.",
+    "difficulty": "Advanced",
+    "minTime": 35,
+    "maxTime": 70,
+    "starterCode": "function wordSearch(board, word) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(wordSearch({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[['A','B','C','E'],['S','F','C','S'],['A','D','E','E']], 'ABCCED'", "output": "true" }
+    ],
+    "testCases": [
+      { "input": "[['A','B','C','E'],['S','F','C','S'],['A','D','E','E']], 'SEE'", "expected": "true" },
+      { "input": "[['a','b'],['c','d']], 'abcd'", "expected": "false" },
+      { "input": "[['a']], 'a'", "expected": "true" },
+      { "input": "[['C','A','A'],['A','A','A'],['B','C','D']], 'AAB'", "expected": "true" }
+    ]
+  },
+  {
+    "slug": "JS-034",
+    "title": "The Coin Change Problem",
+    "description": "You are given an integer array `coins` representing coins of different denominations and an integer `amount` representing a total amount of money. Write a function `coinChange(coins, amount)` that returns the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.",
+    "difficulty": "Advanced",
+    "minTime": 30,
+    "maxTime": 60,
+    "starterCode": "function coinChange(coins, amount) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(coinChange({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[1, 2, 5], 11", "output": "3" }
+    ],
+    "testCases": [
+      { "input": "[1, 2, 5], 11", "expected": "3" },
+      { "input": "[2], 3", "expected": "-1" },
+      { "input": "[1], 0", "expected": "0" },
+      { "input": "[186,419,83,408], 6249", "expected": "20" }
+    ]
+  },
+  {
+    "slug": "JS-035",
+    "title": "Implement a LRU Cache",
+    "description": "Design and implement a data structure for a Least Recently Used (LRU) cache. It should support two operations: `get(key)` and `put(key, value)`. `get(key)` should get the value of the key if it exists, otherwise return -1. `put(key, value)` should set or insert the value. When the cache reaches its capacity, it should invalidate the least recently used item before inserting a new item. Your implementation should be a class `LRUCache` with a constructor that accepts the capacity.",
+    "difficulty": "Advanced",
+    "minTime": 35,
+    "maxTime": 70,
+    "starterCode": "class LRUCache {\n  constructor(capacity) {\n    // your code here\n  }\n\n  get(key) {\n    // your code here\n  }\n\n  put(key, value) {\n    // your code here\n  }\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  {{TEST_INPUT}}\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "const cache = new LRUCache(2); cache.put(1,1); cache.put(2,2); console.log(cache.get(1));", "output": "1" }
+    ],
+    "testCases": [
+      {
+        "input": "const cache = new LRUCache(2);\nconst results = [];\nresults.push(cache.put(1, 1));\nresults.push(cache.put(2, 2));\nresults.push(cache.get(1));\nresults.push(cache.put(3, 3));\nresults.push(cache.get(2));\nresults.push(cache.put(4, 4));\nresults.push(cache.get(1));\nresults.push(cache.get(3));\nresults.push(cache.get(4));\nconsole.log(JSON.stringify(results.map(r => r === undefined ? null : r)));",
+        "expected": "[null,null,1,null,-1,null,-1,3,4]"
+      }
+    ]
+  },
+  {
+    "slug": "JS-036",
+    "title": "Merge K Sorted Lists",
+    "description": "You are given an array of `k` linked-lists `lists`, where each linked-list is sorted in ascending order. Write a function `mergeKLists(lists)` that merges all the linked-lists into one sorted linked-list and returns it. You will be given a `ListNode` class definition.",
+    "difficulty": "Advanced",
+    "minTime": 30,
+    "maxTime": 60,
+    "starterCode": "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\nfunction mergeKLists(lists) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "function ListNode(val, next) { this.val = (val===undefined ? 0 : val); this.next = (next===undefined ? null : next); }\n{{USER_CODE}}\n\ntry {\n  const toArray = (head) => { const arr = []; while(head) { arr.push(head.val); head = head.next; } return arr; };\n  const fromArray = (arr) => { if(!arr || arr.length === 0) return null; let head = new ListNode(arr[0]); let current = head; for(let i=1; i<arr.length; i++) { current.next = new ListNode(arr[i]); current = current.next; } return head; };\n  const lists = {{TEST_INPUT}}.map(arr => fromArray(arr));\n  const result = mergeKLists(lists);\n  console.log(JSON.stringify(toArray(result)));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[[1,4,5],[1,3,4],[2,6]]", "output": "[1,1,2,3,4,4,5,6]" }
+    ],
+    "testCases": [
+      { "input": "[[1,4,5],[1,3,4],[2,6]]", "expected": "[1,1,2,3,4,4,5,6]" },
+      { "input": "[]", "expected": "[]" },
+      { "input": "[[]]", "expected": "[]" }
+    ]
+  },
+  {
+    "slug": "JS-037",
+    "title": "Regular Expression Matcher",
+    "description": "Given an input string `s` and a pattern `p`, implement regular expression matching with support for `.` and `*`. The `.` character matches any single character. The `*` character matches zero or more of the preceding element. The matching should cover the entire input string (not partial). Write a function `isMatch(s, p)`.",
+    "difficulty": "Advanced",
+    "minTime": 40,
+    "maxTime": 80,
+    "starterCode": "function isMatch(s, p) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(isMatch({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "'aa', 'a'", "output": "false" }
+    ],
+    "testCases": [
+      { "input": "'mississippi', 'mis*is*p*.'", "expected": "false" },
+      { "input": "'aab', 'c*a*b'", "expected": "true" },
+      { "input": "'ab', '.*c'", "expected": "false" },
+      { "input": "'aaa', 'a*a'", "expected": "true" }
+    ]
+  },
+  {
+    "slug": "JS-038",
+    "title": "JSON Stringify Implementation",
+    "description": "Write a function `myJSONStringify(obj)` that mimics the behavior of `JSON.stringify()`. Your function should take a JavaScript value (object, array, string, number, boolean, null) and return its JSON string representation. You should handle nested objects and arrays, but you do not need to handle functions, `undefined`, or circular references for this challenge.",
+    "difficulty": "Advanced",
+    "minTime": 25,
+    "maxTime": 50,
+    "starterCode": "function myJSONStringify(obj) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(myJSONStringify({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "{a:1, b:'hello'}", "output": "'{\"a\":1,\"b\":\"hello\"}'" }
+    ],
+    "testCases": [
+      { "input": "{'key': 'value', 'num': 123}", "expected": "\"{\\\"key\\\":\\\"value\\\",\\\"num\\\":123}\"" },
+      { "input": "[1, false, null, 'string']", "expected": "\"[1,false,null,\\\"string\\\"]\"" },
+      { "input": "{'nested': {'arr': [1,2]}}", "expected": "\"{\\\"nested\\\":{\\\"arr\\\":[1,2]}}\"" },
+      { "input": "'a simple string'", "expected": "\"\\\"a simple string\\\"\"" }
+    ]
+  },
+  {
+    "slug": "JS-039",
+    "title": "Largest Rectangle in Histogram",
+    "description": "Given an array of integers `heights` representing the bar height of a histogram, write a function `largestRectangleArea(heights)` that finds the area of the largest rectangle in the histogram.",
+    "difficulty": "Advanced",
+    "minTime": 35,
+    "maxTime": 70,
+    "starterCode": "function largestRectangleArea(heights) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(largestRectangleArea({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[2,1,5,6,2,3]", "output": "10" }
+    ],
+    "testCases": [
+      { "input": "[2,1,5,6,2,3]", "expected": "10" },
+      { "input": "[1,1,1,1,1]", "expected": "5" },
+      { "input": "[4,2,0,3,2,5]", "expected": "6" },
+      { "input": "[1]", "expected": "1" }
+    ]
+  },
+  {
+    "slug": "JS-040",
+    "title": "Sudoku Solver",
+    "description": "Write a function `solveSudoku(board)` that solves a Sudoku puzzle. The input `board` is a 9x9 array of strings, where filled cells are digits '1'-'9' and empty cells are '.'. Your function should modify the board in-place to solve the puzzle. A Sudoku solution must satisfy all of the following rules: 1. Each of the digits 1-9 must occur exactly once in each row. 2. Each of the digits 1-9 must occur exactly once in each column. 3. Each of the digits 1-9 must occur exactly once in each of the 9 3x3 sub-boxes of the grid.",
+    "difficulty": "Advanced",
+    "minTime": 45,
+    "maxTime": 90,
+    "starterCode": "function solveSudoku(board) {\n  // write your code here\n  // The function should modify the board in-place and not return anything.\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  let board = {{TEST_INPUT}};\n  solveSudoku(board);\n  console.log(JSON.stringify(board));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "a partially filled 9x9 sudoku board", "output": "the same board, but solved" }
+    ],
+    "testCases": [
+      { "input": "[['5','3','.','.','7','.','.','.','.'],['6','.','.','1','9','5','.','.','.'],['.','9','8','.','.','.','.','6','.'],['8','.','.','.','6','.','.','.','3'],['4','.','.','8','.','3','.','.','1'],['7','.','.','.','2','.','.','.','6'],['.','6','.','.','.','.','2','8','.'],['.','.','.','4','1','9','.','.','5'],['.','.','.','.','8','.','.','7','9']]", "expected": "[[\"5\",\"3\",\"4\",\"6\",\"7\",\"8\",\"9\",\"1\",\"2\"],[\"6\",\"7\",\"2\",\"1\",\"9\",\"5\",\"3\",\"4\",\"8\"],[\"1\",\"9\",\"8\",\"3\",\"4\",\"2\",\"5\",\"6\",\"7\"],[\"8\",\"5\",\"9\",\"7\",\"6\",\"1\",\"4\",\"2\",\"3\"],[\"4\",\"2\",\"6\",\"8\",\"5\",\"3\",\"7\",\"9\",\"1\"],[\"7\",\"1\",\"3\",\"9\",\"2\",\"4\",\"8\",\"5\",\"6\"],[\"9\",\"6\",\"1\",\"5\",\"3\",\"7\",\"2\",\"8\",\"4\"],[\"2\",\"8\",\"7\",\"4\",\"1\",\"9\",\"6\",\"3\",\"5\"],[\"3\",\"4\",\"5\",\"2\",\"8\",\"6\",\"1\",\"7\",\"9\"]]" }
+    ]
+  },
+  {
+    "slug": "JS-041",
+    "title": "The Debounce Decorator",
+    "description": "Implement a `debounce` function. A debounce function is a higher-order function that limits the rate at which a function gets called. It takes a function `func` and a delay `wait` (in milliseconds) as arguments. It should return a new function that, when invoked, will only call the original `func` after `wait` milliseconds have passed since the last time it was invoked. This is useful for implementing behavior that should only happen after the user has stopped performing an action (like resizing a window or typing in a search box).",
+    "difficulty": "Advanced",
+    "minTime": 20,
+    "maxTime": 40,
+    "starterCode": "function debounce(func, wait) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  {{TEST_INPUT}}\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "let f = debounce(() => console.log('Hi'), 1000); f(); f();", "output": "'Hi' is logged once, after 1 second." }
+    ],
+    "testCases": [
+      {
+        "input": "const results = []; const log = (val) => results.push(val); const debouncedLog = debounce(log, 50); debouncedLog('a'); debouncedLog('b'); setTimeout(() => console.log(JSON.stringify(results)), 100);",
+        "expected": "[\"b\"]",
+        "description": "Should call the function only once after multiple rapid calls."
+      }
+    ]
+  },
+  {
+    "slug": "JS-042",
+    "title": "The Throttle Limiter",
+    "description": "Implement a `throttle` function. A throttle function is a higher-order function that ensures a given function is executed at most once per every `limit` milliseconds. It takes a function `func` and a time limit `limit` as arguments. It should return a new function that, when invoked, will only call the original `func` if `limit` milliseconds have passed since the last successful invocation.",
+    "difficulty": "Advanced",
+    "minTime": 20,
+    "maxTime": 40,
+    "starterCode": "function throttle(func, limit) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  {{TEST_INPUT}}\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "let f = throttle(() => console.log('Tick'), 1000); setInterval(f, 100);", "output": "'Tick' is logged roughly once every second, not every 100ms." }
+    ],
+    "testCases": [
+      {
+        "input": "const results = []; const log = () => results.push(1); const throttledLog = throttle(log, 50); throttledLog(); throttledLog(); setTimeout(() => { throttledLog(); console.log(JSON.stringify(results)) }, 100);",
+        "expected": "[1,1]",
+        "description": "Should call function again after time limit."
+      }
+    ]
+  },
+  {
+    "slug": "JS-043",
+    "title": "Event Emitter Class",
+    "description": "Create an `EventEmitter` class that mimics the behavior of event emitters in Node.js. The class should have three main methods: `on(eventName, callback)` to register a listener, `emit(eventName, ...args)` to trigger all listeners for an event, and `off(eventName, callback)` to remove a specific listener.",
+    "difficulty": "Advanced",
+    "minTime": 25,
+    "maxTime": 50,
+    "starterCode": "class EventEmitter {\n  constructor() {\n    // your code here\n  }\n\n  on(eventName, callback) {\n    // your code here\n  }\n\n  emit(eventName, ...args) {\n    // your code here\n  }\n\n  off(eventName, callback) {\n    // your code here\n  }\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  {{TEST_INPUT}}\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "const emitter = new EventEmitter(); emitter.on('hello', name => console.log(`Hello ${name}!`)); emitter.emit('hello', 'World');", "output": "Logs 'Hello World!'" }
+    ],
+    "testCases": [
+      {
+        "input": "const emitter = new EventEmitter(); let result = ''; const listener = name => { result = `Hello ${name}!`; }; emitter.on('greet', listener); emitter.emit('greet', 'Alice'); console.log(JSON.stringify(result));",
+        "expected": "\"Hello Alice!\""
+      },
+      {
+        "input": "const emitter = new EventEmitter(); let count = 0; emitter.on('increment', val => { count += val; }); emitter.on('increment', val => { count += val; }); emitter.emit('increment', 5); console.log(JSON.stringify(count));",
+        "expected": "10"
+      },
+      {
+        "input": "const emitter = new EventEmitter(); let result = 'fail'; const listener = () => { result = 'pass'; }; emitter.on('test', listener); emitter.off('test', listener); emitter.emit('test'); console.log(JSON.stringify(result));",
+        "expected": "\"fail\""
+      }
+    ]
+  },
+  {
+    "slug": "JS-044",
+    "title": "Currying Function",
+    "description": "Write a function `curry(fn)` that takes a function `fn` as an argument and returns a curried version of it. The curried function should be able to be called with one argument at a time until all arguments required by the original function are provided, at which point it will execute the original function. For example, if `fn` is `sum(a, b, c)`, then `curry(sum)(1)(2)(3)` should return 6.",
+    "difficulty": "Advanced",
+    "minTime": 20,
+    "maxTime": 45,
+    "starterCode": "function curry(fn) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  const sum = (a,b,c) => a + b + c;\n  const curriedSum = curry(sum);\n  const result = {{TEST_INPUT}};\n  console.log(JSON.stringify(result));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "const sum = (a, b, c) => a + b + c; const curriedSum = curry(sum); curriedSum(1)(2)(3);", "output": "6" }
+    ],
+    "testCases": [
+      { "input": "curriedSum(1)(2)(3)", "expected": "6" },
+      { "input": "curriedSum(1, 2, 3)", "expected": "6" },
+      { "input": "curriedSum(1)(2, 3)", "expected": "6" }
+    ]
+  },
+  {
+    "slug": "JS-045",
+    "title": "Function Composition",
+    "description": "Write a function `compose(...fns)` that performs right-to-left function composition. It should take any number of functions as arguments and return a new function. This new function takes an initial value and passes it through the functions from right to left. For example, `compose(f, g, h)(x)` is equivalent to `f(g(h(x)))`.",
+    "difficulty": "Advanced",
+    "minTime": 15,
+    "maxTime": 30,
+    "starterCode": "function compose(...fns) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  {{TEST_INPUT}}\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "const add5 = x => x + 5; const multiply10 = x => x * 10; const composed = compose(add5, multiply10); composed(3);", "output": "35" }
+    ],
+    "testCases": [
+      { "input": "const add = x => x + 1; const square = x => x * x; const composed = compose(square, add); console.log(JSON.stringify(composed(2)));", "expected": "9" },
+      { "input": "const toUpperCase = s => s.toUpperCase(); const exclaim = s => s + '!'; const composed = compose(exclaim, toUpperCase); console.log(JSON.stringify(composed('hello')));", "expected": "\"HELLO!\"" },
+      { "input": "const composed = compose(x => x); console.log(JSON.stringify(composed(10)));", "expected": "10" }
+    ]
+  },
+  {
+    "slug": "JS-046",
+    "title": "Trapping Rain Water",
+    "description": "Given `n` non-negative integers representing an elevation map where the width of each bar is 1, write a function `trap(height)` that computes how much water it can trap after raining. This is a classic problem that requires careful thought about how water gets trapped between bars.",
+    "difficulty": "Advanced",
+    "minTime": 30,
+    "maxTime": 60,
+    "starterCode": "function trap(height) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(trap({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[0,1,0,2,1,0,1,3,2,1,2,1]", "output": "6" }
+    ],
+    "testCases": [
+      { "input": "[0,1,0,2,1,0,1,3,2,1,2,1]", "expected": "6" },
+      { "input": "[4,2,3]", "expected": "1" },
+      { "input": "[5,4,1,2]", "expected": "1" },
+      { "input": "[]", "expected": "0" }
+    ]
+  },
+  {
+    "slug": "JS-047",
+    "title": "The `get` Utility",
+    "description": "Implement a function `get(obj, path, defaultValue)` that safely retrieves a nested property from an object. The `path` can be a string like `'a.b.c'` or an array like `['a', 'b', 'c']`. If the path does not exist, it should return the `defaultValue` instead of throwing an error.",
+    "difficulty": "Advanced",
+    "minTime": 15,
+    "maxTime": 30,
+    "starterCode": "function get(obj, path, defaultValue) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(get({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "{ a: { b: { c: 1 } } }, 'a.b.c', 'default'", "output": "1" }
+    ],
+    "testCases": [
+      { "input": "{ a: [{ b: { c: 3 } }] }, 'a[0].b.c'", "expected": "3" },
+      { "input": "{ a: 1 }, 'a.b'", "expected": "null" },
+      { "input": "{ a: 1 }, 'a.b', 'not found'", "expected": "\"not found\"" },
+      { "input": "null, 'a.b', 'default'", "expected": "\"default\"" }
+    ]
+  },
+  {
+    "slug": "JS-048",
+    "title": "Median of Two Sorted Arrays",
+    "description": "Given two sorted arrays `nums1` and `nums2` of size `m` and `n` respectively, write a function `findMedianSortedArrays(nums1, nums2)` that returns the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).",
+    "difficulty": "Advanced",
+    "minTime": 40,
+    "maxTime": 80,
+    "starterCode": "function findMedianSortedArrays(nums1, nums2) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  console.log(JSON.stringify(findMedianSortedArrays({{TEST_INPUT}})));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[1,3], [2]", "output": "2.0" }
+    ],
+    "testCases": [
+      { "input": "[1,3], [2]", "expected": "2" },
+      { "input": "[1,2], [3,4]", "expected": "2.5" },
+      { "input": "[0,0], [0,0]", "expected": "0" },
+      { "input": "[], [1]", "expected": "1" }
+    ]
+  },
+  {
+    "slug": "JS-049",
+    "title": "Binary Tree Maximum Path Sum",
+    "description": "A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. A node can only appear in the sequence at most once. Note that the path does not need to pass through the root. The path sum of a path is the sum of the node's values in the path. Given the `root` of a binary tree, write a function `maxPathSum(root)` that returns the maximum path sum of any non-empty path.",
+    "difficulty": "Advanced",
+    "minTime": 30,
+    "maxTime": 60,
+    "starterCode": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\nfunction maxPathSum(root) {\n  // write your code here\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "function TreeNode(val, left, right) { this.val = (val===undefined ? 0 : val); this.left = (left===undefined ? null : left); this.right = (right===undefined ? null : right); }\n{{USER_CODE}}\n\ntry {\n  const arrayToTree = (arr) => { if (!arr || arr.length === 0) return null; let root = new TreeNode(arr[0]); let queue = [root]; let i = 1; while (i < arr.length) { let current = queue.shift(); if (arr[i] !== null) { current.left = new TreeNode(arr[i]); queue.push(current.left); } i++; if (i < arr.length && arr[i] !== null) { current.right = new TreeNode(arr[i]); queue.push(current.right); } i++; } return root; };\n  const root = arrayToTree({{TEST_INPUT}});\n  console.log(JSON.stringify(maxPathSum(root)));\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "[1,2,3]", "output": "6" }
+    ],
+    "testCases": [
+      { "input": "[1,2,3]", "expected": "6" },
+      { "input": "[-10,9,20,null,null,15,7]", "expected": "42" },
+      { "input": "[-3]", "expected": "-3" },
+      { "input": "[5,4,8,11,null,13,4,7,2,null,null,null,1]", "expected": "48" }
+    ]
+  },
+  {
+    "slug": "JS-050",
+    "title": "The `Symbol.iterator` Challenge",
+    "description": "Create an object `myIterable` that is iterable. It should produce a sequence of numbers from a `start` value to an `end` value (inclusive) with a given `step`. To make it iterable, you need to implement the `Symbol.iterator` method. This method should return an iterator object with a `next()` method, which in turn returns an object with `value` and `done` properties.",
+    "difficulty": "Advanced",
+    "minTime": 20,
+    "maxTime": 40,
+    "starterCode": "function makeIterable(start, end, step) {\n  const myIterable = {\n    // your code here\n  };\n  return myIterable;\n}",
+    "languageId": 93,
+    "testStrategy": "DRIVER_CODE",
+    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  {{TEST_INPUT}}\n} catch (e) {\n  console.error(e.toString());\n}",
+    "examples": [
+      { "input": "const it = makeIterable(0, 10, 2); [...it]", "output": "[0, 2, 4, 6, 8, 10]" }
+    ],
+    "testCases": [
+      { "input": "const it = makeIterable(1, 5, 1); console.log(JSON.stringify([...it]));", "expected": "[1,2,3,4,5]" },
+      { "input": "const it = makeIterable(10, 0, -2); console.log(JSON.stringify([...it]));", "expected": "[10,8,6,4,2,0]" },
+      { "input": "const it = makeIterable(5, 5, 1); console.log(JSON.stringify([...it]));", "expected": "[5]" }
+    ]
+  }
+]

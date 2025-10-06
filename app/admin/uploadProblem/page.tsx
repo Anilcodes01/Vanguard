@@ -50,6 +50,9 @@ export default function UploadProblems() {
           setProblems([]);
         }
       } catch (err) {
+        // FIX 1: Use the 'err' variable, for example by logging it for debugging.
+        // This resolves the "no-unused-vars" warning.
+        console.error('Failed to parse JSON:', err);
         setError('Failed to parse JSON. Please check the file for syntax errors.');
         setProblems([]);
       }
@@ -79,7 +82,7 @@ export default function UploadProblems() {
           .from('problems')
           .insert([{ ...problemData, slug }])
           .select('id')
-          .single(); 
+          .single();
 
         if (problemError) {
           throw new Error(`Failed to insert problem with slug "${slug}": ${problemError.message}`);
@@ -115,8 +118,13 @@ export default function UploadProblems() {
 
 
         uploadedCount++;
-      } catch (err: any) {
-        setError(`An error occurred during upload: ${err.message}. ${uploadedCount} problems were uploaded before the error.`);
+      } catch (err) {
+        let message = 'An unknown error occurred.';
+        if (err instanceof Error) {
+          message = err.message;
+        }
+        
+        setError(`An error occurred during upload: ${message}. ${uploadedCount} problems were uploaded before the error.`);
         setIsLoading(false);
         return;
       }

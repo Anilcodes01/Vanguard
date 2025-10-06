@@ -419,16 +419,25 @@ enum Difficulty {
 }
 
 model Problem {
-    id           String     @id @default(uuid()) @db.Uuid
-   slug         String     @unique
+  id           String     @id @default(uuid()) @db.Uuid
+  slug         String     @unique
   title        String
   description  String     @db.Text
   difficulty   Difficulty
-  min_time     Int
-  max_time     Int
-  starter_code String     @db.Text
+
+  // Renamed fields for better Prisma client API (camelCase)
+  minTime      Int        @map("min_time")
+  maxTime      Int        @map("max_time")
+  starterCode  String     @db.Text @map("starter_code")
+
+  // --- NEW FIELDS FOR UNIVERSAL TESTING ---
+  languageId        Int          @default(93) @map("language_id") // Default to 93 for JavaScript
+  testStrategy      TestStrategy @map("test_strategy")
+  driverCodeTemplate String?     @db.Text @map("driver_code_template") // Optional, for DRIVER_CODE strategy
+
+  // --- RELATIONS ---
   examples     Example[]
-  test_cases   TestCase[]
+  testCases    TestCase[] 
 
   @@map("problems")
   @@schema("public")
@@ -439,19 +448,28 @@ model Example {
   input     String?
   output    String?
   problem   Problem @relation(fields: [problemId], references: [id])
-   problemId String  @db.Uuid
+  problemId String  @db.Uuid
 
   @@map("examples")
   @@schema("public")
 }
 
+
 model TestCase {
-  id        Int     @id @default(autoincrement())
-  input     String?
-  expected  String?
-  problem   Problem @relation(fields: [problemId], references: [id])
-   problemId String  @db.Uuid
-description String?
+  id          Int     @id @default(autoincrement())
+  input       String?
+  expected    String?
+  description String?
+  problem     Problem @relation(fields: [problemId], references: [id])
+  problemId   String  @db.Uuid
+
   @@map("test_cases")
+  @@schema("public")
+}
+
+enum TestStrategy {
+  STDIN
+  DRIVER_CODE
+
   @@schema("public")
 }
