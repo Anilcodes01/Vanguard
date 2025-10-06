@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/app/utils/supabase/client';
 
 type UserProfile = {
+  id: string; 
   name: string | null;
   avatar_url: string | null;
 };
@@ -20,6 +21,13 @@ export default function UserAvatar({ user }: { user: UserProfile }) {
     await supabase.auth.signOut();
     router.refresh(); 
     setIsOpen(false);
+  };
+
+  const handleProfileClick = () => {
+    if (user.id) {
+      router.push(`/profile/${user.id}`);
+      setIsOpen(false);
+    }
   };
 
   const initial = user.name ? user.name.charAt(0).toUpperCase() : 'V';
@@ -63,9 +71,7 @@ export default function UserAvatar({ user }: { user: UserProfile }) {
           </div>
           <div className="border-t flex flex-col border-gray-100 my-1"></div>
           <button
-          onClick={() => {
-            router.push('/profile')
-          }}
+            onClick={handleProfileClick}
             className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50 hover:text-green-700"
           >
             Profile

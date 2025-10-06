@@ -1,5 +1,3 @@
-
-
 import Link from 'next/link';
 import { createClient } from '@/app/utils/supabase/server';
 import { prisma } from '@/lib/prisma';
@@ -18,6 +16,7 @@ export default async function NavbarSignedIn() {
   const userProfile = await prisma.profiles.findUnique({
     where: { id: user.id },
     select: {
+      id: true, 
       name: true,
       avatar_url: true,
     },
@@ -28,7 +27,6 @@ export default async function NavbarSignedIn() {
       key: 'explore',
       name: 'Explore',
       path: '/explore'
-
     },
     {
      key:'problems',
@@ -63,7 +61,6 @@ export default async function NavbarSignedIn() {
       </div>
       <div className="flex items-center gap-4">
         {userProfile && <UserAvatar user={userProfile} />}
-     
       </div>
     </nav>
   );
