@@ -46,7 +46,7 @@ const EditorHeader = () => (
 // Renders the output in the results panel
 const RenderOutput = ({ submissionResult }: { submissionResult: SubmissionResult | null }) => {
   if (!submissionResult) {
-    return <pre className="text-gray-400">Click "Submit" to run your code against the test cases.</pre>;
+   return <pre className="text-gray-400">Click &quot;Submit&quot; to run your code against the test cases.</pre>;
   }
 
   switch (submissionResult.status) {
