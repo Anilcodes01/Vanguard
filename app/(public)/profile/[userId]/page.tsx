@@ -101,7 +101,7 @@ export default function ProfilePage({
   const totalSubmissions = userData.submissions.length;
 
   return (
-    <div className="bg-gray-800 flex justify-center text-white min-h-screen p-4 sm:p-8">
+    <div className="bg-white flex justify-center text-white min-h-screen p-4 sm:p-8">
       <div className="max-w-6xl w-full flex rounded-lg overflow-hidden">
         <div className="w-[70%] px-8">
           <div>

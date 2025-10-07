@@ -1,5 +1,5 @@
-
-import React from 'react';
+import { Tag, ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
 
 type Example = {
   id: number;
@@ -15,6 +15,7 @@ type ProblemDetails = {
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   starter_code: string;
   examples: Example[];
+  topic: string[];
 };
 
 interface ProblemDetailsPanelProps {
@@ -28,37 +29,86 @@ const difficultyStyles = {
 };
 
 export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProps) {
+  const [isTopicsOpen, setIsTopicsOpen] = useState(false);
+
   return (
-    <div className="w-1/2 p-6 rounded-lg overflow-y-auto bg-[#262626]">
-      <h1 className="text-2xl font-bold text-white mb-2">{problem.title}</h1>
-      <span
-        className={`px-3 py-1 text-sm font-semibold rounded-full ${
-          difficultyStyles[problem.difficulty]
-        }`}
-      >
-        {problem.difficulty}
-      </span>
+    <div className="w-1/2 p-6 flex flex-col gap-4 rounded-lg overflow-y-auto bg-[#262626]">
+      <div className="flex flex-col">
+        <h1 className="text-4xl font-bold text-white mb-2">{problem.title}</h1>
+        <div className="flex gap-4 items-center">
+          <span
+            className={`px-3 py-1 text-sm rounded-full ${
+              difficultyStyles[problem.difficulty]
+            }`}
+          >
+            {problem.difficulty}
+          </span>
+        </div>
+      </div>
+
       <div
-        className="prose max-w-none text-white mt-6"
+        className="prose prose-invert max-w-none text-gray-300 mt-6"
         dangerouslySetInnerHTML={{ __html: problem.description }}
       />
-      <div className="mt-6 text-black">
+
+      <div className="mt-6 flex flex-col gap-8">
         {problem.examples.map((example, index) => (
-          <div
-            key={example.id}
-            className="bg-gray-50 p-4 rounded-lg mb-4 border border-gray-200"
-          >
-            <h3 className="font-semibold text-black mb-2">
+          <div key={example.id} className="rounded-lg mb-4">
+            <h3 className="font-semibold text-white mb-2">
               Example {index + 1}
             </h3>
-            <p className="font-mono text-black text-sm">
-              <strong className="font-semibold">Input:</strong> {example.input}
+          <div className='flex flex-col gap-2'>
+              <p className="font-mono text-gray-300 text-sm">
+              <strong className="font-semibold text-white">Input:</strong>{' '}
+              {example.input}
             </p>
-            <p className="font-mono text-sm">
-              <strong className="font-semibold">Output:</strong> {example.output}
+            <p className="font-mono text-sm text-gray-300">
+              <strong className="font-semibold text-white">Output:</strong>{' '}
+              {example.output}
             </p>
           </div>
+          </div>
         ))}
+      </div>
+
+      <div className="mt-4 border-t border-gray-700 pt-6">
+        <button
+          onClick={() => setIsTopicsOpen(!isTopicsOpen)}
+          className="flex items-center justify-between w-full text-left text-white hover:cursor-pointer p-2 rounded-md"
+          aria-expanded={isTopicsOpen}
+        >
+          <div className="flex items-center gap-2">
+            <Tag size={18} />
+            <h3 className="font-semibold">Topics</h3>
+          </div>
+          <ChevronDown
+            size={20}
+            className={`text-gray-400 transition-transform duration-300 ${
+              isTopicsOpen ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
+
+        <div
+          className={`
+            overflow-hidden 
+            transition-[max-height,opacity] 
+            duration-300 
+            ease-in-out
+            ${isTopicsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
+          `}
+        >
+          <div className="mt-4 pl-2 flex flex-wrap gap-2">
+            {problem.topic.map((topic, index) => (
+              <span
+                key={index}
+                className="bg-gray-700 text-gray-300 text-sm font-medium px-3 py-1 rounded-full"
+              >
+                {topic}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

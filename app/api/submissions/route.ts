@@ -31,7 +31,7 @@ function mapJudge0StatusToEnum(description: string): SubmissionStatus {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase =await createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
     
     let finalResult: Judge0Submission | null = null;
     let allTestsPassed = true;
+    let firstFailedTestCase = null;
 
     for (const testCase of problem.testCases) {
       let source_code = code;
@@ -94,6 +95,7 @@ export async function POST(request: NextRequest) {
       finalResult = result;
       if (result.status.id !== 3) {
         allTestsPassed = false;
+        firstFailedTestCase = testCase;
         break; 
       }
     }
@@ -135,7 +137,7 @@ export async function POST(request: NextRequest) {
                 where: { userId_problemId: { userId: user.id, problemId: problem.id } },
                 data: {
                     status: SolutionStatus.Solved,
-                    firstSolvedAt: new Date(),
+                    firstSolvedAt: existingSolution.firstSolvedAt || new Date(),
                     lastAttemptedAt: new Date(),
                     bestSubmissionId: newSubmission.id,
                 }
@@ -167,20 +169,24 @@ export async function POST(request: NextRequest) {
     if (allTestsPassed) {
         return NextResponse.json({ status: 'Accepted' });
     } else {
-        const firstFailedTest = problem.testCases.find(tc => tc.input === finalResult?.message);
         return NextResponse.json({
             status: finalResult.status.description,
+            message: finalResult.message,
+            details: finalResult.stderr || finalResult.compile_output,
+            input: firstFailedTestCase?.input,
             userOutput: finalResult.stdout,
-            errorDetails: finalResult.stderr || finalResult.compile_output || null,
+            expectedOutput: firstFailedTestCase?.expected,
         });
     }
 
-  }  catch (error) {
+  } catch (error) {
     console.error("Submission failed:", error);
     let errorMessage = "An unknown error occurred during submission.";
-    if (error instanceof Error) {
+    if (axios.isAxiosError(error) && error.response) {
+       errorMessage = error.response.data?.message || "Error connecting to execution engine.";
+    } else if (error instanceof Error) {
       errorMessage = error.message;
     }
-    return NextResponse.json({ message: errorMessage }, { status: 500 });
+    return NextResponse.json({ message: errorMessage, status: 'Error' }, { status: 500 });
   }
 }

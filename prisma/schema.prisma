@@ -426,19 +426,18 @@ model Problem {
   title        String
   description  String     @db.Text
   difficulty   Difficulty
+  topic        String[]   @default([])
 
-  // Renamed fields for better Prisma client API (camelCase)
   minTime      Int        @map("min_time")
   maxTime      Int        @map("max_time")
   starterCode  String     @db.Text @map("starter_code")
-
-  // --- NEW FIELDS FOR UNIVERSAL TESTING ---
-  languageId        Int          @default(93) @map("language_id") // Default to 93 for JavaScript
+  
+  languageId        Int          @default(93) @map("language_id")
   testStrategy      TestStrategy @map("test_strategy")
-  driverCodeTemplate String?     @db.Text @map("driver_code_template") // Optional, for DRIVER_CODE strategy
+  driverCodeTemplate String?     @db.Text @map("driver_code_template") 
+
   submissions     Submission[]
   problemSolutions ProblemSolution[]
-  // --- RELATIONS ---
   examples     Example[]
   testCases    TestCase[] 
 
@@ -510,10 +509,9 @@ model Submission {
   executionMemory Int?             @map("execution_memory")
   createdAt       DateTime         @default(now()) @map("created_at")
 
-  // Relations
   user            users            @relation(fields: [userId], references: [id], onDelete: Cascade, map: "submissions_user_id_fkey")
   problem         Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  problemSolution ProblemSolution? // A submission might be the "best" one
+  problemSolution ProblemSolution? 
 
   @@map("submissions")
   @@schema("public")
@@ -527,12 +525,11 @@ model ProblemSolution {
   lastAttemptedAt DateTime       @map("last_attempted_at")
   bestSubmissionId String?        @unique @map("best_submission_id") @db.Uuid
   
-  // Relations
   user            users          @relation(fields: [userId], references: [id], onDelete: Cascade, map: "problem_solutions_user_id_fkey")
   problem         Problem        @relation(fields: [problemId], references: [id], onDelete: Cascade)
   bestSubmission  Submission?    @relation(fields: [bestSubmissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([userId, problemId]) // Composite primary key
+  @@id([userId, problemId]) 
   @@map("problem_solutions")
   @@schema("public")
 }

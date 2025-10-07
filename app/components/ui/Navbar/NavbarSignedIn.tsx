@@ -46,7 +46,7 @@ export default async function NavbarSignedIn() {
   ]
 
   return (
-    <nav className="flex items-center justify-around bg-white text-black px-4 py-2 border-b border-gray-200 w-full">
+    <nav className="flex items-center justify-around bg-black text-white  px-4 py-2  w-full">
      <Link className="text-2xl flex gap-2 font-bold" href={"/"}>
        <Image src={'/adapt.png'} alt='adapt logo' width={200} height={200} className='h-8 w-8' />
       </Link>

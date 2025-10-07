@@ -10,6 +10,13 @@ type Example = {
   id: number;
   input: string;
   output: string;
+  
+};
+
+type TestCase = {
+  id: number;
+  input: string | null;
+   expected: string | null; 
 };
 
 type ProblemDetails = {
@@ -20,6 +27,8 @@ type ProblemDetails = {
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   starter_code: string;
   examples: Example[];
+   topic: string[];
+    testCases: TestCase[];
 };
 
 type SubmissionResult = {
@@ -102,14 +111,16 @@ export default function ProblemPage() {
   }
 
   return (
-     <div className="flex h-screen p- gap-2 text-black overflow-hidden bg-gray-100">
+     <div className="flex h-screen p- gap-2 text-black overflow-hidden bg-black">
       <ProblemDetailsPanel problem={problem} />
-      <CodeEditorPanel
+     <CodeEditorPanel
+        problemId={problem.id} 
         code={code}
         setCode={setCode}
         handleSubmit={handleSubmit}
         isSubmitting={isSubmitting}
         submissionResult={submissionResult}
+        testCases={problem.testCases}
       />
     </div>
   );

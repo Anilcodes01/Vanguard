@@ -14,7 +14,7 @@ type UserProfilePanel = {
 export default function ProfilePanel({user} : {user: UserProfilePanel}) {
     console.log('User: ', user)
 
-    return <div className="flex w-full bg-gray-600 text-white rounded-lg py-8 justify-center ">
+    return <div className="flex w-full bg-gray-400 text-white rounded-lg py-8 justify-center ">
 
           <div className="flex flex-col gap-4 items-center justify-center">
           <div className="border rounded-full border-gray-400">

@@ -14,6 +14,7 @@ export async function GET(
       },
       include: {
         examples: true,
+        testCases: true
       }
     });
 
