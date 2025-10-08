@@ -1,3 +1,5 @@
+// src/app/api/profileData/[userId]/route.ts
+
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -6,7 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const { userId } =await params; 
+    const { userId } = await params;
 
     if (!userId) {
       return NextResponse.json(
@@ -20,7 +22,21 @@ export async function GET(
         id: userId,
       },
       include: {
-        submissions: true,
+        // --- CHANGE IS HERE ---
+        // We are now explicitly including the related problem for each submission
+        submissions: {
+          orderBy: {
+            createdAt: 'desc' // To get the most recent submissions first
+          },
+          include: {
+            problem: {
+              select: {
+                title: true,
+              },
+            },
+          },
+        },
+        // --- END OF CHANGE ---
         problemSolutions: true,
         profiles: {
           select: {
@@ -35,10 +51,10 @@ export async function GET(
     });
 
     if (!userData) {
-        return NextResponse.json(
-            { message: "User not found" },
-            { status: 404 }
-        )
+      return NextResponse.json(
+        { message: "User not found" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(

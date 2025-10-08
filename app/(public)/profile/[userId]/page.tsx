@@ -1,8 +1,9 @@
+// src/app/profile/[userId]/page.tsx
+
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { XCircle, CheckCircle, Code, Clock } from "lucide-react";
-import ProfilePanel from "@/app/components/Profile/ProfilePanel";
+import { XCircle, CheckCircle, Code, Award, Target, Zap } from "lucide-react";
 
 type ProfileData = {
   name: string | null;
@@ -28,16 +29,74 @@ type UserData = {
 };
 
 const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-blue-500"></div>
-    <p className="ml-4 text-lg">Loading Profile...</p>
+  <div className="flex items-center justify-center min-h-screen bg-[#0a0a0a]">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-16 h-16 border-4 border-gray-800 border-t-blue-500 rounded-full animate-spin"></div>
+      <p className="text-gray-400 text-lg">Loading Profile...</p>
+    </div>
   </div>
 );
+
 const ErrorDisplay = ({ message }: { message: string }) => (
-  <div className="flex flex-col items-center justify-center min-h-screen text-red-500">
-    <XCircle size={48} />
-    <h2 className="mt-4 text-2xl font-semibold">Something went wrong</h2>
-    <p className="mt-2">{message}</p>
+  <div className="flex flex-col items-center justify-center min-h-screen bg-[#0a0a0a]">
+    <div className="text-center max-w-md">
+      <div className="w-20 h-20 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <XCircle className="text-rose-400" size={48} />
+      </div>
+      <h2 className="text-2xl font-bold text-white mb-3">Something went wrong</h2>
+      <p className="text-gray-400">{message}</p>
+    </div>
+  </div>
+);
+
+const ProfilePanel = ({ user }: { user: ProfileData }) => (
+  <div className="bg-[#151515] border border-gray-800 rounded-2xl p-8 sticky top-8">
+    <div className="flex flex-col items-center text-center">
+      <div className="relative mb-6">
+        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 p-1">
+          <div className="w-full h-full rounded-full bg-[#151515] flex items-center justify-center">
+            {user.avatar_url ? (
+              <img
+                src={user.avatar_url}
+                alt={user.name || "User"}
+                className="w-full h-full rounded-full object-cover"
+              />
+            ) : (
+              <span className="text-5xl font-bold text-white">
+                {user.name?.charAt(0).toUpperCase() || "U"}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full border-4 border-[#151515] flex items-center justify-center">
+          <Award size={20} className="text-white" />
+        </div>
+      </div>
+
+      <h2 className="text-2xl font-bold text-white mb-1">
+        {user.name || "Anonymous User"}
+      </h2>
+
+      {user.username && (
+        <p className="text-gray-400 mb-4">@{user.username}</p>
+      )}
+
+      <div className="w-full space-y-3 mt-6">
+        {user.college_name && (
+          <div className="bg-gray-800/30 rounded-xl p-3 text-left">
+            <p className="text-xs text-gray-500 mb-1">College</p>
+            <p className="text-sm text-gray-300">{user.college_name}</p>
+          </div>
+        )}
+
+        {user.domain && (
+          <div className="bg-gray-800/30 rounded-xl p-3 text-left">
+            <p className="text-xs text-gray-500 mb-1">Domain</p>
+            <p className="text-sm text-gray-300">{user.domain}</p>
+          </div>
+        )}
+      </div>
+    </div>
   </div>
 );
 
@@ -100,36 +159,133 @@ export default function ProfilePage({
   const attemptedCount = userData.problemSolutions.length;
   const totalSubmissions = userData.submissions.length;
 
+  const stats = [
+    {
+      icon: CheckCircle,
+      value: solvedCount,
+      label: "Problems Solved",
+      color: "emerald",
+      bgColor: "bg-emerald-500/10",
+      borderColor: "border-emerald-500/20",
+      iconColor: "text-emerald-400",
+    },
+    {
+      icon: Target,
+      value: attemptedCount,
+      label: "Problems Attempted",
+      color: "amber",
+      bgColor: "bg-amber-500/10",
+      borderColor: "border-amber-500/20",
+      iconColor: "text-amber-400",
+    },
+    {
+      icon: Zap,
+      value: totalSubmissions,
+      label: "Total Submissions",
+      color: "blue",
+      bgColor: "bg-blue-500/10",
+      borderColor: "border-blue-500/20",
+      iconColor: "text-blue-400",
+    },
+  ];
+
   return (
-    <div className="bg-white flex justify-center text-white min-h-screen p-4 sm:p-8">
-      <div className="max-w-6xl w-full flex rounded-lg overflow-hidden">
-        <div className="w-[70%] px-8">
-          <div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-              <div className="bg-green-100 p-6 rounded-lg">
-                <CheckCircle
-                  className="mx-auto text-green-600 mb-2"
-                  size={32}
-                />
-                <p className="text-3xl font-bold text-gray-800">{solvedCount}</p>
-                <p className="text-gray-600">Problems Solved</p>
-              </div>
-              <div className="bg-yellow-100 p-6 rounded-lg">
-                <Code className="mx-auto text-yellow-600 mb-2" size={32} />
-                <p className="text-3xl font-bold text-gray-800">{attemptedCount}</p>
-                <p className="text-gray-600">Problems Attempted</p>
-              </div>
-              <div className="bg-blue-100 p-6 rounded-lg">
-                <Clock className="mx-auto text-blue-600 mb-2" size={32} />
-                <p className="text-3xl font-bold text-gray-800">{totalSubmissions}</p>
-                <p className="text-gray-600">Total Submissions</p>
-              </div>
-            </div>
-          </div>
+    <div className="bg-[#0a0a0a] min-h-screen p-4 sm:p-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Profile Dashboard</h1>
+          <p className="text-gray-400">Track your progress and achievements</p>
         </div>
 
-        <div className="w-[30%]">
-          <ProfilePanel user={profile} />
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex-1 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {stats.map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <div
+                    key={index}
+                    className={`${stat.bgColor} border ${stat.borderColor} rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-lg`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div
+                        className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center`}
+                      >
+                        <Icon className={stat.iconColor} size={24} />
+                      </div>
+                    </div>
+                    <p className="text-4xl font-bold text-white mb-2">
+                      {stat.value}
+                    </p>
+                    <p className="text-gray-400 text-sm">{stat.label}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="bg-[#151515] border border-gray-800 rounded-2xl p-8">
+              <h2 className="text-xl font-bold text-white mb-6">
+                Recent Activity
+              </h2>
+              {userData.submissions.length > 0 ? (
+                <div className="space-y-3">
+                  {userData.submissions.slice(0, 5).map((submission) => (
+                    <div
+                      key={submission.id}
+                      className="bg-gray-800/30 rounded-xl p-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            submission.status === "Accepted"
+                              ? "bg-emerald-400"
+                              : submission.status === "Wrong Answer"
+                              ? "bg-rose-400"
+                              : "bg-amber-400"
+                          }`}
+                        />
+                        <div>
+                          {/* --- CHANGE IS HERE: UNCOMMENTED THIS LINE --- */}
+                          <p className="text-white font-medium">
+                            {submission.problem.title}
+                          </p>
+                          {/* --- END OF CHANGE --- */}
+                          <p className="text-sm text-gray-400">
+                            {new Date(
+                              submission.createdAt
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          submission.status === "Accepted"
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                            : submission.status === "Wrong Answer"
+                            ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                            : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                        }`}
+                      >
+                        {submission.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Code className="mx-auto text-gray-600 mb-3" size={48} />
+                  <p className="text-gray-400">No submissions yet</p>
+                  <p className="text-gray-500 text-sm mt-1">
+                    Start solving problems to see your activity
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="lg:w-80">
+            <ProfilePanel user={profile} />
+          </div>
         </div>
       </div>
     </div>

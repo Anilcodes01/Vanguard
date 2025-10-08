@@ -14,7 +14,7 @@ export default async function UserLoggedInLanding() {
   });
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen bg-white text-black'>
+    <div className='flex flex-col items-center justify-center min-h-screen bg-[#262626] text-white'>
       <h1>Welcome, {userProfile?.name}!</h1>
       <h2>Your username is, {userProfile?.username}</h2>
 
