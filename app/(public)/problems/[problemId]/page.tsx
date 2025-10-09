@@ -5,44 +5,15 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import ProblemDetailsPanel from "@/app/components/Problems/ProblemsDetailsPanle";
 import CodeEditorPanel from "@/app/components/Problems/CodeEditorPanle";
+import { useUser } from "@/app/context/userContext";
+import { SuccessModal } from "@/app/components/Problems/CodeEditor/SuccessModal";
+import { ProblemDetails, SubmissionResult, RewardData } from "@/types";
 
-type Example = {
-  id: number;
-  input: string;
-  output: string;
-  
-};
-
-type TestCase = {
-  id: number;
-  input: string | null;
-   expected: string | null; 
-};
-
-type ProblemDetails = {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  difficulty: "Beginner" | "Intermediate" | "Advanced";
-  starter_code: string;
-  examples: Example[];
-   topic: string[];
-    testCases: TestCase[];
-};
-
-type SubmissionResult = {
-  status: "Accepted" | "Wrong Answer" | "Error";
-  message?: string;
-  details?: string;
-  input?: string;
-  userOutput?: string;
-  expectedOutput?: string;
-};
 
 export default function ProblemPage() {
   const params = useParams();
   const problemId = params.problemId as string;
+   const { addXp } = useUser(); 
 
   const [problem, setProblem] = useState<ProblemDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,19 +23,23 @@ export default function ProblemPage() {
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+   const [rewardData, setRewardData] = useState<RewardData | null>(null);
+
   useEffect(() => {
     if (!problemId) {
       setIsLoading(false);
       return;
     }
 
-    const fetchProblem = async () => {
+   const fetchProblem = async () => {
       setIsLoading(true);
       setError(null);
       try {
         const response = await axios.get<ProblemDetails>(`/api/problems/${problemId}`);
         setProblem(response.data);
-        setCode(response.data.starter_code);
+
+        setCode(response.data.starterCode); 
+        
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data?.message || "Failed to fetch problem data.");
@@ -79,7 +54,12 @@ export default function ProblemPage() {
     fetchProblem();
   }, [problemId]);
 
-  const handleSubmit = async () => {
+ const handleSubmit = async (startTime: number | null) => {
+    if (!startTime) {
+        alert("Please click 'Start' before submitting.");
+        return;
+    }
+
     setIsSubmitting(true);
     setSubmissionResult(null);
 
@@ -87,8 +67,19 @@ export default function ProblemPage() {
       const response = await axios.post("/api/submissions", {
         problemId,
         code,
+        startTime, 
       });
+
       setSubmissionResult(response.data);
+
+      if (response.data.status === 'Accepted' && response.data.xpEarned > 0) {
+        addXp(response.data.xpEarned);
+        setRewardData({
+          xpEarned: response.data.xpEarned,
+          starsEarned: response.data.starsEarned,
+        });
+      }
+
     } catch (err) {
       let message = "An unknown error occurred during submission.";
       if (axios.isAxiosError(err) && err.response) {
@@ -113,15 +104,23 @@ export default function ProblemPage() {
   return (
      <div className="flex h-screen p- gap-2 text-black overflow-hidden bg-black">
       <ProblemDetailsPanel problem={problem} />
-     <CodeEditorPanel
+        <CodeEditorPanel
         problemId={problem.id} 
-        code={code}
+        maxTimeInMinutes={problem.maxTime}
+        code={code} 
         setCode={setCode}
         handleSubmit={handleSubmit}
         isSubmitting={isSubmitting}
         submissionResult={submissionResult}
         testCases={problem.testCases}
       />
+       {rewardData && (
+        <SuccessModal
+          xp={rewardData.xpEarned}
+          stars={rewardData.starsEarned}
+          onClose={() => setRewardData(null)}
+        />
+      )}
     </div>
   );
 }

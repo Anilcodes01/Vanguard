@@ -404,6 +404,7 @@ model Profiles {
   domain       String?
   college_name String?
   onboarded    Boolean @default(false)
+  xp           Int     @default(0)
 
   users users @relation(fields: [id], references: [id], onDelete: Cascade)
 
@@ -524,6 +525,8 @@ model ProblemSolution {
   firstSolvedAt   DateTime?      @map("first_solved_at")
   lastAttemptedAt DateTime       @map("last_attempted_at")
   bestSubmissionId String?        @unique @map("best_submission_id") @db.Uuid
+  firstAttemptedAt DateTime?      @map("first_attempted_at")
+  starsEarned     Int            @default(0) @map("stars_earned")
   
   user            users          @relation(fields: [userId], references: [id], onDelete: Cascade, map: "problem_solutions_user_id_fkey")
   problem         Problem        @relation(fields: [problemId], references: [id], onDelete: Cascade)

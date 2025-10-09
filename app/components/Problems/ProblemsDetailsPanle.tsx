@@ -13,7 +13,7 @@ type ProblemDetails = {
   title: string;
   description: string;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  starter_code: string;
+  starterCode: string;
   examples: Example[];
   topic: string[];
 };

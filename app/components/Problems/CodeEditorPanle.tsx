@@ -1,161 +1,20 @@
-import React, { useState } from "react";
-import Editor from "@monaco-editor/react";
-
+import React, { useEffect, useState } from "react";
+import Editor, { OnMount } from "@monaco-editor/react";
 import { VscCode } from "react-icons/vsc";
 import { BsCheck2Circle } from "react-icons/bs";
-import { ChevronUp, Maximize, PlayIcon, Plus } from "lucide-react";
+import { ChevronUp, Maximize, PlayIcon, Plus, ShieldCheck, Clock, Star, X, Zap, Trophy } from "lucide-react";
 import axios from "axios";
+import { EditorHeader } from "./CodeEditor/EditorHeader";
+import { RenderOutput } from "./CodeEditor/RenderOutput";
+import {  CodeEditorPanelProps, SubmissionResult } from "@/types";
+import { TestCaseInput } from "./CodeEditor/TestCaseInput";
 
-type SubmissionResult = {
-  status: "Accepted" | "Wrong Answer" | "Error" | string;
-  message?: string;
-  details?: string;
-  input?: string;
-  userOutput?: string;
-  expectedOutput?: string;
-};
 
-type TestCase = {
-  id: number;
-  input: string | null;
-  expected: string | null;
-};
-
-interface CodeEditorPanelProps {
-  problemId: string;
-  code: string;
-  setCode: (code: string) => void;
-  handleSubmit: () => void;
-  isSubmitting: boolean;
-  submissionResult: SubmissionResult | null;
-  testCases: TestCase[];
-}
-
-const EditorHeader = ({
-  onRun,
-  onSubmit,
-  isRunning,
-  isSubmitting,
-}: {
-  onRun: () => void;
-  onSubmit: () => void;
-  isRunning: boolean;
-  isSubmitting: boolean;
-}) => (
-  <div className="flex items-center justify-between px-4 py-2 bg-zinc-800 border-b border-zinc-700">
-    <div className="flex items-center gap-4">
-      <div className="flex gap-2 items-center text-white">
-        <VscCode className="text-gray-400" />
-        <span className="font-bold rounded-lg bg-gray-700 px-4 ">Code</span>
-      </div>
-      <span className="text-sm font-medium text-gray-200">JavaScript</span>
-    </div>
-    <div className="flex items-center gap-4">
-      <button
-        onClick={onRun}
-        disabled={isRunning || isSubmitting}
-        className="flex items-center gap-2 px-3 py-1.5 bg-zinc-700 text-white text-sm font-semibold rounded-lg hover:bg-zinc-600 disabled:bg-zinc-800 disabled:text-gray-500 transition-colors"
-      >
-        <PlayIcon size={14} />
-        {isRunning ? "Running..." : "Run"}
-      </button>
-      <button
-        onClick={onSubmit}
-        disabled={isRunning || isSubmitting}
-        className="px-4 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 disabled:bg-gray-600 transition-colors"
-      >
-        {isSubmitting ? "Submitting..." : "Submit"}
-      </button>
-    </div>
-  </div>
-);
-
-const RenderOutput = ({ result }: { result: SubmissionResult | null }) => {
-  if (!result) {
-    return (
-      <div className="p-4">
-        <pre className="text-gray-400">
-          Run or submit your code to see the result.
-        </pre>
-      </div>
-    );
-  }
-
-  if (result.status === "Accepted") {
-    return <div className="p-4 text-green-400 font-bold">✅ Accepted!</div>;
-  }
-
-  return (
-    <div className="p-4 text-sm font-mono">
-      <p className="font-bold text-red-400">❌ {result.status}</p>
-      {result.details && (
-        <div className="mt-4 p-3 bg-black/30 rounded-lg">
-          <p className="font-semibold text-gray-300 mb-1">Error Details:</p>
-          <pre className="whitespace-pre-wrap text-red-300">
-            {result.details}
-          </pre>
-        </div>
-      )}
-      {result.input !== undefined && (
-        <div className="mt-4 p-3 bg-black/30 rounded-lg space-y-3">
-          <div>
-            <p className="font-semibold text-gray-300">Input:</p>
-            <pre className="whitespace-pre-wrap text-gray-200">
-              {result.input}
-            </pre>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-300">Your Output:</p>
-            <pre className="whitespace-pre-wrap text-red-300">
-              {result.userOutput || '""'}
-            </pre>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-300">Expected:</p>
-            <pre className="whitespace-pre-wrap text-green-300">
-              {result.expectedOutput || '""'}
-            </pre>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const TestCaseInput = ({ input }: { input: string | null }) => {
-  if (!input)
-    return (
-      <div className="p-4 text-gray-500">No input for this test case.</div>
-    );
-
-  let formattedInput: { key: string; value: string } | null = null;
-  try {
-    const parsed = JSON.parse(input);
-    const key = Object.keys(parsed)[0];
-    const value = JSON.stringify(parsed[key]);
-    formattedInput = { key, value };
-  } catch (e) {
-    const parts = input.split("=");
-    if (parts.length === 2) {
-      formattedInput = { key: parts[0].trim(), value: parts[1].trim() };
-    }
-  }
-
-  if (!formattedInput) {
-    return <pre className="p-4 text-white font-mono">{input}</pre>;
-  }
-
-  return (
-    <div className="p-4 text-white font-mono text-sm space-y-2">
-      <p className="text-gray-400">{formattedInput.key} =</p>
-      <div className="bg-zinc-800 rounded-lg p-3">{formattedInput.value}</div>
-    </div>
-  );
-};
 
 export default function CodeEditorPanel({
   problemId,
   code,
+  maxTimeInMinutes,
   setCode,
   handleSubmit,
   isSubmitting,
@@ -166,11 +25,58 @@ export default function CodeEditorPanel({
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [runResult, setRunResult] = useState<SubmissionResult | null>(null);
+  const [isStarted, setIsStarted] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const maxTimeInSeconds = maxTimeInMinutes * 60;
+
+  const handleStart = () => {
+    setIsStarted(true);
+    setStartTime(Date.now());
+    setElapsedTime(0);
+  };
+
+  useEffect(() => {
+    if (!isStarted || !startTime || submissionResult?.status === 'Accepted') {
+      return;
+    }
+
+    const timerInterval = setInterval(() => {
+      setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+
+    return () => clearInterval(timerInterval);
+  }, [isStarted, startTime, submissionResult]);
+
+  const formatTime = (elapsedSeconds: number): string => {
+    if (elapsedSeconds <= maxTimeInSeconds) {
+      const remainingSeconds = maxTimeInSeconds - elapsedSeconds;
+      const min = Math.floor(remainingSeconds / 60);
+      const sec = remainingSeconds % 60;
+      return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    } else {
+      const extraSeconds = elapsedSeconds - maxTimeInSeconds;
+      const min = Math.floor(extraSeconds / 60);
+      const sec = extraSeconds % 60;
+      return `+${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+  };
+
+  const getTimerColor = (elapsedSeconds: number): string => {
+    if (elapsedSeconds > maxTimeInSeconds) {
+      return 'text-red-500';
+    }
+    const remainingSeconds = maxTimeInSeconds - elapsedSeconds;
+    if (remainingSeconds <= 60) {
+      return 'text-yellow-400';
+    }
+    return 'text-gray-300';
+  };
 
   const handleRun = async () => {
+    if (!isStarted) return;
     setIsRunning(true);
     setRunResult(null);
-
     const currentTestCase = testCases[activeCaseIndex];
     if (!currentTestCase) return;
 
@@ -182,7 +88,7 @@ export default function CodeEditorPanel({
         expectedOutput: currentTestCase.expected,
       });
       setRunResult(response.data);
-    } catch (error) {
+    } catch {
       setRunResult({
         status: "Error",
         message: "Failed to connect to the server.",
@@ -195,37 +101,63 @@ export default function CodeEditorPanel({
 
   const displayResult = submissionResult || runResult;
 
+  const handleEditorDidMount: OnMount = (editor, monaco) => {
+    editor.addAction({
+      id: "prevent-paste",
+      label: "Prevent Paste Action",
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV],
+      run: () => {
+        console.log("Pasting is disabled.");
+      },
+    });
+  };
+
   return (
     <div className="w-1/2 flex flex-col p- gap-4 ">
       <div className="bg-zinc-900 rounded-lg shadow-2xl flex flex-col flex-grow overflow-hidden">
         <EditorHeader
+          onStart={handleStart}
           onRun={handleRun}
-          onSubmit={handleSubmit}
+          onSubmit={() => handleSubmit(startTime)}
+          isStarted={isStarted}
           isRunning={isRunning}
           isSubmitting={isSubmitting}
+          displayTime={formatTime(elapsedTime)}
+          timerColor={getTimerColor(elapsedTime)}
         />
 
         <div className="flex-grow relative">
+          {!isStarted && (
+            <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-gray-300 font-semibold">Editor is locked.</p>
+                <p className="text-gray-400 text-sm">Click &quot;Start&quot; to begin coding.</p>
+              </div>
+            </div>
+          )}
           <Editor
             height="100%"
             language="javascript"
             theme="vs-dark"
             value={code}
             onChange={(value) => setCode(value || "")}
+            onMount={handleEditorDidMount}
             options={{
+              readOnly: !isStarted,
               fontSize: 14,
               minimap: { enabled: false },
               scrollBeyondLastLine: false,
               padding: { top: 10 },
+              contextmenu: !isStarted,
             }}
           />
         </div>
         <div className="flex justify-between items-center px-4 py-1 bg-zinc-800 border-t border-zinc-700 text-xs text-gray-400">
-          <span>Saved</span>
+          <span>{isStarted ? "In Progress" : "Not Started"}</span>
           <span>Ln 1, Col 1</span>
         </div>
       </div>
-
+      
       <div className="flex-shrink-0 bg-[#262626] rounded-lg shadow-2xl flex flex-col min-h-[16rem]">
         <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-700">
           <div className="flex items-center gap-4 text-sm font-medium">

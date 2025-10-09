@@ -1,66 +1,51 @@
+"use client"; 
+
 import Link from 'next/link';
-import { createClient } from '@/app/utils/supabase/server';
-import { prisma } from '@/lib/prisma';
+import { useUser } from '@/app/context/userContext';
 import UserAvatar from '../Avatar';
 import Image from 'next/image';
+import { Star, Zap } from 'lucide-react';
 
-export default async function NavbarSignedIn() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return null; 
+export default function NavbarSignedIn() {
+  const { userProfile, isLoading } = useUser();
+
+  if (!userProfile && !isLoading) {
+    return null;
   }
-
-  const userProfile = await prisma.profiles.findUnique({
-    where: { id: user.id },
-    select: {
-      id: true, 
-      name: true,
-      avatar_url: true,
-    },
-  });
-
+  
   const links = [
-    {
-      key: 'explore',
-      name: 'Explore',
-      path: '/explore'
-    },
-    {
-     key:'problems',
-     name: 'Problems',
-     path: '/problems'
-    },
-    {
-     key: 'discussions',
-     name: 'Discussions',
-     path: '/discussions'
-    },
-    {
-      key: 'leaderboard',
-      name: 'Leaderboard',
-      path: '/leaderboard'
-    }
-  ]
+    { key: 'explore', name: 'Explore', path: '/explore' },
+    { key:'problems', name: 'Problems', path: '/problems' },
+    { key: 'discussions', name: 'Discussions', path: '/discussions' },
+    { key: 'leaderboard', name: 'Leaderboard', path: '/leaderboard' }
+  ];
 
   return (
-    <nav className="flex items-center justify-around bg-black text-white  px-4 py-2  w-full">
+    <nav className="flex items-center justify-around bg-black text-white px-4 py-2 w-full">
      <Link className="text-2xl flex gap-2 font-bold" href={"/"}>
        <Image src={'/adapt.png'} alt='adapt logo' width={200} height={200} className='h-8 w-8' />
       </Link>
 
       <div className='flex gap-8 '>
         {links.map((link) => (
-          <Link key={link.key} href={link.path} 
-          className='cursor-pointer hover:text-gray-500'>
+          <Link key={link.key} href={link.path} className='cursor-pointer hover:text-gray-500'>
             {link.name}
           </Link>
         ))}
       </div>
-      <div className="flex items-center gap-4">
-        {userProfile && <UserAvatar user={userProfile} />}
+      <div className="flex items-center gap-6">
+        {isLoading ? (
+          <div className="h-6 w-20 bg-gray-800 rounded animate-pulse" />
+        ) : userProfile && (
+          <>
+            <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full text-sm">
+              <Zap size={14} className="text-yellow-400" />
+              <span className="font-bold text-white">{userProfile.xp}</span>
+              <span className="text-gray-400">XP</span>
+            </div>
+            <UserAvatar user={userProfile} />
+          </>
+        )}
       </div>
     </nav>
   );

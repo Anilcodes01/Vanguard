@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import { SubmissionStatus, SolutionStatus } from "@prisma/client";
+import { SubmissionStatus, SolutionStatus, Difficulty } from "@prisma/client";
 import axios from "axios";
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from "@/app/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 type Judge0Submission = {
@@ -10,38 +10,43 @@ type Judge0Submission = {
   compile_output: string | null;
   message: string | null;
   time: string;
-  memory: number; 
-  status: {
-    id: number;
-    description: string;
-  };
+  memory: number;
+  status: { id: number; description: string };
 };
 
 function mapJudge0StatusToEnum(description: string): SubmissionStatus {
-    const mapping: { [key: string]: SubmissionStatus } = {
-        "Accepted": SubmissionStatus.Accepted,
-        "Wrong Answer": SubmissionStatus.WrongAnswer,
-        "Time Limit Exceeded": SubmissionStatus.TimeLimitExceeded,
-        "Compilation Error": SubmissionStatus.CompilationError,
-        "Runtime Error (NZEC)": SubmissionStatus.RuntimeError,
-        "Internal Error": SubmissionStatus.InternalError,
-    };
-    return mapping[description] || SubmissionStatus.InternalError;
+  const mapping: { [key: string]: SubmissionStatus } = {
+    Accepted: SubmissionStatus.Accepted,
+    "Wrong Answer": SubmissionStatus.WrongAnswer,
+    "Time Limit Exceeded": SubmissionStatus.TimeLimitExceeded,
+    "Compilation Error": SubmissionStatus.CompilationError,
+    "Runtime Error (NZEC)": SubmissionStatus.RuntimeError,
+    "Internal Error": SubmissionStatus.InternalError,
+  };
+  return mapping[description] || SubmissionStatus.InternalError;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ message: "Authentication required." }, { status: 401 });
+      return NextResponse.json(
+        { message: "Authentication required." },
+        { status: 401 }
+      );
     }
 
-    const { problemId, code } = await request.json();
-    
-    if (!problemId || !code) {
-      return NextResponse.json({ message: "Problem ID and code are required." }, { status: 400 });
+    const { problemId, code, startTime } = await request.json();
+
+    if (!problemId || !code || !startTime) {
+      return NextResponse.json(
+        { message: "Problem ID, code, and startTime are required." },
+        { status: 400 }
+      );
     }
 
     const problem = await prisma.problem.findUnique({
@@ -50,9 +55,12 @@ export async function POST(request: NextRequest) {
     });
 
     if (!problem || !problem.testCases || problem.testCases.length === 0) {
-      return NextResponse.json({ message: "Problem or test cases not found." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Problem or test cases not found." },
+        { status: 404 }
+      );
     }
-    
+
     let finalResult: Judge0Submission | null = null;
     let allTestsPassed = true;
     let firstFailedTestCase = null;
@@ -61,26 +69,27 @@ export async function POST(request: NextRequest) {
       let source_code = code;
       let stdin: string | undefined = undefined;
 
-      if (problem.testStrategy === 'DRIVER_CODE') {
-        if (!problem.driverCodeTemplate) {
-          throw new Error(`Problem ${problemId} is misconfigured: missing driver code template.`);
-        }
+      if (problem.testStrategy === "DRIVER_CODE") {
+        if (!problem.driverCodeTemplate)
+          throw new Error(
+            `Problem ${problemId} is misconfigured: missing driver code template.`
+          );
         source_code = problem.driverCodeTemplate
-          .replace('{{USER_CODE}}', code)
-          .replace('{{TEST_INPUT}}', testCase.input || '');
+          .replace("{{USER_CODE}}", code)
+          .replace("{{TEST_INPUT}}", testCase.input || "");
       } else {
         source_code = code;
         stdin = testCase.input || undefined;
       }
 
       const options = {
-        method: 'POST',
+        method: "POST",
         url: `${process.env.JUDGE0_API_URL}/submissions`,
-        params: { base64_encoded: 'false', wait: 'true', fields: '*' },
+        params: { base64_encoded: "false", wait: "true", fields: "*" },
         headers: {
-          'content-type': 'application/json',
-          'X-RapidAPI-Key': process.env.JUDGE0_API_KEY,
-          'X-RapidAPI-Host': process.env.JUDGE0_API_HOST,
+          "content-type": "application/json",
+          "X-RapidAPI-Key": process.env.JUDGE0_API_KEY,
+          "X-RapidAPI-Host": process.env.JUDGE0_API_HOST,
         },
         data: {
           language_id: problem.languageId,
@@ -96,97 +105,126 @@ export async function POST(request: NextRequest) {
       if (result.status.id !== 3) {
         allTestsPassed = false;
         firstFailedTestCase = testCase;
-        break; 
+        break;
       }
     }
 
     if (!finalResult) {
-        throw new Error("Code execution failed to produce a result.");
+      throw new Error("Code execution failed to produce a result.");
     }
-
-    const newSubmission = await prisma.submission.create({
-        data: {
-            userId: user.id,
-            problemId: problem.id,
-            code: code,
-            languageId: problem.languageId,
-            status: mapJudge0StatusToEnum(finalResult.status.description),
-            executionTime: parseFloat(finalResult.time) || null,
-            executionMemory: finalResult.memory || null,
-        }
-    });
 
     const existingSolution = await prisma.problemSolution.findUnique({
-        where: { userId_problemId: { userId: user.id, problemId: problem.id } }
+      where: { userId_problemId: { userId: user.id, problemId: problem.id } },
+    });
+
+    const isFirstSolve =
+      allTestsPassed &&
+      (!existingSolution || existingSolution.status !== SolutionStatus.Solved);
+
+    let xpEarned = 0;
+    let starsEarned = 0;
+
+    if (isFirstSolve) {
+      switch (problem.difficulty) {
+        case Difficulty.Beginner:
+          xpEarned = 100;
+          break;
+        case Difficulty.Intermediate:
+          xpEarned = 150;
+          break;
+        case Difficulty.Advanced:
+          xpEarned = 200;
+          break;
+      }
+
+      const solveTime = Date.now();
+      const solveDurationInSeconds = (solveTime - startTime) / 1000;
+
+      const maxTimeInSeconds = problem.maxTime * 60; 
+
+        if (solveDurationInSeconds <= maxTimeInSeconds / 2) {
+            starsEarned = 3;
+        } else if (solveDurationInSeconds <= maxTimeInSeconds) {
+            starsEarned = 2;
+        } else {
+            starsEarned = 1;
+        }
+    }
+
+    await prisma.$transaction(async (tx) => {
+      const newSubmission = await tx.submission.create({
+        data: {
+          userId: user.id,
+          problemId: problem.id,
+          code: code,
+          languageId: problem.languageId,
+          status: mapJudge0StatusToEnum(finalResult.status.description),
+          executionTime: parseFloat(finalResult.time) || null,
+          executionMemory: finalResult.memory || null,
+        },
+      });
+
+      await tx.problemSolution.upsert({
+        where: { userId_problemId: { userId: user.id, problemId: problem.id } },
+        create: {
+          userId: user.id,
+          problemId: problem.id,
+          status: allTestsPassed
+            ? SolutionStatus.Solved
+            : SolutionStatus.Attempted,
+          firstAttemptedAt: new Date(),
+          lastAttemptedAt: new Date(),
+          firstSolvedAt: allTestsPassed ? new Date() : null,
+          bestSubmissionId: allTestsPassed ? newSubmission.id : null,
+          starsEarned: starsEarned,
+        },
+        update: {
+          lastAttemptedAt: new Date(),
+          ...(isFirstSolve && {
+            status: SolutionStatus.Solved,
+            firstSolvedAt: new Date(),
+            bestSubmissionId: newSubmission.id,
+            starsEarned: starsEarned,
+          }),
+        },
+      });
+
+      if (xpEarned > 0) {
+        await tx.profiles.update({
+          where: { id: user.id },
+          data: {
+            xp: { increment: xpEarned },
+          },
+        });
+      }
     });
 
     if (allTestsPassed) {
-        if (!existingSolution) {
-            await prisma.problemSolution.create({
-                data: {
-                    userId: user.id,
-                    problemId: problem.id,
-                    status: SolutionStatus.Solved,
-                    firstSolvedAt: new Date(),
-                    lastAttemptedAt: new Date(),
-                    bestSubmissionId: newSubmission.id,
-                }
-            });
-        } else if (existingSolution.status !== SolutionStatus.Solved) {
-            await prisma.problemSolution.update({
-                where: { userId_problemId: { userId: user.id, problemId: problem.id } },
-                data: {
-                    status: SolutionStatus.Solved,
-                    firstSolvedAt: existingSolution.firstSolvedAt || new Date(),
-                    lastAttemptedAt: new Date(),
-                    bestSubmissionId: newSubmission.id,
-                }
-            });
-        } else {
-            await prisma.problemSolution.update({
-                where: { userId_problemId: { userId: user.id, problemId: problem.id } },
-                data: { lastAttemptedAt: new Date() }
-            });
-        }
+      return NextResponse.json({
+        status: "Accepted",
+        xpEarned: isFirstSolve ? xpEarned : 0,
+        starsEarned: isFirstSolve ? starsEarned : 0,
+      });
     } else {
-        if (!existingSolution) {
-            await prisma.problemSolution.create({
-                data: {
-                    userId: user.id,
-                    problemId: problem.id,
-                    status: SolutionStatus.Attempted,
-                    lastAttemptedAt: new Date(),
-                }
-            });
-        } else {
-             await prisma.problemSolution.update({
-                where: { userId_problemId: { userId: user.id, problemId: problem.id } },
-                data: { lastAttemptedAt: new Date() }
-            });
-        }
+      return NextResponse.json({
+        status: finalResult.status.description,
+        input: firstFailedTestCase?.input,
+        userOutput: finalResult.stdout,
+        expectedOutput: firstFailedTestCase?.expected,
+      });
     }
-    
-    if (allTestsPassed) {
-        return NextResponse.json({ status: 'Accepted' });
-    } else {
-        return NextResponse.json({
-            status: finalResult.status.description,
-            message: finalResult.message,
-            details: finalResult.stderr || finalResult.compile_output,
-            input: firstFailedTestCase?.input,
-            userOutput: finalResult.stdout,
-            expectedOutput: firstFailedTestCase?.expected,
-        });
-    }
-
   } catch (error) {
     console.error("Submission failed:", error);
     let errorMessage = "An unknown error occurred during submission.";
     if (axios.isAxiosError(error) && error.response) {
-       errorMessage = error.response.data?.message || "Error connecting to execution engine.";
+      errorMessage =
+        error.response.data?.message || "Error connecting to execution engine.";
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
-    return NextResponse.json({ message: errorMessage, status: 'Error' }, { status: 500 });
+    return NextResponse.json(
+      { message: errorMessage, status: "Error" },
+      { status: 500 }
+    );
   }
 }
