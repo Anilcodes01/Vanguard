@@ -1,4 +1,4 @@
-// src/app/profile/[userId]/page.tsx
+
 
 "use client";
 
@@ -245,11 +245,9 @@ export default function ProfilePage({
                           }`}
                         />
                         <div>
-                          {/* --- CHANGE IS HERE: UNCOMMENTED THIS LINE --- */}
                           <p className="text-white font-medium">
                             {submission.problem.title}
                           </p>
-                          {/* --- END OF CHANGE --- */}
                           <p className="text-sm text-gray-400">
                             {new Date(
                               submission.createdAt

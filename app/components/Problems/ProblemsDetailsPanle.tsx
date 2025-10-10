@@ -32,7 +32,7 @@ export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProp
   const [isTopicsOpen, setIsTopicsOpen] = useState(false);
 
   return (
-    <div className="w-1/2 p-6 flex flex-col gap-4 rounded-lg overflow-y-auto bg-[#262626]">
+    <div className="w-1/2 p-6 flex flex-col gap-4 shadow-2xl rounded-lg overflow-y-auto bg-[#262626]">
       <div className="flex flex-col">
         <h1 className="text-4xl font-bold text-white mb-2">{problem.title}</h1>
         <div className="flex gap-4 items-center">

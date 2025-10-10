@@ -4,7 +4,6 @@ import path from 'path';
 
 const prisma = new PrismaClient();
 
-// Define the structure of the JSON problems
 type ProblemJson = {
   slug: string;
   title: string;
@@ -24,20 +23,15 @@ async function main() {
   console.log('Starting the seeding process...');
 
   try {
-    // 1. Read the JSON file
     const jsonPath = path.join(process.cwd(), 'problems.json');
     const fileContent = await fs.readFile(jsonPath, 'utf-8');
     const problemsData: ProblemJson[] = JSON.parse(fileContent);
 
     console.log(`Found ${problemsData.length} problems in problems.json`);
 
-    // 2. Iterate and seed each problem
     for (const problem of problemsData) {
       console.log(`Seeding problem: ${problem.title}`);
 
-      // Use `upsert` to avoid creating duplicates.
-      // It will create the problem if it doesn't exist (based on `slug`),
-      // or update it if it already exists.
       await prisma.problem.upsert({
         where: { slug: problem.slug },
         update: {
@@ -50,7 +44,6 @@ async function main() {
           languageId: problem.languageId,
           testStrategy: problem.testStrategy,
           driverCodeTemplate: problem.driverCodeTemplate,
-          // For relations, we need to delete existing ones and create new ones.
           examples: {
             deleteMany: {},
             create: problem.examples,

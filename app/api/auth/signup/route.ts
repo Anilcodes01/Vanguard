@@ -29,7 +29,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  // With email confirmation disabled, a user and session are created immediately.
-  // The Supabase server-side client automatically handles setting the auth cookie.
   return NextResponse.json({ message: 'Sign up successful! You are now logged in.' });
 }

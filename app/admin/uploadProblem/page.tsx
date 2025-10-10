@@ -50,8 +50,6 @@ export default function UploadProblems() {
           setProblems([]);
         }
       } catch (err) {
-        // FIX 1: Use the 'err' variable, for example by logging it for debugging.
-        // This resolves the "no-unused-vars" warning.
         console.error('Failed to parse JSON:', err);
         setError('Failed to parse JSON. Please check the file for syntax errors.');
         setProblems([]);

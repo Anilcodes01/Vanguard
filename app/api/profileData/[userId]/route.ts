@@ -1,4 +1,4 @@
-// src/app/api/profileData/[userId]/route.ts
+
 
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
@@ -22,11 +22,9 @@ export async function GET(
         id: userId,
       },
       include: {
-        // --- CHANGE IS HERE ---
-        // We are now explicitly including the related problem for each submission
         submissions: {
           orderBy: {
-            createdAt: 'desc' // To get the most recent submissions first
+            createdAt: 'desc'
           },
           include: {
             problem: {
@@ -36,7 +34,6 @@ export async function GET(
             },
           },
         },
-        // --- END OF CHANGE ---
         problemSolutions: true,
         profiles: {
           select: {

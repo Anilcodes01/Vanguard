@@ -102,7 +102,7 @@ export default function ProblemPage() {
   }
 
   return (
-     <div className="flex h-screen p- gap-2 text-black overflow-hidden bg-black">
+     <div className="flex h-screen p- gap-2 text-black overflow-hidden bg-[#262626]">
       <ProblemDetailsPanel problem={problem} />
         <CodeEditorPanel
         problemId={problem.id} 

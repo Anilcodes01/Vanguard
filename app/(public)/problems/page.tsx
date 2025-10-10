@@ -90,7 +90,7 @@ export default function Problems() {
   };
 
   return (
-    <div className="bg-[#0a0a0a] min-h-screen">
+    <div className="bg-[#262626] min-h-screen">
       <div className="w-full max-w-5xl mx-auto px-4 py-12 md:px-8 md:py-16">
         
         <div className="mb-12">

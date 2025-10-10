@@ -536,3 +536,18 @@ model ProblemSolution {
   @@map("problem_solutions")
   @@schema("public")
 }
+
+model Project {
+  id          String   @id @default(cuid()) 
+  name        String   @unique
+  description String   @db.Text
+  domain      String
+  maxTime     String  
+  coverImage  String?  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("projects")
+  @@schema("public") 
+}
