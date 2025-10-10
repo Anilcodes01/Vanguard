@@ -405,6 +405,7 @@ model Profiles {
   college_name String?
   onboarded    Boolean @default(false)
   xp           Int     @default(0)
+  stars        Int     @default(0)
 
   users users @relation(fields: [id], references: [id], onDelete: Cascade)
 

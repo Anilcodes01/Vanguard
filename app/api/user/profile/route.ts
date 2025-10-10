@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
         name: true,
         avatar_url: true,
         xp: true,
+        stars: true,
       },
     });
 

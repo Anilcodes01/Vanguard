@@ -13,7 +13,7 @@ import { ProblemDetails, SubmissionResult, RewardData } from "@/types";
 export default function ProblemPage() {
   const params = useParams();
   const problemId = params.problemId as string;
-   const { addXp } = useUser(); 
+  const { addXp, addStars } = useUser(); 
 
   const [problem, setProblem] = useState<ProblemDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +23,7 @@ export default function ProblemPage() {
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-   const [rewardData, setRewardData] = useState<RewardData | null>(null);
+  const [rewardData, setRewardData] = useState<RewardData | null>(null);
 
   useEffect(() => {
     if (!problemId) {
@@ -31,15 +31,13 @@ export default function ProblemPage() {
       return;
     }
 
-   const fetchProblem = async () => {
+    const fetchProblem = async () => {
       setIsLoading(true);
       setError(null);
       try {
         const response = await axios.get<ProblemDetails>(`/api/problems/${problemId}`);
         setProblem(response.data);
-
         setCode(response.data.starterCode); 
-        
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data?.message || "Failed to fetch problem data.");
@@ -54,7 +52,7 @@ export default function ProblemPage() {
     fetchProblem();
   }, [problemId]);
 
- const handleSubmit = async (startTime: number | null) => {
+  const handleSubmit = async (startTime: number | null) => {
     if (!startTime) {
         alert("Please click 'Start' before submitting.");
         return;
@@ -72,12 +70,17 @@ export default function ProblemPage() {
 
       setSubmissionResult(response.data);
 
-      if (response.data.status === 'Accepted' && response.data.xpEarned > 0) {
-        addXp(response.data.xpEarned);
+      if (response.data.status === 'Accepted') {
         setRewardData({
           xpEarned: response.data.xpEarned,
           starsEarned: response.data.starsEarned,
         });
+        if (response.data.xpEarned > 0) {
+          addXp(response.data.xpEarned);
+        }
+        if (response.data.starsEarned > 0) {
+          addStars(response.data.starsEarned);
+        }
       }
 
     } catch (err) {
@@ -92,13 +95,13 @@ export default function ProblemPage() {
   };
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading Problem...</div>;
+    return <div className="flex justify-center items-center bg-[#262626] h-screen">Loading Problem...</div>;
   }
   if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>;
+    return <div className="flex justify-center items-center bg-[#262626] h-screen text-red-500">Error: {error}</div>;
   }
   if (!problem) {
-    return <div className="flex justify-center items-center h-screen">Problem not found.</div>;
+    return <div className="flex justify-center items-center bg-[#262626] h-screen">Problem not found.</div>;
   }
 
   return (

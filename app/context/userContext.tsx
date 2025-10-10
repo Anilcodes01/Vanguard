@@ -8,12 +8,14 @@ type UserProfile = {
   name: string | null;
   avatar_url: string | null;
   xp: number;
+  stars: number; // This now comes directly from the API
 };
 
 interface UserContextType {
   userProfile: UserProfile | null;
   isLoading: boolean;
   addXp: (amount: number) => void;
+  addStars: (amount: number) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -43,8 +45,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const addStars = (amount: number) => {
+    setUserProfile(prev => {
+        if (!prev) return null;
+        return { ...prev, stars: prev.stars + amount };
+    });
+  };
+
   return (
-    <UserContext.Provider value={{ userProfile, isLoading, addXp }}>
+    <UserContext.Provider value={{ userProfile, isLoading, addXp, addStars }}>
       {children}
     </UserContext.Provider>
   );

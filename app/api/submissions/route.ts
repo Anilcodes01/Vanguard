@@ -189,12 +189,22 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      const profileUpdateData: {
+        xp?: { increment: number };
+        stars?: { increment: number };
+      } = {};
+
       if (xpEarned > 0) {
+        profileUpdateData.xp = { increment: xpEarned };
+      }
+      if (starsEarned > 0) {
+        profileUpdateData.stars = { increment: starsEarned };
+      }
+
+      if (Object.keys(profileUpdateData).length > 0) {
         await tx.profiles.update({
           where: { id: user.id },
-          data: {
-            xp: { increment: xpEarned },
-          },
+          data: profileUpdateData,
         });
       }
     });
