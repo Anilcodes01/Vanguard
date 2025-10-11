@@ -54,3 +54,36 @@ export type RewardData = {
   xpEarned: number;
   starsEarned: number;
 };
+
+
+
+export type ProfileData = {
+  name: string | null;
+  college_name: string | null;
+  avatar_url: string | null;
+  username: string | null;
+  domain: string | null;
+  xp: number;
+  stars: number;
+};
+
+
+export type Submission = {
+  id: string;
+  status: string;
+  createdAt: string;
+  problem: { title: string };
+};
+
+
+export type ProblemSolution = {
+  status: "Solved" | "Attempted";
+};
+
+
+export type UserData = {
+  email: string | null;
+  profiles: ProfileData[];
+  submissions: Submission[];
+  problemSolutions: ProblemSolution[];
+};

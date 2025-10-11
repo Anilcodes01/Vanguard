@@ -42,6 +42,8 @@ export async function GET(
             avatar_url: true,
             username: true,
             domain: true,
+            stars: true,
+            xp: true
           },
         },
       },
