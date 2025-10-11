@@ -1,8 +1,76 @@
 import { prisma } from "@/lib/prisma";
-import { SubmissionStatus, SolutionStatus, Difficulty } from "@prisma/client";
+import {
+  SubmissionStatus,
+  SolutionStatus,
+  Difficulty,
+  Prisma,
+} from "@prisma/client";
 import axios from "axios";
 import { createClient } from "@/app/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+
+const LEADERBOARD_GROUP_SIZE = 30;
+
+function getWeekStartDate() {
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const date = new Date(now);
+  date.setDate(now.getDate() - dayOfWeek);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+async function assignUserToLeaderboardGroup(
+  userId: string,
+  tx: Prisma.TransactionClient
+) {
+  const userProfile = await tx.profiles.findUnique({
+    where: { id: userId },
+    include: { currentGroup: true },
+  });
+
+  if (!userProfile) return;
+
+  const weekStartDate = getWeekStartDate();
+
+  if (
+    userProfile.currentGroup &&
+    userProfile.currentGroup.weekStartDate.getTime() === weekStartDate.getTime()
+  ) {
+    return;
+  }
+
+  const availableGroups = await tx.leaderboardGroup.findMany({
+    where: {
+      league: userProfile.league,
+      weekStartDate: weekStartDate,
+    },
+    include: { _count: { select: { members: true } } },
+  });
+
+  const availableGroup =
+    availableGroups.find((g) => g._count.members < LEADERBOARD_GROUP_SIZE) ||
+    null;
+
+  let groupIdToAssign: string;
+
+  if (availableGroup) {
+    groupIdToAssign = availableGroup.id;
+  } else {
+    const newGroup = await tx.leaderboardGroup.create({
+      data: {
+        league: userProfile.league,
+        weekStartDate: weekStartDate,
+      },
+    });
+    groupIdToAssign = newGroup.id;
+  }
+
+  await tx.profiles.update({
+    where: { id: userId },
+    data: { currentGroupId: groupIdToAssign },
+  });
+}
 
 type Judge0Submission = {
   stdout: string | null;
@@ -139,19 +207,20 @@ export async function POST(request: NextRequest) {
 
       const solveTime = Date.now();
       const solveDurationInSeconds = (solveTime - startTime) / 1000;
+      const maxTimeInSeconds = problem.maxTime * 60;
 
-      const maxTimeInSeconds = problem.maxTime * 60; 
-
-        if (solveDurationInSeconds <= maxTimeInSeconds / 2) {
-            starsEarned = 3;
-        } else if (solveDurationInSeconds <= maxTimeInSeconds) {
-            starsEarned = 2;
-        } else {
-            starsEarned = 1;
-        }
+      if (solveDurationInSeconds <= maxTimeInSeconds / 2) {
+        starsEarned = 3;
+      } else if (solveDurationInSeconds <= maxTimeInSeconds) {
+        starsEarned = 2;
+      } else {
+        starsEarned = 1;
+      }
     }
 
     await prisma.$transaction(async (tx) => {
+      await assignUserToLeaderboardGroup(user.id, tx);
+
       const newSubmission = await tx.submission.create({
         data: {
           userId: user.id,
@@ -177,6 +246,7 @@ export async function POST(request: NextRequest) {
           firstSolvedAt: allTestsPassed ? new Date() : null,
           bestSubmissionId: allTestsPassed ? newSubmission.id : null,
           starsEarned: starsEarned,
+          xpEarned: xpEarned,
         },
         update: {
           lastAttemptedAt: new Date(),
@@ -185,6 +255,7 @@ export async function POST(request: NextRequest) {
             firstSolvedAt: new Date(),
             bestSubmissionId: newSubmission.id,
             starsEarned: starsEarned,
+            xpEarned: xpEarned,
           }),
         },
       });
