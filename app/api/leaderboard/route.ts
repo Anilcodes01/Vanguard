@@ -2,12 +2,13 @@ import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-function getWeekStartDate() {
+function getWeekStartDateUTC() {
   const now = new Date();
-  const dayOfWeek = now.getDay(); 
-  const date = new Date(now);
-  date.setDate(now.getDate() - dayOfWeek);
-  date.setHours(0, 0, 0, 0);
+  const dayOfWeek = now.getUTCDay(); 
+  const date = new Date(now.getTime());
+  date.setUTCDate(now.getUTCDate() - dayOfWeek);
+  date.setUTCHours(0, 0, 0, 0);
+  
   return date;
 }
 
@@ -31,7 +32,7 @@ export async function GET() {
     });
   }
 
-  const weekStartDate = getWeekStartDate();
+  const weekStartDate = getWeekStartDateUTC();
   
   if (profile.currentGroup.weekStartDate.getTime() !== weekStartDate.getTime()) {
       return NextResponse.json({
