@@ -7,6 +7,7 @@ type UserProfile = {
   id: string;
   name: string | null;
   avatar_url: string | null;
+  username: string
   xp: number;
   stars: number; // This now comes directly from the API
 };

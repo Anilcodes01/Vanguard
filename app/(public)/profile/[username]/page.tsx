@@ -18,22 +18,22 @@ import { UserData } from "@/types";
 export default function ProfilePage({
   params,
 }: {
-  params: Promise<{ userId: string }>;
+  params: Promise<{ username: string }>;
 }) {
-  const { userId } = use(params);
+  const { username } = use(params);
 
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!username) return;
 
     const fetchUserData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/profileData/${userId}`);
+        const response = await fetch(`/api/profileData/${username}`);
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Failed to fetch data");
@@ -49,7 +49,7 @@ export default function ProfilePage({
       }
     };
     fetchUserData();
-  }, [userId]);
+  }, [username]);
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorDisplay message={error} />;

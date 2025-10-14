@@ -10,6 +10,7 @@ type UserProfile = {
   id: string; 
   name: string | null;
   avatar_url: string | null;
+  username: string
 };
 
 const DropdownMenuItem = ({
@@ -42,8 +43,8 @@ export default function UserAvatar({ user }: { user: UserProfile }) {
   };
 
   const handleProfileClick = () => {
-    if (user.id) {
-      router.push(`/profile/${user.id}`);
+    if (user.username) {
+      router.push(`/profile/${user.username}`);
       setIsOpen(false);
     }
   };
