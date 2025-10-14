@@ -280,11 +280,16 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    const executionTime = parseFloat(finalResult.time) || 0;
+    const executionMemory = finalResult.memory || 0;
+
     if (allTestsPassed) {
       return NextResponse.json({
         status: "Accepted",
         xpEarned: isFirstSolve ? xpEarned : 0,
         starsEarned: isFirstSolve ? starsEarned : 0,
+        executionTime,
+        executionMemory,
       });
     } else {
       return NextResponse.json({
@@ -292,8 +297,11 @@ export async function POST(request: NextRequest) {
         input: firstFailedTestCase?.input,
         userOutput: finalResult.stdout,
         expectedOutput: firstFailedTestCase?.expected,
+        executionTime,
+        executionMemory,
       });
     }
+
   } catch (error) {
     console.error("Submission failed:", error);
     let errorMessage = "An unknown error occurred during submission.";

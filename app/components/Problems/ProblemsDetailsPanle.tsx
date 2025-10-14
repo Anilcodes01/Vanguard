@@ -1,22 +1,8 @@
-import { Tag, ChevronDown } from 'lucide-react';
+import { Tag, ChevronDown, CheckCircle2, Edit3 } from 'lucide-react';
+import { SolutionStatus } from '@prisma/client';
 import React, { useState } from 'react';
+import { ProblemDetails } from '@/types';
 
-type Example = {
-  id: number;
-  input: string;
-  output: string;
-};
-
-type ProblemDetails = {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  starterCode: string;
-  examples: Example[];
-  topic: string[];
-};
 
 interface ProblemDetailsPanelProps {
   problem: ProblemDetails;
@@ -31,6 +17,31 @@ const difficultyStyles = {
 export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProps) {
   const [isTopicsOpen, setIsTopicsOpen] = useState(false);
 
+  const renderStatusBadge = () => {
+    if (!problem.solutionStatus) return null;
+
+    if (problem.solutionStatus === 'Solved') {
+      return (
+        <span className="flex items-center gap-1.5 px-3 py-1 text-sm rounded-full bg-emerald-500/10 text-emerald-400">
+          <CheckCircle2 size={14} />
+          Solved
+        </span>
+      );
+    }
+
+    if (problem.solutionStatus === 'Attempted') {
+      return (
+        <span className="flex items-center gap-1.5 px-3 py-1 text-sm rounded-full bg-sky-500/10 text-sky-400">
+          <Edit3 size={14} />
+          Attempted
+        </span>
+      );
+    }
+
+    return null;
+  };
+
+
   return (
     <div className="w-1/2 p-6 flex flex-col gap-4 shadow-2xl rounded-lg overflow-y-auto bg-[#262626]">
       <div className="flex flex-col">
@@ -43,6 +54,7 @@ export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProp
           >
             {problem.difficulty}
           </span>
+             {renderStatusBadge()}
         </div>
       </div>
 

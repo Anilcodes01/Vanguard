@@ -1,10 +1,16 @@
+import { SolutionStatus } from '@prisma/client';
+
 export type SubmissionResult = {
-  status: "Accepted" | "Wrong Answer" | "Error" | string;
+  status: string;
   message?: string;
   details?: string;
   input?: string;
   userOutput?: string;
   expectedOutput?: string;
+  executionTime?: number;   
+  executionMemory?: number;  
+  xpEarned?: number;         
+  starsEarned?: number;     
 };
 
 export type TestCase = {
@@ -42,9 +48,10 @@ export type ProblemDetails = {
   description: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
    starterCode: string;
-  examples: Example[];
-   topic: string[];
-    testCases: TestCase[];
+  examples: Example[]; 
+  testCases: TestCase[];
+  topic: string[];
+  solutionStatus?: 'Solved' | 'Attempted' | null;
 };
 
 

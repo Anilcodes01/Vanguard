@@ -1,43 +1,88 @@
-import { SubmissionResult } from "@/types/index";
+import { SubmissionResult } from "@/types";
+import { Clock, Cpu, CheckCircle, XCircle } from "lucide-react";
+import React from "react";
+
+interface StatCardProps {
+  icon: React.ComponentType<{ className: string }>;
+  label: string;
+  value: string;
+  colorClass: string;
+}
+
+const StatCard = ({ icon: Icon, label, value, colorClass }: StatCardProps) => (
+  <div className="flex items-center gap-3 bg-zinc-800 p-3 rounded-lg">
+    <Icon className={`w-5 h-5 ${colorClass}`} />
+    <div>
+      <p className="text-xs text-zinc-400">{label}</p>
+      <p className="text-sm font-semibold text-white">{value}</p>
+    </div>
+  </div>
+);
 
 export const RenderOutput = ({ result }: { result: SubmissionResult | null }) => {
   if (!result) {
     return (
-      <div className="p-4">
-        <pre className="text-gray-400">
-          Click &quot;Start&quot; to begin coding. Run or submit your code to see the result.
-        </pre>
+      <div className="p-4 text-center text-gray-400">
+        Run or submit your code to see the results.
       </div>
     );
   }
 
-  if (result.status === "Accepted") {
-    return <div className="p-4 text-green-400 font-bold">✅ Accepted!</div>;
-  }
+  const isAccepted = result.status === 'Accepted';
+  const isError = result.status === 'Error';
 
   return (
-    <div className="p-4 text-sm font-mono">
-      <p className="font-bold text-red-400">❌ {result.status}</p>
-      {result.details && (
-        <div className="mt-4 p-3 bg-black/30 rounded-lg">
-          <p className="font-semibold text-gray-300 mb-1">Error Details:</p>
-          <pre className="whitespace-pre-wrap text-red-300">{result.details}</pre>
+    <div className="p-4 space-y-4 text-white overflow-y-auto h-full">
+      <div className="flex items-center gap-3">
+        {isAccepted ? (
+          <CheckCircle className="text-green-400" size={24} />
+        ) : (
+          <XCircle className="text-red-400" size={24} />
+        )}
+        <h3 className={`text-xl font-bold ${isAccepted ? 'text-green-400' : 'text-red-400'}`}>
+          {result.status}
+        </h3>
+      </div>
+      
+      {(result.executionTime != null && result.executionMemory != null) && (
+        <div className="grid grid-cols-2 gap-3 pt-2">
+          <StatCard 
+            icon={Clock} 
+            label="Runtime" 
+            value={`${(result.executionTime * 1000).toFixed(0)} ms`}
+            colorClass="text-sky-400"
+          />
+          <StatCard 
+            icon={Cpu} 
+            label="Memory" 
+            value={`${result.executionMemory} KB`}
+            colorClass="text-purple-400"
+          />
         </div>
       )}
-      {result.input !== undefined && (
-        <div className="mt-4 p-3 bg-black/30 rounded-lg space-y-3">
-          <div>
-            <p className="font-semibold text-gray-300">Input:</p>
-            <pre className="whitespace-pre-wrap text-gray-200">{result.input}</pre>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-300">Your Output:</p>
-            <pre className="whitespace-pre-wrap text-red-300">{result.userOutput || '""'}</pre>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-300">Expected:</p>
-            <pre className="whitespace-pre-wrap text-green-300">{result.expectedOutput || '""'}</pre>
-          </div>
+
+      {isError && <p className="text-sm text-red-300 bg-red-500/10 p-3 rounded-lg">{result.message}</p>}
+
+      {!isAccepted && !isError && (
+        <div className="space-y-3 text-sm font-mono">
+          {result.input && (
+            <div>
+              <p className="font-sans font-semibold text-zinc-400 mb-1">Input:</p>
+              <pre className="bg-zinc-800 p-2 rounded text-zinc-300 whitespace-pre-wrap">{result.input}</pre>
+            </div>
+          )}
+          {result.userOutput && (
+            <div>
+              <p className="font-sans font-semibold text-zinc-400 mb-1">Your Output:</p>
+              <pre className="bg-zinc-800 p-2 rounded text-zinc-300 whitespace-pre-wrap">{result.userOutput}</pre>
+            </div>
+          )}
+          {result.expectedOutput && (
+            <div>
+              <p className="font-sans font-semibold text-zinc-400 mb-1">Expected Output:</p>
+              <pre className="bg-zinc-800 p-2 rounded text-zinc-300 whitespace-pre-wrap">{result.expectedOutput}</pre>
+            </div>
+          )}
         </div>
       )}
     </div>
