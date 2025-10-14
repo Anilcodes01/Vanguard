@@ -1,12 +1,15 @@
 'use client';
 
+import { CheckCircle2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 type Problem = {
   id: string;
   title: string;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  solved?: boolean;
 };
+
 
 interface ApiResponse {
   problems: Problem[];
@@ -125,9 +128,17 @@ export default function Problems() {
                         <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gray-800/50 flex items-center justify-center text-gray-400 text-sm font-medium group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors">
                           {index + 1}
                         </div>
-                        <h3 className="text-white font-medium text-lg group-hover:text-blue-400 transition-colors truncate">
-                          {problem.title}
-                        </h3>
+                         <div className="flex items-center gap-2 min-w-0">
+                          <h3 className="text-white font-medium text-lg group-hover:text-blue-400 transition-colors truncate">
+                            {problem.title}
+                          </h3>
+                          {problem.solved && (
+                            <CheckCircle2
+                              size={18}
+                              className="text-emerald-400 flex-shrink-0"
+                            />
+                          )}
+                        </div>
                       </div>
                       
                       <span className={`flex-shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full border ${getDifficultyStyles(problem.difficulty)} transition-all duration-300`}>

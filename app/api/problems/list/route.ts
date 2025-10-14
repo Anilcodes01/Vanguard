@@ -1,11 +1,13 @@
-
-
-import {prisma} from '@/lib/prisma'; 
+import { prisma } from '@/lib/prisma'; 
+import { createClient } from '@/app/utils/supabase/server'; 
 import { NextRequest, NextResponse } from 'next/server';
 
 const PAGE_SIZE = 50;
 
 export async function GET(request: NextRequest) {
+  const supabase =await createClient();
+  const { data: { user } } = await supabase.auth.getUser(); 
+
   const searchParams = request.nextUrl.searchParams;
   const page = parseInt(searchParams.get('page') || '1', 10);
 
@@ -16,7 +18,7 @@ export async function GET(request: NextRequest) {
   const skip = (page - 1) * PAGE_SIZE;
 
   try {
-    const [problems, totalCount] = await prisma.$transaction([
+    const [problemsData, totalCount] = await prisma.$transaction([
       prisma.problem.findMany({
         skip: skip,
         take: PAGE_SIZE,
@@ -24,6 +26,16 @@ export async function GET(request: NextRequest) {
           id: true,
           title: true,
           difficulty: true,
+          _count: {
+            select: {
+              problemSolutions: {
+                where: {
+                  userId: user?.id, 
+                  status: 'Solved',
+                },
+              },
+            },
+          },
         },
         orderBy: {
           id: 'asc', 
@@ -31,6 +43,13 @@ export async function GET(request: NextRequest) {
       }),
       prisma.problem.count(),
     ]);
+
+    const problems = problemsData.map(p => ({
+      id: p.id,
+      title: p.title,
+      difficulty: p.difficulty,
+      solved: p._count.problemSolutions > 0,
+    }));
 
     return NextResponse.json({
       problems,
