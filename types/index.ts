@@ -94,3 +94,29 @@ export type UserData = {
   submissions: Submission[];
   problemSolutions: ProblemSolution[];
 };
+
+export type LeaderboardMember = {
+  id: string;
+  name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+  weeklyXP: number; 
+  league: string;
+};
+
+export type LeaderboardData = {
+  group: {
+    id: string;
+    league: string;
+    members: LeaderboardMember[];
+  } | null;
+  currentUserRank: number;
+};
+
+export type DailyProblem = {
+  id: string;
+  slug: string;
+  title: string;
+  difficulty: string;
+  topic: string[];
+};

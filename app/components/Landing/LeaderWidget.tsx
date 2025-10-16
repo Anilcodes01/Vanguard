@@ -4,16 +4,25 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Trophy, ArrowUp, ArrowDown } from "lucide-react";
+import { LeaderboardData } from "@/types";
 
 type LeaderboardEntry = {
   id: string;
   name: string | null;
   avatar_url: string | null;
-  weeklyXP: number;
+   weeklyXP: number; 
 };
 
 const PROMOTION_ZONE = 10;
 const DEMOTION_ZONE = 5;
+
+interface LeaderboardWidgetProps {
+  leaderboardData: LeaderboardData | null;
+  currentUserId: string | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
 
 const LoadingSkeleton = () => (
   <div className="space-y-2 animate-pulse">
@@ -32,14 +41,16 @@ const LeaderboardRow = ({
   entry,
   rank,
   isCurrentUser,
+  totalMembers,
 }: {
   entry: LeaderboardEntry;
   rank: number;
   isCurrentUser: boolean;
+  totalMembers: number;
 }) => {
   const getZone = () => {
     if (rank <= PROMOTION_ZONE) return "promotion";
-    if (rank > 30 - DEMOTION_ZONE) return "demotion";
+    if (rank > totalMembers - DEMOTION_ZONE) return "demotion";
     return "safe";
   };
 
@@ -60,65 +71,34 @@ const LeaderboardRow = ({
           <ArrowDown size={14} className="text-red-500" />
         )}
       </div>
-      <span className="text-sm font-medium text-neutral-500 w-6">
-        {rank}
-      </span>
+      <span className="text-sm font-medium text-neutral-500 w-6">{rank}</span>
       <Image
         src={
           entry.avatar_url ||
-          `https://ui-avatars.com/api/?name=${
-            entry.name || "A"
-          }&background=262626&color=fff`
+          `https://ui-avatars.com/api/?name=${entry.name || "A"}&background=262626&color=fff`
         }
         alt={entry.name || "User"}
         width={32}
         height={32}
         className="w-8 h-8 rounded-full object-cover"
       />
-      <p className="flex-1 text-sm font-medium truncate">
-        {entry.name || "Anonymous"}
-      </p>
-      <p className="text-sm font-semibold tabular-nums">{entry.weeklyXP}</p>
+      <p className="flex-1 text-sm font-medium truncate">{entry.name || "Anonymous"}</p>
+     <p className="text-sm font-semibold tabular-nums">{entry.weeklyXP}</p>
     </div>
   );
 };
 
-export default function LeaderboardWidget() {
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [league, setLeague] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function LeaderboardWidget({
+  leaderboardData,
+  currentUserId,
+  isLoading,
+  error,
+}: LeaderboardWidgetProps) {
+    
+  const league = leaderboardData?.group?.league;
+  const members = leaderboardData?.group?.members || [];
+  const displayedLeaderboard = members.slice(0, 10);
 
-  useEffect(() => {
-    const fetchLeaderboard = async () => {
-      try {
-        const response = await fetch("/api/leaderboard");
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Failed to fetch leaderboard");
-        }
-
-        if (data.data === null) {
-          setError(data.message);
-        } else {
-          setLeaderboard(data.leaderboard);
-          setLeague(data.league);
-          setCurrentUserId(data.currentUserId);
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unexpected error occurred");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchLeaderboard();
-  }, []);
 
   const renderContent = () => {
     if (isLoading) {
@@ -133,8 +113,15 @@ export default function LeaderboardWidget() {
         </div>
       );
     }
-
-    const displayedLeaderboard = leaderboard.slice(0, 10);
+    
+    if (members.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center text-center py-8">
+                <Trophy className="text-neutral-700 mb-3" size={28} />
+                <p className="text-sm text-neutral-500">Your leaderboard is being prepared. Check back soon!</p>
+            </div>
+        );
+    }
 
     return (
       <div className="space-y-1">
@@ -144,6 +131,7 @@ export default function LeaderboardWidget() {
             entry={entry}
             rank={index + 1}
             isCurrentUser={entry.id === currentUserId}
+            totalMembers={members.length}
           />
         ))}
       </div>
@@ -160,7 +148,7 @@ export default function LeaderboardWidget() {
 
       <div className="flex-grow overflow-y-auto">{renderContent()}</div>
 
-      {!isLoading && !error && (
+      {!isLoading && !error && members.length > 0 && (
         <div className="mt-4 pt-3 border-t border-neutral-800">
           <Link
             href="/leaderboard"

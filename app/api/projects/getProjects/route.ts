@@ -31,7 +31,7 @@ export async function GET() {
       where: {
         domain: userProfile.domain,
       },
-      take: 3,
+      take: 2,
       orderBy: {
         createdAt: 'desc',
       },

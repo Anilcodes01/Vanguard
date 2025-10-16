@@ -83,7 +83,7 @@ const LeaderboardRow = ({
 };
 
 export default function LeaderboardPage() {
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [league, setLeague] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -99,8 +99,9 @@ export default function LeaderboardPage() {
           throw new Error(data.message || "Failed to fetch leaderboard");
         }
 
-        if (data.data === null) {
+        if (data.message) {
           setError(data.message);
+          setLeaderboard([]); 
         } else {
           setLeaderboard(data.leaderboard);
           setLeague(data.league);
@@ -156,14 +157,20 @@ export default function LeaderboardPage() {
         </div>
 
         <div>
-          {leaderboard.map((entry, index) => (
-            <LeaderboardRow
-              key={entry.id}
-              entry={entry}
-              rank={index + 1}
-              isCurrentUser={entry.id === currentUserId}
-            />
-          ))}
+          {leaderboard && leaderboard.length > 0 ? (
+            leaderboard.map((entry, index) => (
+              <LeaderboardRow
+                key={entry.id}
+                entry={entry}
+                rank={index + 1}
+                isCurrentUser={entry.id === currentUserId}
+              />
+            ))
+          ) : (
+            <div className="text-center py-10">
+              <p className="text-neutral-500">Leaderboard is empty.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
