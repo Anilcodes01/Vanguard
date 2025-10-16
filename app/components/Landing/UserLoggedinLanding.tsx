@@ -1,30 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import ProjectCard from "./Projects/ProjectsCard";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "@/app/store/store";
+import { fetchDashboardData } from "@/app/store/features/dashboard/dashboardSlice";
+import { fetchProjects } from "@/app/store/features/projects/projectSlice";
 import FullProjectCardSkeleton from "./Projects/ProjectCardSkeleton";
 import LeaderboardWidget from "./LeaderWidget";
-import { DailyProblem, LeaderboardData, LeaderboardMember } from "@/types";
+import { DailyProblem } from "@/types";
 import Link from "next/link";
 import { Code, Zap } from "lucide-react";
-
-type UserProfile = {
-  name: string | null;
-  username: string | null;
-  domain: string | null;
-};
-
-type Project = {
-  id: string;
-  name: string;
-  domain: string;
-  maxTime: string;
-  coverImage: string | null;
-  description: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
+import ProjectCard from "./Projects/ProjectsCard";
 
 const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
   const difficultyColors: { [key: string]: string } = {
@@ -37,8 +23,14 @@ const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
     <div className="bg-neutral-900 p-6 rounded-lg border border-neutral-800 flex flex-col justify-between h-full">
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-neutral-400">Daily Challenge</h3>
-          <span className={`text-xs font-bold px-2 py-1 rounded-full ${difficultyColors[problem.difficulty] || ''}`}>
+          <h3 className="text-sm font-semibold text-neutral-400">
+            Daily Challenge
+          </h3>
+          <span
+            className={`text-xs font-bold px-2 py-1 rounded-full ${
+              difficultyColors[problem.difficulty] || ""
+            }`}
+          >
             {problem.difficulty}
           </span>
         </div>
@@ -55,94 +47,67 @@ const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
 };
 
 const AllProblemsSolvedCard = () => (
-    <div className="bg-neutral-900 p-6 rounded-lg border border-neutral-800 flex flex-col justify-center items-center text-center h-full">
-        <h3 className="text-lg font-bold text-white mb-2">You&apos;re on Fire! 🔥</h3>
-        <p className="text-neutral-400 mb-4">You&apos;ve solved all the available problems. More are coming soon!</p>
-        <Link href="/problems" className="w-full">
-            <button className="w-full bg-neutral-700 hover:bg-neutral-600 text-white font-bold py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
-                <Code size={16} />
-                Browse Problems
-            </button>
-        </Link>
-    </div>
+  <div className="bg-neutral-900 p-6 rounded-lg border border-neutral-800 flex flex-col justify-center items-center text-center h-full">
+    <h3 className="text-lg font-bold text-white mb-2">
+      You&apos;re on Fire! 🔥
+    </h3>
+    <p className="text-neutral-400 mb-4">
+      You&apos;ve solved all the available problems. More are coming soon!
+    </p>
+    <Link href="/problems" className="w-full">
+      <button className="w-full bg-neutral-700 hover:bg-neutral-600 text-white font-bold py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
+        <Code size={16} />
+        Browse Problems
+      </button>
+    </Link>
+  </div>
 );
 
-
 export default function UserLoggedInLanding() {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [projects, setProjects] = useState<Project[]>([]);
+  const dispatch: AppDispatch = useDispatch();
 
-   const [currentUser, setCurrentUser] = useState<LeaderboardMember | null>(null);
-  const [dailyProblem, setDailyProblem] = useState<DailyProblem | null>(null);
-  const [leaderboardData, setLeaderboardData] = useState<LeaderboardData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { profile } = useSelector((state: RootState) => state.profile);
+  const {
+    dailyProblem,
+    leaderboardData,
+    currentUserId,
+    status: dashboardStatus,
+    error: dashboardError,
+  } = useSelector((state: RootState) => state.dashboard);
+
+  const {
+    projects,
+    status: projectsStatus,
+    error: projectsError,
+  } = useSelector((state: RootState) => state.projects);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/projects/getProjects");
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to fetch data");
-        }
-        const data = await response.json();
-        setUserProfile(data.userProfile);
-        setProjects(data.projects);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (dashboardStatus === "idle") {
+      dispatch(fetchDashboardData());
+    }
+  }, [dashboardStatus, dispatch]);
 
-    fetchData();
-  }, []);
+  useEffect(() => {
+    if (projectsStatus === "idle") {
+      dispatch(fetchProjects());
+    }
+  }, [projectsStatus, dispatch]);
 
-   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/dashboardData");
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to fetch dashboard data");
-        }
-        const data = await response.json();
+  const isLoading =
+    dashboardStatus === "loading" ||
+    dashboardStatus === "idle" ||
+    projectsStatus === "loading" ||
+    projectsStatus === "idle";
+  const combinedError = dashboardError || projectsError;
 
-        setDailyProblem(data.dailyProblem);
-        setLeaderboardData(data.leaderboard);
-        const userInLeaderboard = data.leaderboard?.group?.members.find(
-          (member: LeaderboardMember) => member.id === data.userId 
-        );
-        setCurrentUser(userInLeaderboard || null);
-
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-
-  if (loading) {
+  if (isLoading) {
     return <FullProjectCardSkeleton />;
   }
 
-  if (error) {
+  if (combinedError) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#262626] text-white">
-        <p className="text-red-400">Error: {error}</p>
+        <p className="text-red-400">Error: {combinedError}</p>
       </div>
     );
   }
@@ -152,42 +117,41 @@ export default function UserLoggedInLanding() {
       <div className="w-full max-w-7xl mx-auto">
         <div className="text-start w-full mb-12">
           <h1 className="text-4xl font-bold">
-            Welcome, {userProfile?.name} 👋
+            Welcome, {profile?.name || "Coder"} 👋
           </h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            {projects.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="md:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="md:col-span-2">
                 {dailyProblem ? (
-                    <DailyProblemCard problem={dailyProblem} />
+                  <DailyProblemCard problem={dailyProblem} />
                 ) : (
-                    <AllProblemsSolvedCard />
+                  <AllProblemsSolvedCard />
                 )}
               </div>
 
-
-                {projects.map((project) => (
+              {projects.length > 0 ? (
+                projects.map((project) => (
                   <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-[#3b3b3b] p-8 rounded-lg text-center">
-                <p className="text-gray-300">
-                  No projects found for your domain right now. Check back later!
-                </p>
-              </div>
-            )}
+                ))
+              ) : (
+                <div className="md:col-span-2 bg-[#3b3b3b] p-8 rounded-lg text-center">
+                  <p className="text-gray-300">
+                    No projects found right now. Check back later!
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="lg:col-span-1">
             <LeaderboardWidget
               leaderboardData={leaderboardData}
-              currentUserId={currentUser?.id || null}
-              isLoading={loading}
-              error={error}
+              currentUserId={currentUserId}
+              isLoading={isLoading}
+              error={dashboardError}
             />
           </div>
         </div>

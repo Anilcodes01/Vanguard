@@ -1,19 +1,16 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
-import {
-  CheckCircle,
-  Code2,
-  Target,
-  Activity,
-} from "lucide-react";
+import { useEffect, use } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "@/app/store/store";
+import { fetchProfileByUsername } from "@/app/store/features/viewedProfile/viewedProfileSlice";
+import { CheckCircle, Code2, Target, Activity } from "lucide-react";
 import {
   ProfilePanel,
   ErrorDisplay,
   LoadingSpinner,
   StatCard,
 } from "@/app/components/Profile/ProfilePanel";
-import { UserData } from "@/types";
 
 export default function ProfilePage({
   params,
@@ -21,48 +18,38 @@ export default function ProfilePage({
   params: Promise<{ username: string }>;
 }) {
   const { username } = use(params);
+  const dispatch: AppDispatch = useDispatch();
 
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { profilesCache, status, error } = useSelector(
+    (state: RootState) => state.viewedProfile
+  );
+
+  const profileData = profilesCache[username];
 
   useEffect(() => {
-    if (!username) return;
+    if (!profileData) {
+      dispatch(fetchProfileByUsername(username));
+    }
+  }, [username, profileData, dispatch]);
 
-    const fetchUserData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`/api/profileData/${username}`);
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to fetch data");
-        }
-        const result = await response.json();
-        setUserData(result.data);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unexpected error occurred."
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUserData();
-  }, [username]);
+  const isLoading = status === "loading" || !profileData;
 
   if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorDisplay message={error} />;
-  if (!userData || !userData.profiles || userData.profiles.length === 0) {
+  if (status === "failed") return <ErrorDisplay message={error} />;
+  if (
+    !profileData ||
+    !profileData.profiles ||
+    profileData.profiles.length === 0
+  ) {
     return <ErrorDisplay message="This user profile could not be found." />;
   }
 
-  const profile = userData.profiles[0];
-  const solvedCount = userData.problemSolutions.filter(
+  const profile = profileData.profiles[0];
+  const solvedCount = profileData.problemSolutions.filter(
     (s) => s.status === "Solved"
   ).length;
-  const attemptedCount = userData.problemSolutions.length;
-  const totalSubmissions = userData.submissions.length;
+  const attemptedCount = profileData.problemSolutions.length;
+  const totalSubmissions = profileData.submissions.length;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -113,9 +100,9 @@ export default function ProfilePage({
                   Recent Submissions
                 </h2>
               </div>
-              {userData.submissions.length > 0 ? (
+              {profileData.submissions.length > 0 ? (
                 <div className="divide-y divide-neutral-800">
-                  {userData.submissions.slice(0, 5).map((submission) => (
+                  {profileData.submissions.slice(0, 5).map((submission) => (
                     <div
                       key={submission.id}
                       className="grid grid-cols-3 items-center p-4 gap-4 hover:bg-neutral-900 transition-colors"

@@ -1,17 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/app/utils/supabase/client';
-import { LogOut, User as UserIcon } from 'lucide-react'; 
-
-type UserProfile = {
-  id: string; 
-  name: string | null;
-  avatar_url: string | null;
-  username: string
-};
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/app/utils/supabase/client";
+import { LogOut, User as UserIcon } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/app/store/store";
+import { logout } from "@/app/store/features/auth/authSlice";
+import { clearProfile } from "@/app/store/features/profile/profileSlice";
+import { UserProfile } from "@/app/store/features/profile/profileSlice";
 
 const DropdownMenuItem = ({
   onClick,
@@ -35,10 +33,15 @@ export default function UserAvatar({ user }: { user: UserProfile }) {
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const dispatch: AppDispatch = useDispatch();
+
   const handleSignOut = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.refresh(); 
+    dispatch(logout());
+    dispatch(clearProfile());
+    router.push("/");
+
     setIsOpen(false);
   };
 
@@ -49,11 +52,14 @@ export default function UserAvatar({ user }: { user: UserProfile }) {
     }
   };
 
-  const initial = user.name ? user.name.charAt(0).toUpperCase() : 'V';
+  const initial = user.name ? user.name.charAt(0).toUpperCase() : "V";
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -72,7 +78,7 @@ export default function UserAvatar({ user }: { user: UserProfile }) {
         {user.avatar_url ? (
           <Image
             src={user.avatar_url}
-            alt={user.name || 'User Avatar'}
+            alt={user.name || "User Avatar"}
             width={40}
             height={40}
             className="h-full w-full object-cover transition-transform group-hover:scale-110"
@@ -87,13 +93,17 @@ export default function UserAvatar({ user }: { user: UserProfile }) {
           absolute right-0 mt-2 w-56 origin-top-right rounded-xl bg-neutral-900 
           border border-neutral-800 p-1.5 shadow-lg
           transition-all duration-150 ease-in-out
-          ${isOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}
+          ${
+            isOpen
+              ? "opacity-100 scale-100 visible"
+              : "opacity-0 scale-95 invisible"
+          }
         `}
       >
         <div className="px-3 py-2">
           <p className="text-xs text-neutral-500">Signed in as</p>
           <p className="truncate text-sm font-medium text-neutral-200">
-            {user.name || 'User'}
+            {user.name || "User"}
           </p>
         </div>
 
@@ -105,8 +115,11 @@ export default function UserAvatar({ user }: { user: UserProfile }) {
         </DropdownMenuItem>
 
         <div className="my-1 h-px bg-neutral-800" />
-        
-        <DropdownMenuItem onClick={handleSignOut} className="hover:text-red-400">
+
+        <DropdownMenuItem
+          onClick={handleSignOut}
+          className="hover:text-red-400"
+        >
           <LogOut size={14} className="text-neutral-400" />
           <span>Sign Out</span>
         </DropdownMenuItem>

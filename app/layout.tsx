@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "./providers";
 import Navbar from "./components/ui/Navbar";
 import { UserProvider } from "./context/userContext";
+import StoreProvider from "./components/StoreProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,10 +32,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <UserProvider>
-            <Navbar />
-          {children}
-        </UserProvider>
+           
+        <StoreProvider>
+           <Navbar />
+            {children}
+        </StoreProvider>
         </Providers>
       </body>
     </html>

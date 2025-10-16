@@ -1,17 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useUser } from "@/app/context/userContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store/store";
 import UserAvatar from "../Avatar";
 import Image from "next/image";
 import { Star, Zap } from "lucide-react";
 
 export default function NavbarSignedIn() {
-  const { userProfile, isLoading } = useUser();
-
-  if (!userProfile && !isLoading) {
-    return null;
-  }
+  const { profile, status } = useSelector((state: RootState) => state.profile);
+  const isLoading = status === "loading" || status === "idle";
 
   const links = [
     { key: "explore", name: "Explore", path: "/explore" },
@@ -52,7 +50,7 @@ export default function NavbarSignedIn() {
             <div className="h-10 w-10 bg-gray-700 rounded-full animate-pulse" />
           </>
         ) : (
-          userProfile && (
+          profile && (
             <>
               <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1.5 rounded-full text-sm">
                 <Star
@@ -60,18 +58,14 @@ export default function NavbarSignedIn() {
                   className="text-yellow-400"
                   fill="currentColor"
                 />
-                <span className="font-bold text-white">
-                  {userProfile.stars}
-                </span>
+                <span className="font-bold text-white">{profile.stars}</span>
               </div>
-
               <div className="flex items-center gap-2 bg-sky-500/10 border border-sky-500/20 px-3 py-1.5 rounded-full text-sm">
                 <Zap size={14} className="text-sky-400" />
-                <span className="font-bold text-white">{userProfile.xp}</span>
+                <span className="font-bold text-white">{profile.xp}</span>
                 <span className="text-gray-400">XP</span>
               </div>
-
-              <UserAvatar user={userProfile} />
+              <UserAvatar user={profile} />
             </>
           )
         )}
