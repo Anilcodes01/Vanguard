@@ -3,13 +3,10 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Trophy, ArrowUp, ArrowDown } from "lucide-react";
-
-type LeaderboardEntry = {
-  id: string;
-  name: string | null;
-  avatar_url: string | null;
-  weeklyXP: number;
-};
+import { RootState, AppDispatch } from "@/app/store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
+import { LeaderboardEntry } from "@/app/store/features/leaderboard/leaderboardSlice";
 
 const PROMOTION_ZONE = 10;
 const DEMOTION_ZONE = 5;
@@ -83,42 +80,23 @@ const LeaderboardRow = ({
 };
 
 export default function LeaderboardPage() {
-   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [league, setLeague] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch: AppDispatch = useDispatch();
+
+  const {
+    leaderboard,
+    error,
+    currentUserId,
+    status,
+    league
+  } = useSelector((state: RootState) => state.leaderboard)
+
+  const isLoading = status === 'loading' || status === 'idle'
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
-      try {
-        const response = await fetch("/api/leaderboard");
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Failed to fetch leaderboard");
-        }
-
-        if (data.message) {
-          setError(data.message);
-          setLeaderboard([]); 
-        } else {
-          setLeaderboard(data.leaderboard);
-          setLeague(data.league);
-          setCurrentUserId(data.currentUserId);
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unexpected error occurred");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchLeaderboard();
-  }, []);
+    if(status === 'idle') {
+      dispatch(fetchLeaderboard()) 
+    }
+  }, [status, dispatch])
 
   if (isLoading) {
     return (

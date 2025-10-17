@@ -1,0 +1,80 @@
+import { createAsyncThunk, createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+export interface LeaderboardEntry {
+  id: string;
+  name: string | null;
+  avatar_url: string | null;
+  weeklyXP: number;
+}
+
+interface LeaderboardApiResponse {
+  leaderboard: LeaderboardEntry[];
+  league: string | null;
+  currentUserId: string | null;
+  message?: string;
+}
+
+interface LeaderboardState {
+  leaderboard: LeaderboardEntry[];
+  league: string | null;
+  currentUserId: string | null;
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
+}
+
+const initialState: LeaderboardState = {
+  leaderboard: [],
+  league: null,
+  currentUserId: null,
+  status: "idle",
+  error: null,
+};
+
+
+export const fetchLeaderboard = createAsyncThunk<LeaderboardApiResponse>(
+    'leaderboard/fetchLeaderboard',
+    async (_, { rejectWithValue }) => {
+    const response = await fetch("/api/leaderboard");
+    const data = await response.json();
+
+    if (!response.ok) {
+      return rejectWithValue(data.message || "Failed to fetch leaderboard");
+    }
+
+    return data
+}
+)
+
+const leaderboardSlice = createSlice({
+    name: 'leaderboard',
+    initialState,
+    reducers: {
+        resetLeaderboard : () => initialState
+    },
+    extraReducers: (builder) => {
+        builder.addCase(fetchLeaderboard.pending, (state) => {
+            state.status = 'loading',
+            state.error = null
+        })
+        .addCase(fetchLeaderboard.fulfilled, (state, action: PayloadAction<LeaderboardApiResponse>) => {
+               state.status = 'succeeded'
+               const {leaderboard, league, currentUserId, message} = action.payload;
+
+               state.leaderboard = leaderboard
+               state.league = league
+               state.currentUserId = currentUserId
+
+               if(message) {
+                state.error = message
+               }
+        })
+        .addCase(fetchLeaderboard.rejected, (state, action) => {
+            state.status = 'failed'
+            state.error = (action.payload as string) || 'An error occured'
+        })
+    }
+
+})
+
+export const {resetLeaderboard} = leaderboardSlice.actions
+export default leaderboardSlice.reducer;

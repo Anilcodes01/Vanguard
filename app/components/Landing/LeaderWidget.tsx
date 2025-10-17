@@ -5,19 +5,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { Trophy, ArrowUp, ArrowDown } from "lucide-react";
 import { LeaderboardData } from "@/types";
+import { LeaderboardEntry } from "@/app/store/features/leaderboard/leaderboardSlice";
 
-type LeaderboardEntry = {
-  id: string;
-  name: string | null;
-  avatar_url: string | null;
-   weeklyXP: number; 
-};
+
 
 const PROMOTION_ZONE = 10;
 const DEMOTION_ZONE = 5;
 
 interface LeaderboardWidgetProps {
-  leaderboardData: LeaderboardData | null;
+  leaderboard: LeaderboardEntry[]; 
+  league: string | null;         
   currentUserId: string | null;
   isLoading: boolean;
   error: string | null;
@@ -89,15 +86,13 @@ const LeaderboardRow = ({
 };
 
 export default function LeaderboardWidget({
-  leaderboardData,
+   leaderboard,
+  league,
   currentUserId,
   isLoading,
   error,
 }: LeaderboardWidgetProps) {
-    
-  const league = leaderboardData?.group?.league;
-  const members = leaderboardData?.group?.members || [];
-  const displayedLeaderboard = members.slice(0, 10);
+     const displayedLeaderboard = leaderboard.slice(0, 10);
 
 
   const renderContent = () => {
@@ -114,7 +109,7 @@ export default function LeaderboardWidget({
       );
     }
     
-    if (members.length === 0) {
+    if (leaderboard.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center text-center py-8">
                 <Trophy className="text-neutral-700 mb-3" size={28} />
@@ -131,7 +126,7 @@ export default function LeaderboardWidget({
             entry={entry}
             rank={index + 1}
             isCurrentUser={entry.id === currentUserId}
-            totalMembers={members.length}
+            totalMembers={leaderboard.length}
           />
         ))}
       </div>
@@ -148,7 +143,7 @@ export default function LeaderboardWidget({
 
       <div className="flex-grow overflow-y-auto">{renderContent()}</div>
 
-      {!isLoading && !error && members.length > 0 && (
+      {!isLoading && !error && leaderboard.length > 0 && (
         <div className="mt-4 pt-3 border-t border-neutral-800">
           <Link
             href="/leaderboard"

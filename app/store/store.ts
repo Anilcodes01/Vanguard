@@ -5,6 +5,7 @@ import dashboardReducer from './features/dashboard/dashboardSlice';
 import projectsReducer from './features/projects/projectSlice';
 import viewedProfileReducer from './features/viewedProfile/viewedProfileSlice'; 
 import problemsListReducer from './features/problems/problemsSlice'
+import leaderboardReducer from './features/leaderboard/leaderboardSlice'
 
 export const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     projects: projectsReducer,
     viewedProfile: viewedProfileReducer,
-    problemsList: problemsListReducer
+    problemsList: problemsListReducer,
+    leaderboard: leaderboardReducer
   },
 });
 

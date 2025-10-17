@@ -1,7 +1,6 @@
 import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { getWeekStartDateUTC } from "@/lib/dateUtils";
 
 export async function GET() {
   try {
@@ -39,94 +38,18 @@ export async function GET() {
       });
     }
 
-    const weekStartDate = getWeekStartDateUTC();
-    let leaderboardData;
-
-    const userProfileWithGroup = await prisma.profiles.findUnique({
-      where: { id: user.id },
-      select: {
-        currentGroup: {
-          select: {
-            id: true,
-            league: true,
-            weekStartDate: true,
-            members: {
-              select: {
-                id: true,
-                name: true,
-                avatar_url: true,
-              },
-              take: 10,
-            },
-          },
-        },
-      },
-    });
-
-    const currentGroup = userProfileWithGroup?.currentGroup;
-
-    if (
-      !currentGroup ||
-      currentGroup.weekStartDate.getTime() !== weekStartDate.getTime()
-    ) {
-      leaderboardData = {
-        group: null,
-        currentUserRank: -1,
-      };
-    } else {
-      const memberIds = currentGroup.members.map((member) => member.id);
-
-      const weeklyScores = await prisma.problemSolution.groupBy({
-        by: ["userId"],
-        where: {
-          userId: { in: memberIds },
-          status: "Solved",
-          firstSolvedAt: { gte: weekStartDate },
-        },
-        _sum: { xpEarned: true },
-      });
-
-      const scoreMap = new Map<string, number>();
-      weeklyScores.forEach((score) => {
-        scoreMap.set(score.userId, score._sum.xpEarned || 0);
-      });
-
-      const membersWithWeeklyXP = currentGroup.members.map((member) => ({
-        ...member,
-        weeklyXP: scoreMap.get(member.id) || 0,
-      }));
-
-      const sortedLeaderboard = membersWithWeeklyXP.sort(
-        (a, b) => b.weeklyXP - a.weeklyXP
-      );
-      const userIndex = sortedLeaderboard.findIndex(
-        (member) => member.id === user.id
-      );
-      const currentUserRank = userIndex !== -1 ? userIndex + 1 : -1;
-
-      leaderboardData = {
-        group: {
-          ...currentGroup,
-          members: sortedLeaderboard,
-        },
-        currentUserRank: currentUserRank,
-      };
-    }
-
     return NextResponse.json({
-      userId: user.id,
       dailyProblem,
-      leaderboard: leaderboardData,
     });
   } catch (error: unknown) {
     let errorMessage = "An unknown error occurred";
     if (error instanceof Error) {
       errorMessage = error.message;
     }
-    console.error("Error fetching leaderboard data:", error);
+    console.error("Error fetching dashboard data:", error);
     return NextResponse.json(
       {
-        message: "Error while fetching leaderboard data",
+        message: "Error while fetching dashboard data",
         error: errorMessage,
       },
       { status: 500 }

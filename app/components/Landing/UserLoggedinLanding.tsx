@@ -11,6 +11,7 @@ import { DailyProblem } from "@/types";
 import Link from "next/link";
 import { Code, Zap } from "lucide-react";
 import ProjectCard from "./Projects/ProjectsCard";
+import { fetchLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
 
 const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
   const difficultyColors: { [key: string]: string } = {
@@ -70,7 +71,6 @@ export default function UserLoggedInLanding() {
   const {
     dailyProblem,
     leaderboardData,
-    currentUserId,
     status: dashboardStatus,
     error: dashboardError,
   } = useSelector((state: RootState) => state.dashboard);
@@ -81,11 +81,23 @@ export default function UserLoggedInLanding() {
     error: projectsError,
   } = useSelector((state: RootState) => state.projects);
 
+  const {
+    leaderboard,
+    league,
+    currentUserId,
+    status: leaderboardStatus,
+    error: leaderboardError,
+  } = useSelector((state: RootState) => state.leaderboard);
+
+
+
   useEffect(() => {
     if (dashboardStatus === "idle") {
       dispatch(fetchDashboardData());
     }
   }, [dashboardStatus, dispatch]);
+
+  
 
   useEffect(() => {
     if (projectsStatus === "idle") {
@@ -93,14 +105,21 @@ export default function UserLoggedInLanding() {
     }
   }, [projectsStatus, dispatch]);
 
-  const isLoading =
+    useEffect(() => {
+    if (leaderboardStatus === "idle") {
+      dispatch(fetchLeaderboard());
+    }
+  }, [leaderboardStatus, dispatch]);
+
+    const isPageLoading = 
     dashboardStatus === "loading" ||
     dashboardStatus === "idle" ||
     projectsStatus === "loading" ||
     projectsStatus === "idle";
-  const combinedError = dashboardError || projectsError;
 
-  if (isLoading) {
+  const combinedError = dashboardError || projectsError || leaderboardError;
+
+  if (isPageLoading) {
     return <FullProjectCardSkeleton />;
   }
 
@@ -147,11 +166,12 @@ export default function UserLoggedInLanding() {
           </div>
 
           <div className="lg:col-span-1">
-            <LeaderboardWidget
-              leaderboardData={leaderboardData}
-              currentUserId={currentUserId}
-              isLoading={isLoading}
-              error={dashboardError}
+             <LeaderboardWidget
+              leaderboard={leaderboard} 
+              league={league}
+            currentUserId={currentUserId}
+              isLoading={leaderboardStatus === 'loading' || leaderboardStatus === 'idle'}
+              error={leaderboardError}
             />
           </div>
         </div>
