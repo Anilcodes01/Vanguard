@@ -2,82 +2,37 @@
 
 import { CheckCircle2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import {  useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/store/store';
+import { fetchProblemsPage, resetProblemsList } from '@/app/store/features/problems/problemsSlice';
 
-type Problem = {
-  id: string;
-  title: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  solved?: boolean;
-};
-
-
-interface ApiResponse {
-  problems: Problem[];
-  totalCount: number;
-}
 
 export default function Problems() {
-  const [problems, setProblems] = useState<Problem[]>([]);
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch: AppDispatch = useDispatch();
+
+  const {
+    problems,
+    status, 
+    error,
+    hasMore,
+    nextPage
+  } = useSelector((state: RootState) => state.problemsList)
+
+  const isLoading = status === 'loading'
 
   useEffect(() => {
-    let isMounted = true; 
+  dispatch(fetchProblemsPage(1));
 
-    const fetchProblems = async () => {
-      setIsLoading(true); 
-      setError(null);
-
-      try {
-        const response = await fetch(`/api/problems/list?page=${page}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch problems');
-        }
-
-        const data: ApiResponse = await response.json();
-        const { problems: newProblems, totalCount } = data;
-
-        if (isMounted) {
-          setProblems(prev => {
-            const existingIds = new Set(prev.map(p => p.id));
-            const uniqueNewProblems = newProblems.filter(p => !existingIds.has(p.id));
-            return [...prev, ...uniqueNewProblems];
-          });
-          
-          const totalFetched = (problems.length + newProblems.length);
-          if (totalFetched >= totalCount) {
-            setHasMore(false);
-          }
-        }
-
-      } catch (err) {
-        if (isMounted) {
-          if (err instanceof Error) {
-            setError(err.message);
-          } else {
-            setError('An unknown error occurred.');
-          }
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchProblems();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [page, problems.length]); 
+  return () => {
+    dispatch(resetProblemsList());
+  };
+}, [dispatch]);
 
   const loadMoreProblems = () => {
-    setPage(prevPage => prevPage + 1);
-  };
+    if(!isLoading && hasMore) {
+      dispatch(fetchProblemsPage(nextPage))
+    }
+  }
 
   const getDifficultyStyles = (difficulty: string) => {
     switch(difficulty) {
@@ -105,7 +60,7 @@ export default function Problems() {
           </p>
         </div>
 
-        {error && page === 1 ? (
+        {error && nextPage === 1 ? (
           <div className="flex items-center justify-center p-8 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl backdrop-blur-sm">
             <div className="text-center">
               <div className="text-5xl mb-4">⚠️</div>
@@ -150,7 +105,7 @@ export default function Problems() {
               ))}
             </div>
 
-            {isLoading && page === 1 && (
+            {isLoading && nextPage === 1 && (
               <div className="flex justify-center items-center py-16">
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-12 h-12 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin"></div>
@@ -183,7 +138,7 @@ export default function Problems() {
               </div>
             )}
 
-            {error && page > 1 && (
+            {error && nextPage > 1 && (
               <div className="mt-8 text-center">
                 <div className="inline-flex items-center gap-2 px-6 py-3 bg-rose-500/10 border border-rose-500/20 rounded-full text-rose-400 text-sm">
                   <span>⚠️</span>
