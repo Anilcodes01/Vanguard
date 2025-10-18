@@ -34,6 +34,7 @@ export async function GET() {
           title: true,
           difficulty: true,
           topic: true,
+          maxTime: true, 
         },
       });
     }

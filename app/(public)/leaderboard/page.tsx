@@ -7,8 +7,10 @@ import { RootState, AppDispatch } from "@/app/store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
 import { LeaderboardEntry } from "@/app/store/features/leaderboard/leaderboardSlice";
+import { LeagueStatusBar } from "@/app/components/Landing/LeagueStatusBar";
 
-const PROMOTION_ZONE = 10;
+
+const PROMOTION_ZONE = 3;
 const DEMOTION_ZONE = 5;
 
 const LoadingSkeleton = () => (
@@ -133,7 +135,13 @@ export default function LeaderboardPage() {
             Resets every Sunday
           </p>
         </div>
-
+{!isLoading && !error && league && currentUserId && leaderboard.length > 0 && (
+          <LeagueStatusBar 
+            league={league}
+            currentUserId={currentUserId}
+            leaderboard={leaderboard}
+          />
+        )}
         <div>
           {leaderboard && leaderboard.length > 0 ? (
             leaderboard.map((entry, index) => (

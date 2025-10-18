@@ -115,8 +115,9 @@ export type LeaderboardData = {
 
 export type DailyProblem = {
   id: string;
-  slug: string;
-  title: string;
-  difficulty: string;
-  topic: string[];
+   slug: string;
+    title: string;
+    difficulty: "Beginner" | "Intermediate" | "Advanced";
+    maxTime: number;
+    topic: string[];
 };

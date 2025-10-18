@@ -1,4 +1,7 @@
+
+
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { problemSolved } from '@/app/store/actions';
 
 export interface UserProfile {
   id: string;
@@ -38,6 +41,16 @@ const profileSlice = createSlice({
     clearProfile: (state) => {
         state.profile = null;
         state.status = 'idle';
+    },
+    addXp: (state, action: PayloadAction<number>) => {
+      if (state.profile) {
+        state.profile.xp += action.payload;
+      }
+    },
+    addStars: (state, action: PayloadAction<number>) => {
+      if (state.profile) {
+        state.profile.stars += action.payload;
+      }
     }
   },
   extraReducers: (builder) => {
@@ -52,9 +65,15 @@ const profileSlice = createSlice({
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to fetch profile';
+      })
+       .addCase(problemSolved, (state, action) => {
+        if (state.profile) {
+          state.profile.xp += action.payload.xpEarned;
+          state.profile.stars += action.payload.starsEarned;
+        }
       });
   },
 });
 
-export const { clearProfile } = profileSlice.actions;
+export const { clearProfile, addXp, addStars } = profileSlice.actions;
 export default profileSlice.reducer;

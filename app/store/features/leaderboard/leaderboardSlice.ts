@@ -1,4 +1,5 @@
 import { createAsyncThunk, createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { problemSolved } from "@/app/store/actions";
 
 export interface LeaderboardEntry {
   id: string;
@@ -56,22 +57,21 @@ const leaderboardSlice = createSlice({
             state.status = 'loading',
             state.error = null
         })
-        .addCase(fetchLeaderboard.fulfilled, (state, action: PayloadAction<LeaderboardApiResponse>) => {
-               state.status = 'succeeded'
+         .addCase(fetchLeaderboard.fulfilled, (state, action: PayloadAction<LeaderboardApiResponse>) => {
+               state.status = 'succeeded';
                const {leaderboard, league, currentUserId, message} = action.payload;
 
-               state.leaderboard = leaderboard
-               state.league = league
-               state.currentUserId = currentUserId
-
-               if(message) {
-                state.error = message
-               }
+               state.leaderboard = leaderboard;
+               state.league = league;
+               state.currentUserId = currentUserId;
         })
         .addCase(fetchLeaderboard.rejected, (state, action) => {
-            state.status = 'failed'
-            state.error = (action.payload as string) || 'An error occured'
+            state.status = 'failed';
+            state.error = (action.payload as string) || 'An error occurred fetching leaderboard data.';
         })
+         .addCase(problemSolved, (state) => {
+            state.status = 'idle';
+          });
     }
 
 })

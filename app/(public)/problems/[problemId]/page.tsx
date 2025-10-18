@@ -3,17 +3,21 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux"; 
+import { AppDispatch } from "@/app/store/store";
+import { addXp, addStars } from "@/app/store/features/profile/profileSlice"; 
 import ProblemDetailsPanel from "@/app/components/Problems/ProblemsDetailsPanle";
 import CodeEditorPanel from "@/app/components/Problems/CodeEditorPanle";
-import { useUser } from "@/app/context/userContext";
+import { problemSolved } from "@/app/store/actions"; 
 import { SuccessModal } from "@/app/components/Problems/CodeEditor/SuccessModal";
 import { ProblemDetails, SubmissionResult, RewardData } from "@/types";
+
 
 
 export default function ProblemPage() {
   const params = useParams();
   const problemId = params.problemId as string;
-  const { addXp, addStars } = useUser(); 
+  const dispatch: AppDispatch = useDispatch();
 
   const [problem, setProblem] = useState<ProblemDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -75,12 +79,12 @@ export default function ProblemPage() {
           xpEarned: response.data.xpEarned,
           starsEarned: response.data.starsEarned,
         });
-        if (response.data.xpEarned > 0) {
-          addXp(response.data.xpEarned);
-        }
-        if (response.data.starsEarned > 0) {
-          addStars(response.data.starsEarned);
-        }
+       
+
+         dispatch(problemSolved({
+            xpEarned: response.data.xpEarned,
+            starsEarned: response.data.starsEarned,
+        }));
       }
 
     } catch (err) {
@@ -105,9 +109,9 @@ export default function ProblemPage() {
   }
 
   return (
-     <div className="flex h-screen p- gap-2 text-black overflow-hidden bg-[#262626]">
+    <div className="flex h-screen p- gap-2 text-black overflow-hidden bg-[#262626]">
       <ProblemDetailsPanel problem={problem} />
-        <CodeEditorPanel
+      <CodeEditorPanel
         problemId={problem.id} 
         maxTimeInMinutes={problem.maxTime}
         code={code} 

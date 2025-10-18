@@ -8,17 +8,11 @@ import {
 import axios from "axios";
 import { createClient } from "@/app/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { getWeekStartDateUTC } from '@/lib/dateUtils';
 
 const LEADERBOARD_GROUP_SIZE = 30;
 
-function getWeekStartDate() {
-  const now = new Date();
-  const dayOfWeek = now.getDay();
-  const date = new Date(now);
-  date.setDate(now.getDate() - dayOfWeek);
-  date.setHours(0, 0, 0, 0);
-  return date;
-}
+
 
 async function assignUserToLeaderboardGroup(
   userId: string,
@@ -31,7 +25,7 @@ async function assignUserToLeaderboardGroup(
 
   if (!userProfile) return;
 
-  const weekStartDate = getWeekStartDate();
+    const weekStartDate = getWeekStartDateUTC();
 
   if (
     userProfile.currentGroup &&

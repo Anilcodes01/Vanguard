@@ -6,10 +6,11 @@ import Link from "next/link";
 import { Trophy, ArrowUp, ArrowDown } from "lucide-react";
 import { LeaderboardData } from "@/types";
 import { LeaderboardEntry } from "@/app/store/features/leaderboard/leaderboardSlice";
+import { LeagueStatusBar } from "./LeagueStatusBar";
 
 
 
-const PROMOTION_ZONE = 10;
+const PROMOTION_ZONE = 3;
 const DEMOTION_ZONE = 5;
 
 interface LeaderboardWidgetProps {
@@ -140,6 +141,14 @@ export default function LeaderboardWidget({
           {league ? `${league} League` : "Leaderboard"}
         </h2>
       </div>
+
+      {!isLoading && !error && league && currentUserId && leaderboard.length > 0 && (
+        <LeagueStatusBar 
+          league={league}
+          currentUserId={currentUserId}
+          leaderboard={leaderboard}
+        />
+      )}
 
       <div className="flex-grow overflow-y-auto">{renderContent()}</div>
 
