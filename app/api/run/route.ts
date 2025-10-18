@@ -8,7 +8,7 @@ type Judge0Submission = {
   compile_output: string | null;
   message: string | null;
   time: string;
-  memory: number; 
+  memory: number;
   status: {
     id: number;
     description: string;
@@ -17,10 +17,10 @@ type Judge0Submission = {
 
 export async function POST(request: NextRequest) {
   try {
-    const { problemId, code, input, expectedOutput } = await request.json();
-    
-    if (!problemId || code === undefined || input === undefined) {
-      return NextResponse.json({ message: "Problem ID, code, and input are required." }, { status: 400 });
+    const { problemId, code, input, expectedOutput, languageId } = await request.json();
+
+    if (!problemId || code === undefined || input === undefined || !languageId) {
+      return NextResponse.json({ message: "Problem ID, code, input, and languageId are required." }, { status: 400 });
     }
 
     const problem = await prisma.problem.findUnique({
@@ -30,33 +30,46 @@ export async function POST(request: NextRequest) {
     if (!problem) {
       return NextResponse.json({ message: "Problem not found." }, { status: 404 });
     }
-    
+
+    const languageDetail = await prisma.problemLanguageDetails.findUnique({
+      where: {
+        problemId_languageId: {
+          problemId: problemId,
+          languageId: languageId,
+        },
+      },
+    });
+
+    if (!languageDetail) {
+      return NextResponse.json({ message: "Selected language is not supported for this problem." }, { status: 400 });
+    }
+
     let source_code = code;
     let stdin: string | undefined = undefined;
 
-    if (problem.testStrategy === 'DRIVER_CODE') {
-      if (!problem.driverCodeTemplate) {
-        throw new Error(`Problem ${problemId} is misconfigured: missing driver code template.`);
+    if (problem.testStrategy === "DRIVER_CODE") {
+      if (!languageDetail.driverCodeTemplate) {
+        throw new Error(`Problem ${problemId} is misconfigured for language ${languageDetail.language}: missing driver code template.`);
       }
-      source_code = problem.driverCodeTemplate
-        .replace('{{USER_CODE}}', code)
-        .replace('{{TEST_INPUT}}', input || '');
+      source_code = languageDetail.driverCodeTemplate
+        .replace("{{USER_CODE}}", code)
+        .replace("{{TEST_INPUT}}", input || "");
     } else {
       source_code = code;
       stdin = input || undefined;
     }
 
     const options = {
-      method: 'POST',
+      method: "POST",
       url: `${process.env.JUDGE0_API_URL}/submissions`,
-      params: { base64_encoded: 'false', wait: 'true', fields: '*' },
+      params: { base64_encoded: "false", wait: "true", fields: "*" },
       headers: {
-        'content-type': 'application/json',
-        'X-RapidAPI-Key': process.env.JUDGE0_API_KEY,
-        'X-RapidAPI-Host': process.env.JUDGE0_API_HOST,
+        "content-type": "application/json",
+        "X-RapidAPI-Key": process.env.JUDGE0_API_KEY,
+        "X-RapidAPI-Host": process.env.JUDGE0_API_HOST,
       },
       data: {
-        language_id: problem.languageId,
+        language_id: languageId,
         source_code,
         stdin,
         expected_output: expectedOutput,
@@ -69,20 +82,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       status: result.status.description,
       message: result.message,
+      userOutput: result.stdout,
       details: result.stderr || result.compile_output,
       input: input,
-      userOutput: result.stdout,
       expectedOutput: expectedOutput,
+      executionTime: parseFloat(result.time) || 0,
+      executionMemory: result.memory || 0,
     });
-
   } catch (error) {
-    console.error("Run failed:", error);
     let errorMessage = "An unknown error occurred during execution.";
     if (axios.isAxiosError(error) && error.response) {
-       errorMessage = error.response.data?.message || "Error connecting to execution engine.";
+      errorMessage = error.response.data?.message || "Error connecting to execution engine.";
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
-    return NextResponse.json({ message: errorMessage, status: 'Error' }, { status: 500 });
+    return NextResponse.json({ message: errorMessage, status: "Error" }, { status: 500 });
   }
 }

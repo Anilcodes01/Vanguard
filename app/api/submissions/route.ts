@@ -102,11 +102,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { problemId, code, startTime } = await request.json();
+      const { problemId, code, startTime, languageId } = await request.json();
 
-    if (!problemId || !code || !startTime) {
+    if (!problemId || !code || !startTime || !languageId) {
       return NextResponse.json(
-        { message: "Problem ID, code, and startTime are required." },
+        { message: "Problem ID, code, startTime, and languageId are required." },
         { status: 400 }
       );
     }
@@ -123,6 +123,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const languageDetail = await prisma.problemLanguageDetails.findUnique({
+      where: {
+        problemId_languageId: {
+          problemId: problemId,
+          languageId: languageId
+        }
+      }
+    });
+
+    if (!languageDetail) {
+      return NextResponse.json(
+        { message: "The selected language is not supported for this problem." },
+        { status: 400 }
+      );
+    }
+
+
     let finalResult: Judge0Submission | null = null;
     let allTestsPassed = true;
     let firstFailedTestCase = null;
@@ -132,11 +149,10 @@ export async function POST(request: NextRequest) {
       let stdin: string | undefined = undefined;
 
       if (problem.testStrategy === "DRIVER_CODE") {
-        if (!problem.driverCodeTemplate)
-          throw new Error(
-            `Problem ${problemId} is misconfigured: missing driver code template.`
-          );
-        source_code = problem.driverCodeTemplate
+        if (!languageDetail.driverCodeTemplate) {
+          throw new Error(`Problem ${problemId} is misconfigured for language ${languageDetail.language}: missing driver code template.`);
+        }
+        source_code = languageDetail.driverCodeTemplate
           .replace("{{USER_CODE}}", code)
           .replace("{{TEST_INPUT}}", testCase.input || "");
       } else {
@@ -154,7 +170,7 @@ export async function POST(request: NextRequest) {
           "X-RapidAPI-Host": process.env.JUDGE0_API_HOST,
         },
         data: {
-          language_id: problem.languageId,
+           language_id: languageId,
           source_code,
           stdin,
           expected_output: testCase.expected,
@@ -220,10 +236,10 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           problemId: problem.id,
           code: code,
-          languageId: problem.languageId,
-          status: mapJudge0StatusToEnum(finalResult.status.description),
-          executionTime: parseFloat(finalResult.time) || null,
-          executionMemory: finalResult.memory || null,
+            languageId: languageId,
+          status: mapJudge0StatusToEnum(finalResult!.status.description),
+          executionTime: parseFloat(finalResult!.time) || null,
+          executionMemory: finalResult!.memory || null,
         },
       });
 

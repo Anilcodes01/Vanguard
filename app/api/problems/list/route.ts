@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
           difficulty: true,
           _count: {
             select: {
-              problemSolutions: {
+              solutions: {
                 where: {
                   userId: user?.id, 
                   status: 'Solved',
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       id: p.id,
       title: p.title,
       difficulty: p.difficulty,
-      solved: p._count.problemSolutions > 0,
+      solved: p._count.solutions > 0,
     }));
 
     return NextResponse.json({

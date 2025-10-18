@@ -1,17 +1,7 @@
-import { Clock, PlayIcon, ShieldCheck } from "lucide-react";
-import { VscCode } from "react-icons/vsc";
+import { Clock, PlayIcon, ShieldCheck, ChevronDown } from "lucide-react";
+import { ProblemLanguageDetail } from "@/types";
 
-
-export const EditorHeader = ({
-  onStart,
-  onRun,
-  onSubmit,
-  isStarted,
-  isRunning,
-  isSubmitting,
-   displayTime,   
-  timerColor, 
-}: {
+interface EditorHeaderProps {
   onStart: () => void;
   onRun: () => void;
   onSubmit: () => void;
@@ -20,17 +10,47 @@ export const EditorHeader = ({
   isSubmitting: boolean;
   displayTime: string;
   timerColor: string;
-}) => (
+  availableLanguages: ProblemLanguageDetail[];
+  selectedLanguage: ProblemLanguageDetail;
+  onLanguageChange: (language: ProblemLanguageDetail) => void;
+}
+
+export const EditorHeader = ({
+  onStart,
+  onRun,
+  onSubmit,
+  isStarted,
+  isRunning,
+  isSubmitting,
+  displayTime,
+  timerColor,
+  availableLanguages,
+  selectedLanguage,
+  onLanguageChange,
+}: EditorHeaderProps) => (
   <div className="flex items-center justify-between px-4 py-2 bg-zinc-800 border-b border-zinc-700">
-    <div className="flex items-center gap-4">
-      <div className="flex gap-2 items-center text-white">
-        <VscCode className="text-gray-400" />
-        <span className="font-bold rounded-lg bg-gray-700 px-4 ">Code</span>
-      </div>
-      <span className="text-sm font-medium text-gray-200">JavaScript</span>
+    <div className="relative">
+      <select
+        value={selectedLanguage.languageId}
+        onChange={(e) => {
+          const newLang = availableLanguages.find(lang => lang.languageId === Number(e.target.value));
+          if (newLang) {
+            onLanguageChange(newLang);
+          }
+        }}
+        disabled={isStarted}
+        className="bg-zinc-700 text-white text-sm rounded-md pl-3 pr-8 py-1 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed transition-opacity"
+      >
+        {availableLanguages.map(lang => (
+          <option key={lang.languageId} value={lang.languageId}>
+            {lang.language}
+          </option>
+        ))}
+      </select>
+      <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
     </div>
 
-     {isStarted && (
+    {isStarted && (
       <div className={`flex items-center gap-2 font-mono font-bold text-lg ${timerColor}`}>
         <Clock size={18} />
         <span>{displayTime}</span>

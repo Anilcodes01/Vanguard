@@ -1,22 +1,28 @@
 import { prisma } from "@/lib/prisma";
-import { createClient } from "@/app/utils/supabase/server"; 
+import { createClient } from "@/app/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: NextRequest, 
-  { params }: { params: Promise<{ problemId: string }> } 
+  request: NextRequest,
+  { params }: { params: Promise<{ problemId: string }> }
 ) {
   try {
-    const { problemId } =await params; 
-
-    const supabase =await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const {problemId} =await params;
 
     const problem = await prisma.problem.findUnique({
       where: { id: problemId },
       include: {
         examples: true,
-        testCases: true,
+        testCases: true, 
+        problemLanguageDetails: {
+          orderBy: {
+            languageId: 'desc', 
+          }
+        }, 
       },
     });
 
@@ -26,37 +32,21 @@ export async function GET(
 
     let solutionStatus = null;
     if (user) {
-      const solution = await prisma.problemSolution.findUnique({
-        where: {
-          userId_problemId: {
-            userId: user.id,
-            problemId: problemId,
-          },
-        },
-        select: {
-          status: true,
-        },
-      });
-      if (solution) {
-        solutionStatus = solution.status;
-      }
+        const solution = await prisma.problemSolution.findUnique({
+            where: { userId_problemId: { userId: user.id, problemId } },
+            select: { status: true },
+        });
+        if (solution) {
+            solutionStatus = solution.status;
+        }
     }
-
-    const responseData = {
-      ...problem,
-      solutionStatus, 
-    };
     
-    return NextResponse.json(responseData);
+    return NextResponse.json({ ...problem, solutionStatus });
 
   } catch (error) {
     console.error("Failed to fetch problem:", error);
-    let errorMessage = "An unknown error occurred";
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    }
     return NextResponse.json(
-      { message: "An error occurred while fetching the problem", error: errorMessage },
+      { message: "An internal error occurred." },
       { status: 500 }
     );
   }

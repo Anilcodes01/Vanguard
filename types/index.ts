@@ -31,6 +31,15 @@ export interface CodeEditorPanelProps {
 }
 
 
+export interface ProblemLanguageDetail {
+  id: string;
+  problemId: string;
+  language: string;       
+  languageId: number;   
+  starterCode: string;
+  driverCodeTemplate?: string | null;
+}
+
 
 export type Example = {
   id: number;
@@ -52,6 +61,7 @@ export type ProblemDetails = {
   testCases: TestCase[];
   topic: string[];
   solutionStatus?: 'Solved' | 'Attempted' | null;
+   problemLanguageDetails: ProblemLanguageDetail[];
 };
 
 

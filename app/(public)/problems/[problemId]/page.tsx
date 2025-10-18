@@ -3,15 +3,13 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux"; 
+import {  useDispatch } from "react-redux"; 
 import { AppDispatch } from "@/app/store/store";
-import { addXp, addStars } from "@/app/store/features/profile/profileSlice"; 
 import ProblemDetailsPanel from "@/app/components/Problems/ProblemsDetailsPanle";
 import CodeEditorPanel from "@/app/components/Problems/CodeEditorPanle";
 import { problemSolved } from "@/app/store/actions"; 
 import { SuccessModal } from "@/app/components/Problems/CodeEditor/SuccessModal";
-import { ProblemDetails, SubmissionResult, RewardData } from "@/types";
-
+import { ProblemDetails, SubmissionResult, RewardData, ProblemLanguageDetail } from "@/types";
 
 
 export default function ProblemPage() {
@@ -22,8 +20,9 @@ export default function ProblemPage() {
   const [problem, setProblem] = useState<ProblemDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+ const [selectedLanguage, setSelectedLanguage] = useState<ProblemLanguageDetail | null>(null);
   const [code, setCode] = useState<string>("");
+  
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -41,7 +40,12 @@ export default function ProblemPage() {
       try {
         const response = await axios.get<ProblemDetails>(`/api/problems/${problemId}`);
         setProblem(response.data);
-        setCode(response.data.starterCode); 
+
+           if (response.data.problemLanguageDetails && response.data.problemLanguageDetails.length > 0) {
+          const initialLanguage = response.data.problemLanguageDetails[0];
+          setSelectedLanguage(initialLanguage);
+          setCode(initialLanguage.starterCode);
+        }
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data?.message || "Failed to fetch problem data.");
@@ -56,20 +60,32 @@ export default function ProblemPage() {
     fetchProblem();
   }, [problemId]);
 
+   useEffect(() => {
+    if (selectedLanguage) {
+      setCode(selectedLanguage.starterCode);
+    }
+  }, [selectedLanguage]);
+
   const handleSubmit = async (startTime: number | null) => {
     if (!startTime) {
         alert("Please click 'Start' before submitting.");
         return;
     }
 
+     if (!selectedLanguage) {
+      alert("Please select a language before submitting.");
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmissionResult(null);
 
     try {
-      const response = await axios.post("/api/submissions", {
+       const response = await axios.post("/api/submissions", {
         problemId,
         code,
-        startTime, 
+        startTime,
+        languageId: selectedLanguage.languageId,
       });
 
       setSubmissionResult(response.data);
@@ -104,14 +120,14 @@ export default function ProblemPage() {
   if (error) {
     return <div className="flex justify-center items-center bg-[#262626] h-screen text-red-500">Error: {error}</div>;
   }
-  if (!problem) {
-    return <div className="flex justify-center items-center bg-[#262626] h-screen">Problem not found.</div>;
+  if (!problem || !selectedLanguage) { 
+    return <div className="flex justify-center items-center bg-[#262626] h-screen">Problem not found or configured correctly.</div>;
   }
 
   return (
     <div className="flex h-screen p- gap-2 text-black overflow-hidden bg-[#262626]">
       <ProblemDetailsPanel problem={problem} />
-      <CodeEditorPanel
+        <CodeEditorPanel
         problemId={problem.id} 
         maxTimeInMinutes={problem.maxTime}
         code={code} 
@@ -119,7 +135,10 @@ export default function ProblemPage() {
         handleSubmit={handleSubmit}
         isSubmitting={isSubmitting}
         submissionResult={submissionResult}
-        testCases={problem.testCases}
+        testCases={problem.testCases || []}
+        availableLanguages={problem.problemLanguageDetails}
+        selectedLanguage={selectedLanguage}
+        onLanguageChange={setSelectedLanguage}
       />
        {rewardData && (
         <SuccessModal

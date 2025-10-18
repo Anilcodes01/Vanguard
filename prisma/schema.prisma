@@ -437,27 +437,39 @@ enum Difficulty {
 }
 
 model Problem {
-  id           String     @id @default(uuid()) @db.Uuid
-  slug         String     @unique
-  title        String
-  description  String     @db.Text
-  difficulty   Difficulty
-  topic        String[]   @default([])
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title     String
+  description String
+  difficulty Difficulty
+  minTime   Int      @map("min_time")
+  maxTime   Int      @map("max_time")
+  slug      String?  @unique
+  testStrategy TestStrategy @map("test_strategy")
+  topic     String[]
+  problemLanguageDetails ProblemLanguageDetails[]
 
-  minTime      Int        @map("min_time")
-  maxTime      Int        @map("max_time")
-  starterCode  String     @db.Text @map("starter_code")
-  
-  languageId        Int          @default(93) @map("language_id")
-  testStrategy      TestStrategy @map("test_strategy")
-  driverCodeTemplate String?     @db.Text @map("driver_code_template") 
-
-  submissions     Submission[]
-  problemSolutions ProblemSolution[]
-  examples     Example[]
-  testCases    TestCase[] 
+  examples   Example[]
+  testCases  TestCase[] 
+  submissions Submission[]
+  solutions  ProblemSolution[]
 
   @@map("problems")
+  @@schema("public")
+}
+
+model ProblemLanguageDetails {
+  id                 String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  problemId          String  @db.Uuid @map("problem_id")
+
+  language           String
+  languageId         Int     @map("language_id")
+  starterCode        String  @map("starter_code")
+  driverCodeTemplate String? @map("driver_code_template")
+
+  problem            Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([problemId, languageId])
+  @@map("problem_language_details")
   @@schema("public")
 }
 

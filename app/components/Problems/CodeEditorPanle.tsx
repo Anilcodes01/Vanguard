@@ -1,15 +1,27 @@
-import React, { useEffect, useState } from "react";
-import Editor, { OnMount } from "@monaco-editor/react";
-import { VscCode } from "react-icons/vsc";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import Editor from "@monaco-editor/react";
 import { BsCheck2Circle } from "react-icons/bs";
-import { ChevronUp, Maximize, PlayIcon, Plus, ShieldCheck, Clock, Star, X, Zap, Trophy } from "lucide-react";
+import { ChevronUp, Maximize, Plus } from "lucide-react";
 import axios from "axios";
 import { EditorHeader } from "./CodeEditor/EditorHeader";
 import { RenderOutput } from "./CodeEditor/RenderOutput";
-import {  CodeEditorPanelProps, SubmissionResult } from "@/types";
 import { TestCaseInput } from "./CodeEditor/TestCaseInput";
+import { mapLanguageToMonaco } from "@/lib/languageMappings";
+import { SubmissionResult, ProblemLanguageDetail } from "@/types";
 
-
+interface CodeEditorPanelProps {
+  problemId: string;
+  code: string;
+  maxTimeInMinutes: number;
+  setCode: (code: string) => void;
+  handleSubmit: (startTime: number | null) => void;
+  isSubmitting: boolean;
+  submissionResult: SubmissionResult | null;
+  testCases: { id: number, input: string | null, expected: string | null }[];
+  availableLanguages: ProblemLanguageDetail[];
+  selectedLanguage: ProblemLanguageDetail;
+  onLanguageChange: (language: ProblemLanguageDetail) => void;
+}
 
 export default function CodeEditorPanel({
   problemId,
@@ -20,6 +32,9 @@ export default function CodeEditorPanel({
   isSubmitting,
   submissionResult,
   testCases,
+  availableLanguages,
+  selectedLanguage,
+  onLanguageChange,
 }: CodeEditorPanelProps) {
   const [activeTab, setActiveTab] = useState<"testcase" | "result">("testcase");
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
@@ -29,12 +44,59 @@ export default function CodeEditorPanel({
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const maxTimeInSeconds = maxTimeInMinutes * 60;
-
+  const [isResizing, setIsResizing] = useState(false);
+  const [editorHeight, setEditorHeight] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
   const handleStart = () => {
     setIsStarted(true);
     setStartTime(Date.now());
     setElapsedTime(0);
   };
+
+  useEffect(() => {
+    if (containerRef.current && editorHeight === null) {
+      setEditorHeight(containerRef.current.offsetHeight * 0.80);
+    }
+  }, [containerRef.current]);
+
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (isResizing && containerRef.current) {
+      const containerTop = containerRef.current.getBoundingClientRect().top;
+      const newHeight = e.clientY - containerTop;
+      
+      const minHeight = 300;
+      const bottomPanelMinHeight = 156;
+      const resizerHeight = 8;
+      const maxHeight = containerRef.current.offsetHeight - bottomPanelMinHeight - resizerHeight;
+
+      if (newHeight > minHeight && newHeight < maxHeight) {
+        setEditorHeight(newHeight);
+      }
+    }
+  }, [isResizing]);
+
+  useEffect(() => {
+    if (isResizing) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing, handleMouseMove, handleMouseUp]);
+
 
   useEffect(() => {
     if (!isStarted || !startTime || submissionResult?.status === 'Accepted') {
@@ -86,13 +148,11 @@ export default function CodeEditorPanel({
         code,
         input: currentTestCase.input,
         expectedOutput: currentTestCase.expected,
+        languageId: selectedLanguage.languageId,
       });
       setRunResult(response.data);
     } catch {
-      setRunResult({
-        status: "Error",
-        message: "Failed to connect to the server.",
-      });
+      setRunResult({ status: "Error", message: "Failed to connect to the server." });
     } finally {
       setIsRunning(false);
       setActiveTab("result");
@@ -101,20 +161,12 @@ export default function CodeEditorPanel({
 
   const displayResult = submissionResult || runResult;
 
-  const handleEditorDidMount: OnMount = (editor, monaco) => {
-    editor.addAction({
-      id: "prevent-paste",
-      label: "Prevent Paste Action",
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV],
-      run: () => {
-        console.log("Pasting is disabled.");
-      },
-    });
-  };
-
   return (
-    <div className="w-1/2 flex flex-col p- gap-4 ">
-      <div className="bg-zinc-900 rounded-lg shadow-2xl flex flex-col flex-grow overflow-hidden">
+    <div ref={containerRef} className="w-1/2 flex flex-col h-full">
+      <div 
+        className="bg-zinc-900 rounded-lg shadow-2xl flex flex-col overflow-hidden flex-shrink-0"
+        style={{ height: editorHeight ? `${editorHeight}px` : '60%' }}
+      >
         <EditorHeader
           onStart={handleStart}
           onRun={handleRun}
@@ -124,6 +176,9 @@ export default function CodeEditorPanel({
           isSubmitting={isSubmitting}
           displayTime={formatTime(elapsedTime)}
           timerColor={getTimerColor(elapsedTime)}
+          availableLanguages={availableLanguages}
+          selectedLanguage={selectedLanguage}
+          onLanguageChange={onLanguageChange}
         />
 
         <div className="flex-grow relative">
@@ -137,11 +192,10 @@ export default function CodeEditorPanel({
           )}
           <Editor
             height="100%"
-            language="javascript"
+            language={mapLanguageToMonaco(selectedLanguage.language)}
             theme="vs-dark"
             value={code}
             onChange={(value) => setCode(value || "")}
-            onMount={handleEditorDidMount}
             options={{
               readOnly: !isStarted,
               fontSize: 14,
@@ -158,7 +212,14 @@ export default function CodeEditorPanel({
         </div>
       </div>
       
-      <div className="flex-shrink-0 bg-[#262626] rounded-lg shadow-2xl flex flex-col min-h-[16rem]">
+      <div
+        onMouseDown={handleMouseDown}
+        className="w-full h-2 cursor-row-resize flex items-center justify-center group"
+      >
+        <div className="w-full h-[3px] bg-transparent group-hover:bg-sky-500/50 transition-colors duration-200"></div>
+      </div>
+
+      <div className="flex-1 bg-[#262626] rounded-lg shadow-2xl flex flex-col min-h-0 overflow-hidden">
         <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-700">
           <div className="flex items-center gap-4 text-sm font-medium">
             <button
@@ -194,7 +255,7 @@ export default function CodeEditorPanel({
           </div>
         </div>
 
-        <div className="flex-grow">
+        <div className="flex-grow overflow-y-auto">
           {activeTab === "testcase" && (
             <div>
               <div className="flex items-center gap-2 px-4 pt-2">
