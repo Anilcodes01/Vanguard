@@ -1,5 +1,3 @@
-import { SolutionStatus } from '@prisma/client';
-
 export type SubmissionResult = {
   status: string;
   message?: string;

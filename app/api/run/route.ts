@@ -17,10 +17,19 @@ type Judge0Submission = {
 
 export async function POST(request: NextRequest) {
   try {
-    const { problemId, code, input, expectedOutput, languageId } = await request.json();
+    const { problemId, code, input, expectedOutput, languageId } =
+      await request.json();
 
-    if (!problemId || code === undefined || input === undefined || !languageId) {
-      return NextResponse.json({ message: "Problem ID, code, input, and languageId are required." }, { status: 400 });
+    if (
+      !problemId ||
+      code === undefined ||
+      input === undefined ||
+      !languageId
+    ) {
+      return NextResponse.json(
+        { message: "Problem ID, code, input, and languageId are required." },
+        { status: 400 }
+      );
     }
 
     const problem = await prisma.problem.findUnique({
@@ -28,7 +37,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!problem) {
-      return NextResponse.json({ message: "Problem not found." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Problem not found." },
+        { status: 404 }
+      );
     }
 
     const languageDetail = await prisma.problemLanguageDetails.findUnique({
@@ -41,7 +53,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!languageDetail) {
-      return NextResponse.json({ message: "Selected language is not supported for this problem." }, { status: 400 });
+      return NextResponse.json(
+        { message: "Selected language is not supported for this problem." },
+        { status: 400 }
+      );
     }
 
     let source_code = code;
@@ -49,14 +64,37 @@ export async function POST(request: NextRequest) {
 
     if (problem.testStrategy === "DRIVER_CODE") {
       if (!languageDetail.driverCodeTemplate) {
-        throw new Error(`Problem ${problemId} is misconfigured for language ${languageDetail.language}: missing driver code template.`);
+        throw new Error(
+          `Problem ${problemId} is misconfigured for language ${languageDetail.language}: missing driver code template.`
+        );
       }
       source_code = languageDetail.driverCodeTemplate
-        .replace("{{USER_CODE}}", code)
-        .replace("{{TEST_INPUT}}", input || "");
+        .replace("{{USER_CODE}}", code.trim())
+        .replace("{{RAW_TEST_INPUT}}", input || "");
     } else {
       source_code = code;
       stdin = input || undefined;
+    }
+
+    console.log("--- START OF JUDGE0 SOURCE CODE ---");
+    console.log(source_code);
+    console.log("--- END OF JUDGE0 SOURCE CODE ---");
+
+    const submissionData: {
+      language_id: number;
+      source_code: string;
+      stdin?: string;
+      expected_output: string | null;
+      compiler_options?: string;
+    } = {
+      language_id: languageId,
+      source_code,
+      stdin,
+      expected_output: expectedOutput,
+    };
+
+    if (languageId === 94) {
+      submissionData.compiler_options = "--lib es2020,dom";
     }
 
     const options = {
@@ -68,12 +106,7 @@ export async function POST(request: NextRequest) {
         "X-RapidAPI-Key": process.env.JUDGE0_API_KEY,
         "X-RapidAPI-Host": process.env.JUDGE0_API_HOST,
       },
-      data: {
-        language_id: languageId,
-        source_code,
-        stdin,
-        expected_output: expectedOutput,
-      },
+      data: submissionData,
     };
 
     const judgeResponse = await axios.request(options);
@@ -92,10 +125,14 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     let errorMessage = "An unknown error occurred during execution.";
     if (axios.isAxiosError(error) && error.response) {
-      errorMessage = error.response.data?.message || "Error connecting to execution engine.";
+      errorMessage =
+        error.response.data?.message || "Error connecting to execution engine.";
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
-    return NextResponse.json({ message: errorMessage, status: "Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: errorMessage, status: "Error" },
+      { status: 500 }
+    );
   }
 }

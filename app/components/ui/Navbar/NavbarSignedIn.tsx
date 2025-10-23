@@ -7,9 +7,24 @@ import UserAvatar from "../Avatar";
 import Image from "next/image";
 import { Star, Zap } from "lucide-react";
 
+const LeaderboardImagesData = [
+  { name: 'Bronze', imagePath: '/leagues/bronze.png' },
+  { name: 'Amethyst', imagePath: '/leagues/amethyst.png' },
+  { name: 'Diamond', imagePath: '/leagues/diamond.png' },
+  { name: 'Emerald', imagePath: '/leagues/emerald.png' },
+  { name: 'Gold', imagePath: '/leagues/gold.png' },
+  { name: 'Obsidian', imagePath: '/leagues/obsidian.png' },
+  { name: 'Pearl', imagePath: '/leagues/pearl.png' },
+  { name: 'Ruby', imagePath: '/leagues/ruby.png' }
+];
+
 export default function NavbarSignedIn() {
   const { profile, status } = useSelector((state: RootState) => state.profile);
   const isLoading = status === "loading" || status === "idle";
+
+  const leagueImage = profile?.league
+    ? LeaderboardImagesData.find((img) => img.name.toLowerCase() === profile.league!.toLowerCase())
+    : null;
 
   const links = [
     { key: "explore", name: "Explore", path: "/explore" },
@@ -45,6 +60,7 @@ export default function NavbarSignedIn() {
       <div className="flex items-center gap-4">
         {isLoading ? (
           <>
+            <div className="h-8 w-24 bg-gray-700 rounded-full animate-pulse" />
             <div className="h-8 w-20 bg-gray-700 rounded-full animate-pulse" />
             <div className="h-8 w-20 bg-gray-700 rounded-full animate-pulse" />
             <div className="h-10 w-10 bg-gray-700 rounded-full animate-pulse" />
@@ -52,6 +68,20 @@ export default function NavbarSignedIn() {
         ) : (
           profile && (
             <>
+              {leagueImage && (
+                <Link 
+                  href="/leaderboard" 
+                  className="flex items-center gap- bg-neutral-700/50 border border-neutral-600/60  p-1.5 rounded-full text-sm hover:bg-neutral-700 transition-colors"
+                >
+                  <Image
+                    src={leagueImage.imagePath}
+                    alt={`${leagueImage.name} league`}
+                    width={16}
+                    height={16}
+                    className="w-4 h-4"
+                  />
+                </Link>
+              )}
               <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1.5 rounded-full text-sm">
                 <Star
                   size={14}

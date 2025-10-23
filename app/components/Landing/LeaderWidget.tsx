@@ -1,26 +1,57 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import Image from "next/image"; // Import Next.js Image component
 import Link from "next/link";
 import { Trophy, ArrowUp, ArrowDown } from "lucide-react";
 import { LeaderboardData } from "@/types";
 import { LeaderboardEntry } from "@/app/store/features/leaderboard/leaderboardSlice";
 import { LeagueStatusBar } from "./LeagueStatusBar";
 
-
+const LeaderboardImagesData = [
+  {
+    name: 'Bronze',
+    imagePath: '/leagues/bronze.png'
+  },
+  {
+    name: 'Amethyst',
+    imagePath: '/leagues/amethyst.png'
+  },
+  {
+    name: 'Diamond',
+    imagePath: '/leagues/diamond.png'
+  },
+  {
+    name: 'Emerald',
+    imagePath: '/leagues/emerald.png'
+  },
+  {
+    name: 'Gold',
+    imagePath: '/leagues/gold.png'
+  },
+  {
+    name: 'Obsidian',
+    imagePath: '/leagues/obsidian.png'
+  }, {
+    name: 'Pearl',
+    imagePath: '/leagues/pearl.png'
+  },
+  {
+    name: 'Ruby',
+    imagePath: '/leagues/ruby.png'
+  }
+];
 
 const PROMOTION_ZONE = 3;
 const DEMOTION_ZONE = 5;
 
 interface LeaderboardWidgetProps {
-  leaderboard: LeaderboardEntry[]; 
-  league: string | null;         
+  leaderboard: LeaderboardEntry[];
+  league: string | null;
   currentUserId: string | null;
   isLoading: boolean;
   error: string | null;
 }
-
 
 const LoadingSkeleton = () => (
   <div className="space-y-2 animate-pulse">
@@ -95,6 +126,11 @@ export default function LeaderboardWidget({
 }: LeaderboardWidgetProps) {
      const displayedLeaderboard = leaderboard.slice(0, 10);
 
+     // Find the league image based on the league name
+     const leagueImage = league
+        ? LeaderboardImagesData.find((imgData) => imgData.name.toLowerCase() === league.toLowerCase())
+        : null;
+
 
   const renderContent = () => {
     if (isLoading) {
@@ -109,7 +145,7 @@ export default function LeaderboardWidget({
         </div>
       );
     }
-    
+
     if (leaderboard.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center text-center py-8">
@@ -136,14 +172,23 @@ export default function LeaderboardWidget({
 
   return (
     <div className="bg-neutral-900 p-5 rounded-lg h-full flex flex-col">
-      <div className="mb-4 pb-3 border-b border-neutral-800">
+      <div className="mb-4 pb-3 border-b border-neutral-800 flex items-center gap-2"> {/* Added flex and gap */}
+        {leagueImage && ( // Conditionally render the image
+          <Image
+            src={leagueImage.imagePath}
+            alt={leagueImage.name}
+            width={24} // Adjust size as needed
+            height={24}
+            className="w-6 h-6" // Ensure correct sizing
+          />
+        )}
         <h2 className="text-base font-semibold text-white">
           {league ? `${league} League` : "Leaderboard"}
         </h2>
       </div>
 
       {!isLoading && !error && league && currentUserId && leaderboard.length > 0 && (
-        <LeagueStatusBar 
+        <LeagueStatusBar
           league={league}
           currentUserId={currentUserId}
           leaderboard={leaderboard}

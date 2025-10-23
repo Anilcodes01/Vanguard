@@ -9,6 +9,7 @@ export interface UserProfile {
   username: string;
   avatar_url: string | null;
   xp: number;
+  league: string;
   stars: number;
 }
 
