@@ -1,31 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image"; // Import Next.js Image component
+import {  useEffect } from "react";
+import Image from "next/image"; 
 import { Trophy, ArrowUp, ArrowDown } from "lucide-react";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
 import { LeaderboardEntry } from "@/app/store/features/leaderboard/leaderboardSlice";
 import { LeagueStatusBar } from "@/app/components/Landing/LeagueStatusBar";
+import { LeaderboardImagesData } from "@/lib/data/leaderboardImagesData";
 
-// Define the structure for league images
-interface LeagueImageData {
-  name: string;
-  imagePath: string;
-}
-
-// Assume this data is available or fetched similarly
-const LeaderboardImagesData: LeagueImageData[] = [
-  { name: 'Bronze', imagePath: '/leagues/bronze.png' },
-  { name: 'Amethyst', imagePath: '/leagues/amethyst.png' },
-  { name: 'Diamond', imagePath: '/leagues/diamond.png' },
-  { name: 'Emerald', imagePath: '/leagues/emerald.png' },
-  { name: 'Gold', imagePath: '/leagues/gold.png' },
-  { name: 'Obsidian', imagePath: '/leagues/obsidian.png' },
-  { name: 'Pearl', imagePath: '/leagues/pearl.png' },
-  { name: 'Ruby', imagePath: '/leagues/ruby.png' },
-];
 
 const PROMOTION_ZONE = 3;
 const DEMOTION_ZONE = 5;
@@ -54,10 +38,7 @@ const LeaderboardRow = ({
 }) => {
   const getZone = () => {
     if (rank <= PROMOTION_ZONE) return "promotion";
-    // Assuming total members is dynamic and fetched from state,
-    // for now, using a hardcoded value or a prop if available.
-    // If leaderboard length is needed, it should be passed as a prop.
-    const totalMembers = 30; // Placeholder: replace with actual total members if available
+    const totalMembers = 30; 
     if (rank > totalMembers - DEMOTION_ZONE) return "demotion";
     return "safe";
   };
@@ -121,7 +102,6 @@ export default function LeaderboardPage() {
     }
   }, [status, dispatch])
 
-  // Find the league image based on the league name
   const leagueImage = league
     ? LeaderboardImagesData.find((imgData) => imgData.name.toLowerCase() === league.toLowerCase())
     : null;
@@ -153,14 +133,14 @@ export default function LeaderboardPage() {
   return (
     <div className="bg-[#262626] text-white min-h-screen p-4 sm:p-8">
       <div className="max-w-2xl mx-auto">
-        <div className="mb-8 pb-6 border-b border-neutral-800 flex items-center gap-2"> {/* Added flex and gap */}
-          {leagueImage && ( // Conditionally render the image
+        <div className="mb-8 pb-6 border-b border-neutral-800 flex items-center gap-2"> 
+          {leagueImage && ( 
             <Image
               src={leagueImage.imagePath}
               alt={leagueImage.name}
-              width={32} // Adjust size as needed
+              width={32} 
               height={32}
-              className="w-8 h-8" // Ensure correct sizing
+              className="w-8 h-8"
             />
           )}
           <h1 className="text-2xl font-semibold text-white mb-1">

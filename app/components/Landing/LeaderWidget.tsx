@@ -1,46 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image"; // Import Next.js Image component
+import Image from "next/image"; 
 import Link from "next/link";
 import { Trophy, ArrowUp, ArrowDown } from "lucide-react";
-import { LeaderboardData } from "@/types";
 import { LeaderboardEntry } from "@/app/store/features/leaderboard/leaderboardSlice";
 import { LeagueStatusBar } from "./LeagueStatusBar";
-
-const LeaderboardImagesData = [
-  {
-    name: 'Bronze',
-    imagePath: '/leagues/bronze.png'
-  },
-  {
-    name: 'Amethyst',
-    imagePath: '/leagues/amethyst.png'
-  },
-  {
-    name: 'Diamond',
-    imagePath: '/leagues/diamond.png'
-  },
-  {
-    name: 'Emerald',
-    imagePath: '/leagues/emerald.png'
-  },
-  {
-    name: 'Gold',
-    imagePath: '/leagues/gold.png'
-  },
-  {
-    name: 'Obsidian',
-    imagePath: '/leagues/obsidian.png'
-  }, {
-    name: 'Pearl',
-    imagePath: '/leagues/pearl.png'
-  },
-  {
-    name: 'Ruby',
-    imagePath: '/leagues/ruby.png'
-  }
-];
+import { LeaderboardImagesData } from "@/lib/data/leaderboardImagesData";
 
 const PROMOTION_ZONE = 3;
 const DEMOTION_ZONE = 5;
@@ -126,7 +91,6 @@ export default function LeaderboardWidget({
 }: LeaderboardWidgetProps) {
      const displayedLeaderboard = leaderboard.slice(0, 10);
 
-     // Find the league image based on the league name
      const leagueImage = league
         ? LeaderboardImagesData.find((imgData) => imgData.name.toLowerCase() === league.toLowerCase())
         : null;
@@ -172,14 +136,14 @@ export default function LeaderboardWidget({
 
   return (
     <div className="bg-neutral-900 p-5 rounded-lg h-full flex flex-col">
-      <div className="mb-4 pb-3 border-b border-neutral-800 flex items-center gap-2"> {/* Added flex and gap */}
-        {leagueImage && ( // Conditionally render the image
+      <div className="mb-4 pb-3 border-b border-neutral-800 flex items-center gap-2"> 
+        {leagueImage && ( 
           <Image
             src={leagueImage.imagePath}
             alt={leagueImage.name}
-            width={24} // Adjust size as needed
+            width={24} 
             height={24}
-            className="w-6 h-6" // Ensure correct sizing
+            className="w-6 h-6" 
           />
         )}
         <h2 className="text-base font-semibold text-white">

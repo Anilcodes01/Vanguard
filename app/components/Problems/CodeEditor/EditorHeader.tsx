@@ -1,4 +1,12 @@
-import { Clock, PlayIcon, ShieldCheck, ChevronDown } from "lucide-react";
+import { Clock, Play, ShieldCheck, ChevronDown, Rocket } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { ProblemLanguageDetail } from "@/types";
 
 interface EditorHeaderProps {
@@ -13,6 +21,7 @@ interface EditorHeaderProps {
   availableLanguages: ProblemLanguageDetail[];
   selectedLanguage: ProblemLanguageDetail;
   onLanguageChange: (language: ProblemLanguageDetail) => void;
+  maxTimeInMinutes: number;
 }
 
 export const EditorHeader = ({
@@ -27,62 +36,89 @@ export const EditorHeader = ({
   availableLanguages,
   selectedLanguage,
   onLanguageChange,
+  maxTimeInMinutes,
 }: EditorHeaderProps) => (
-  <div className="flex items-center justify-between px-4 py-2 bg-zinc-800 border-b border-zinc-700">
-    <div className="relative">
-      <select
-        value={selectedLanguage.languageId}
-        onChange={(e) => {
-          const newLang = availableLanguages.find(lang => lang.languageId === Number(e.target.value));
-          if (newLang) {
-            onLanguageChange(newLang);
-          }
-        }}
-        disabled={isStarted}
-        className="bg-zinc-700 text-white text-sm rounded-md pl-3 pr-8 py-1 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed transition-opacity"
+  <div className="flex items-center justify-between px-4 py-2.5 bg-neutral-900 border-b border-neutral-800">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild disabled={isStarted}>
+        <Button
+          variant="ghost"
+          className="inline-flex items-center gap-1.5 rounded-md px-3 py-1 text-sm font-medium text-neutral-300 hover:text-white hover:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-sky-500 disabled:opacity-50 transition-colors h-auto"
+        >
+          {selectedLanguage.language}
+          <ChevronDown
+            className="h-4 w-4 text-neutral-500"
+            aria-hidden="true"
+          />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className="w-48 bg-neutral-800 border-neutral-700 text-neutral-200"
+        align="start"
       >
-        {availableLanguages.map(lang => (
-          <option key={lang.languageId} value={lang.languageId}>
-            {lang.language}
-          </option>
-        ))}
-      </select>
-      <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-    </div>
+        <DropdownMenuRadioGroup
+          value={selectedLanguage.languageId.toString()}
+          onValueChange={(value) => {
+            const newLang = availableLanguages.find(
+              (lang) => lang.languageId.toString() === value
+            );
+            if (newLang) onLanguageChange(newLang);
+          }}
+        >
+          {availableLanguages.map((lang) => (
+            <DropdownMenuRadioItem
+              key={lang.languageId}
+              value={lang.languageId.toString()}
+              className="focus:bg-sky-500/10 focus:text-sky-300 cursor-pointer"
+            >
+              {lang.language}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
 
-    {isStarted && (
-      <div className={`flex items-center gap-2 font-mono font-bold text-lg ${timerColor}`}>
-        <Clock size={18} />
+    {isStarted ? (
+      <div
+        className={`flex items-center gap-2 font-mono font-semibold text-base ${timerColor}`}
+      >
+        <Clock size={16} />
         <span>{displayTime}</span>
+      </div>
+    ) : (
+      <div className="flex items-center gap-2 text-sm text-neutral-400">
+        <Clock size={15} />
+        <span>{maxTimeInMinutes} min</span>
       </div>
     )}
 
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-3">
       {!isStarted && (
-        <button
+        <Button
           onClick={onStart}
-          className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+          className="bg-sky-500 text-white hover:bg-sky-600 h-auto px-4 py-1.5"
         >
-          <ShieldCheck size={14} />
+          <ShieldCheck size={16} className="mr-2" />
           Start
-        </button>
+        </Button>
       )}
-
-      <button
+      <Button
         onClick={onRun}
+        variant="secondary"
         disabled={!isStarted || isRunning || isSubmitting}
-        className="flex items-center gap-2 px-3 py-1.5 bg-zinc-700 text-white text-sm font-semibold rounded-lg hover:bg-zinc-600 disabled:bg-zinc-800 disabled:text-gray-500 transition-colors"
+        className="bg-neutral-800 text-neutral-300 hover:bg-neutral-700 disabled:opacity-50 h-auto px-4 py-1.5"
       >
-        <PlayIcon size={14} />
-        {isRunning ? "Running..." : "Run"}
-      </button>
-      <button
+        <Play size={15} className="mr-2" />
+        {isRunning ? "Running..." : "Run Code"}
+      </Button>
+      <Button
         onClick={onSubmit}
         disabled={!isStarted || isRunning || isSubmitting}
-        className="px-4 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 disabled:bg-gray-600 transition-colors"
+        className="bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 h-auto px-4 py-1.5"
       >
+        <Rocket size={15} className="mr-2" />
         {isSubmitting ? "Submitting..." : "Submit"}
-      </button>
+      </Button>
     </div>
   </div>
 );

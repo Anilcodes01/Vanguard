@@ -179,6 +179,7 @@ export default function CodeEditorPanel({
           availableLanguages={availableLanguages}
           selectedLanguage={selectedLanguage}
           onLanguageChange={onLanguageChange}
+            maxTimeInMinutes={maxTimeInMinutes}
         />
 
         <div className="flex-grow relative">

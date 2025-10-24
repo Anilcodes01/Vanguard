@@ -8,22 +8,13 @@ import {
   Star,
   School,
   Pencil,
-  Share,
   Check,
   Share2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
-type ProfileData = {
-  name: string | null;
-  college_name: string | null;
-  avatar_url: string | null;
-  username: string | null;
-  domain: string | null;
-  xp: number;
-  stars: number;
-};
+import { LeaderboardImagesData } from "@/lib/data/leaderboardImagesData";
+import { ProfileData } from "@/types";
 
 export const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen bg-[#262626]">
@@ -59,6 +50,11 @@ export const StatCard = ({
 
 export const ProfilePanel = ({ user }: { user: ProfileData }) => {
   const [copied, setCopied] = useState(false);
+  const currentLeague = user.league || "Bronze";
+
+  const leagueImage = LeaderboardImagesData.find(
+    (l) => l.name === currentLeague
+  ) || { name: "Bronze", imagePath: "/leagues/bronze.png" };
 
   const handleCopyLink = () => {
     if (!user.username) return;
@@ -104,6 +100,20 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
           <span className="text-neutral-400">Total Stars:</span>
           <span className="font-bold text-neutral-200 ml-auto">
             {user.stars}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Image
+            src={leagueImage.imagePath}
+            alt={`${leagueImage.name} league badge`}
+            width={20}
+            height={20}
+            className="w-5 h-5"
+          />
+          <span className="text-neutral-400">League:</span>
+          <span className="font-bold text-neutral-200 ml-auto">
+            {currentLeague}
           </span>
         </div>
       </div>

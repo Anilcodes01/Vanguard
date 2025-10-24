@@ -1,56 +1,54 @@
-'use client';
+"use client";
 
-import { CheckCircle2 } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import {  useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/app/store/store';
-import { fetchProblemsPage, resetProblemsList } from '@/app/store/features/problems/problemsSlice';
-
+import { CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/app/store/store";
+import Link from "next/link";
+import {
+  fetchProblemsPage,
+  resetProblemsList,
+} from "@/app/store/features/problems/problemsSlice";
 
 export default function Problems() {
   const dispatch: AppDispatch = useDispatch();
 
-  const {
-    problems,
-    status, 
-    error,
-    hasMore,
-    nextPage
-  } = useSelector((state: RootState) => state.problemsList)
+  const { problems, status, error, hasMore, nextPage } = useSelector(
+    (state: RootState) => state.problemsList
+  );
 
-  const isLoading = status === 'loading'
+  const isLoading = status === "loading";
 
   useEffect(() => {
-  dispatch(fetchProblemsPage(1));
+    dispatch(fetchProblemsPage(1));
 
-  return () => {
-    dispatch(resetProblemsList());
-  };
-}, [dispatch]);
+    return () => {
+      dispatch(resetProblemsList());
+    };
+  }, [dispatch]);
 
   const loadMoreProblems = () => {
-    if(!isLoading && hasMore) {
-      dispatch(fetchProblemsPage(nextPage))
+    if (!isLoading && hasMore) {
+      dispatch(fetchProblemsPage(nextPage));
     }
-  }
+  };
 
   const getDifficultyStyles = (difficulty: string) => {
-    switch(difficulty) {
-      case 'Beginner':
-        return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20';
-      case 'Intermediate':
-        return 'text-amber-400 bg-amber-400/10 border-amber-400/20';
-      case 'Advanced':
-        return 'text-rose-400 bg-rose-400/10 border-rose-400/20';
+    switch (difficulty) {
+      case "Beginner":
+        return "text-emerald-400 bg-emerald-400/10";
+      case "Intermediate":
+        return "text-amber-400 bg-amber-400/10";
+      case "Advanced":
+        return "text-rose-400 bg-rose-400/10";
       default:
-        return 'text-gray-400 bg-gray-400/10 border-gray-400/20';
+        return "text-gray-400 bg-gray-400/10";
     }
   };
 
   return (
     <div className="bg-[#262626] min-h-screen">
       <div className="w-full max-w-5xl mx-auto px-4 py-12 md:px-8 md:py-16">
-        
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight">
             Practice Problems
@@ -61,56 +59,60 @@ export default function Problems() {
         </div>
 
         {error && nextPage === 1 ? (
-          <div className="flex items-center justify-center p-8 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl backdrop-blur-sm">
+          <div className="flex items-center justify-center p-8 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl">
             <div className="text-center">
               <div className="text-5xl mb-4">⚠️</div>
-              <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
+              <h2 className="text-xl font-semibold mb-2">
+                Something went wrong
+              </h2>
               <p className="text-sm text-gray-400">{error}</p>
             </div>
           </div>
         ) : (
           <>
-            <div className="space-y-2 mb-8">
-              {problems.map((problem, index) => (
-                <a 
-                  key={problem.id} 
-                  href={`/problems/${problem.id}`}
-                  className="group block"
-                >
-                  <div className="relative bg-[#151515] border border-gray-800 rounded-xl p-5 transition-all duration-300 hover:bg-[#1a1a1a] hover:border-gray-700 hover:shadow-lg hover:shadow-blue-500/5 hover:-translate-y-0.5">
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gray-800/50 flex items-center justify-center text-gray-400 text-sm font-medium group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors">
-                          {index + 1}
-                        </div>
-                         <div className="flex items-center gap-2 min-w-0">
-                          <h3 className="text-white font-medium text-lg group-hover:text-blue-400 transition-colors truncate">
-                            {problem.title}
-                          </h3>
-                          {problem.solved && (
-                            <CheckCircle2
-                              size={18}
-                              className="text-emerald-400 flex-shrink-0"
-                            />
-                          )}
-                        </div>
-                      </div>
-                      
-                      <span className={`flex-shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full border ${getDifficultyStyles(problem.difficulty)} transition-all duration-300`}>
+            <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl">
+              <div className="divide-y divide-neutral-800">
+                {problems.map((problem, index) => (
+                  <Link
+                    key={problem.id}
+                    href={`/problems/${problem.id}`}
+                    className="grid grid-cols-12 items-center gap-4 p-4 transition-colors hover:bg-neutral-800/50 group"
+                  >
+                    <div className="col-span-1 text-center text-neutral-500 text-sm">
+                      {index + 1}
+                    </div>
+
+                    <div className="col-span-8 md:col-span-9 flex items-center gap-2">
+                      <h3 className="text-neutral-200 font-medium truncate group-hover:text-sky-400 transition-colors">
+                        {problem.title}
+                      </h3>
+                      {problem.solved && (
+                        <CheckCircle2
+                          size={18}
+                          className="text-emerald-400 flex-shrink-0"
+                          aria-label="Solved"
+                          role="img"
+                        />
+                      )}
+                    </div>
+
+                    <div className="col-span-3 md:col-span-2 flex justify-end">
+                      <span
+                        className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getDifficultyStyles(
+                          problem.difficulty
+                        )}`}
+                      >
                         {problem.difficulty}
                       </span>
                     </div>
-                  </div>
-                </a>
-              ))}
+                  </Link>
+                ))}
+              </div>
             </div>
 
             {isLoading && nextPage === 1 && (
               <div className="flex justify-center items-center py-16">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-12 h-12 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin"></div>
-                  <p className="text-gray-400 text-sm">Loading problems...</p>
-                </div>
+                <div className="w-10 h-10 border-4 border-neutral-800 border-t-neutral-400 rounded-full animate-spin"></div>
               </div>
             )}
 
@@ -119,22 +121,18 @@ export default function Problems() {
                 <button
                   onClick={loadMoreProblems}
                   disabled={isLoading}
-                  className="group relative px-8 py-3 bg-white text-black font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-white/10 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="px-6 py-2 bg-neutral-800 text-neutral-300 font-semibold rounded-lg transition-all duration-300 hover:bg-neutral-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span className="relative z-10">
-                    {isLoading ? 'Loading...' : 'Load More'}
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  {isLoading ? "Loading..." : "Load More"}
                 </button>
               </div>
             )}
 
             {!hasMore && problems.length > 0 && (
               <div className="text-center mt-12">
-                <div className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800/30 border border-gray-800 rounded-full text-gray-400 text-sm">
-                  <span>✨</span>
-                  <span>You&apos;ve reached the end</span>
-                </div>
+                <p className="text-neutral-500 text-sm">
+                  ✨ You&apos;ve reached the end ✨
+                </p>
               </div>
             )}
 

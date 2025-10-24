@@ -10,17 +10,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/store/store";
 import { fetchUserProfile } from "@/app/store/features/profile/profileSlice"; 
 import { useEffect } from "react";
-
-const LeaderboardImagesData = [
-  { name: 'Bronze', imagePath: '/leagues/bronze.png' },
-  { name: 'Amethyst', imagePath: '/leagues/amethyst.png' },
-  { name: 'Diamond', imagePath: '/leagues/diamond.png' },
-  { name: 'Emerald', imagePath: '/leagues/emerald.png' },
-  { name: 'Gold', imagePath: '/leagues/gold.png' },
-  { name: 'Obsidian', imagePath: '/leagues/obsidian.png' },
-  { name: 'Pearl', imagePath: '/leagues/pearl.png' },
-  { name: 'Ruby', imagePath: '/leagues/ruby.png' }
-];
+import { LeaderboardImagesData } from "@/lib/data/leaderboardImagesData";
 
 export default function NavbarSignedIn() {
    const dispatch: AppDispatch = useDispatch();

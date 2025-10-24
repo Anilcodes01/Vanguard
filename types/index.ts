@@ -72,6 +72,8 @@ export type RewardData = {
 
 
 
+
+
 export type ProfileData = {
   name: string | null;
   college_name: string | null;
@@ -80,8 +82,8 @@ export type ProfileData = {
   domain: string | null;
   xp: number;
   stars: number;
+  league: string;
 };
-
 
 export type Submission = {
   id: string;

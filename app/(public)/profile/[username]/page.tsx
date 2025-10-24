@@ -140,7 +140,10 @@ export default function ProfilePage({
           </div>
 
           <div className="w-full lg:w-80 shrink-0">
-            <ProfilePanel user={profile} />
+            {(() => {
+              const league = (profile as { league?: string }).league ?? "Unranked";
+              return <ProfilePanel user={{ ...profile, league }} />;
+            })()}
           </div>
         </div>
       </div>
