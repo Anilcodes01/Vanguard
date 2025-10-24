@@ -30,7 +30,7 @@ export default function NavbarSignedOut() {
   ]
 
   return (
-    <nav className="flex items-center justify-around bg-[#262626] text-black py-2 px-4 border-b border-gray-200 w-full">
+    <nav className="flex items-center justify-around bg-[#262626] text-white py-2 px-4 border-b border-zinc-500 w-full">
       <Link className="text-2xl font-bold" href={"/"}>
        <Image src={'/adapt.png'} alt='adapt logo' width={200} height={200} className='h-8 w-8' />
       </Link>

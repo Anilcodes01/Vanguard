@@ -6,6 +6,10 @@ import { RootState } from "@/app/store/store";
 import UserAvatar from "../Avatar";
 import Image from "next/image";
 import { Star, Zap } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/app/store/store";
+import { fetchUserProfile } from "@/app/store/features/profile/profileSlice"; 
+import { useEffect } from "react";
 
 const LeaderboardImagesData = [
   { name: 'Bronze', imagePath: '/leagues/bronze.png' },
@@ -19,8 +23,15 @@ const LeaderboardImagesData = [
 ];
 
 export default function NavbarSignedIn() {
-  const { profile, status } = useSelector((state: RootState) => state.profile);
-  const isLoading = status === "loading" || status === "idle";
+   const dispatch: AppDispatch = useDispatch();
+    const { profile, status } = useSelector((state: RootState) => state.profile);
+    const isLoading = status === "loading" || status === "idle";
+
+    useEffect(() => {
+        if (status === "idle") {
+            dispatch(fetchUserProfile()); 
+        }
+    }, [status, dispatch]);
 
   const leagueImage = profile?.league
     ? LeaderboardImagesData.find((img) => img.name.toLowerCase() === profile.league!.toLowerCase())

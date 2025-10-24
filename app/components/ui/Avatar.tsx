@@ -35,14 +35,19 @@ export default function UserAvatar({ user }: { user: UserProfile }) {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    dispatch(logout());
-    dispatch(clearProfile());
-    router.push("/");
 
-    setIsOpen(false);
+const handleSignOut = async () => {
+    const supabase = createClient();
+    
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    } finally {
+      dispatch(logout());
+      dispatch(clearProfile());
+      window.location.href = '/'; 
+    }
   };
 
   const handleProfileClick = () => {
