@@ -76,10 +76,10 @@ export const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
 export const AllProblemsSolvedCard = () => (
   <div className="bg-neutral-900/50 p-6 rounded-2xl border border-neutral-800 flex flex-col justify-center items-center text-center">
     <h3 className="text-lg font-bold text-white mb-2">
-      You're on Fire! 🔥
+      You&apos;re on Fire! 🔥
     </h3>
     <p className="text-neutral-400 text-sm mb-4">
-      You've solved all available problems. More are coming soon!
+      You&apos;ve solved all available problems. More are coming soon!
     </p>
     <Link href="/problems" className="w-full">
       <button className="w-full bg-neutral-700 hover:bg-neutral-600 text-white font-bold py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2 text-sm">
