@@ -135,7 +135,7 @@ export default function LeaderboardWidget({
   };
 
   return (
-    <div className="bg-neutral-900 p-5 rounded-lg h-full flex flex-col">
+    <div className="bg-[#1f1f1f] p-5 rounded-lg h-full flex flex-col">
       <div className="mb-4 pb-3 border-b border-neutral-800 flex items-center gap-2"> 
         {leagueImage && ( 
           <Image
