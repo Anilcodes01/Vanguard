@@ -46,7 +46,7 @@ export default function NavbarSignedIn() {
   ];
 
   return (
-    <nav className="flex items-center border-zinc-500 border-b justify-around bg-[#262626] text-white px-4 py-2 w-full">
+    <nav className="flex items-center   justify-around bg-[#262626] text-white px-4 py-2 w-full">
       <Link className="text-2xl flex gap-2 font-bold" href={"/"}>
         <Image
           src={"/adapt.png"}

@@ -8,11 +8,9 @@ import {
 import axios from "axios";
 import { createClient } from "@/app/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { getWeekStartDateUTC } from '@/lib/dateUtils';
+import { getWeekStartDateUTC } from "@/lib/dateUtils";
 
 const LEADERBOARD_GROUP_SIZE = 30;
-
-
 
 async function assignUserToLeaderboardGroup(
   userId: string,
@@ -25,7 +23,7 @@ async function assignUserToLeaderboardGroup(
 
   if (!userProfile) return;
 
-    const weekStartDate = getWeekStartDateUTC();
+  const weekStartDate = getWeekStartDateUTC();
 
   if (
     userProfile.currentGroup &&
@@ -102,11 +100,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-      const { problemId, code, startTime, languageId } = await request.json();
+    const { problemId, code, startTime, languageId } = await request.json();
 
     if (!problemId || !code || !startTime || !languageId) {
       return NextResponse.json(
-        { message: "Problem ID, code, startTime, and languageId are required." },
+        {
+          message: "Problem ID, code, startTime, and languageId are required.",
+        },
         { status: 400 }
       );
     }
@@ -127,9 +127,9 @@ export async function POST(request: NextRequest) {
       where: {
         problemId_languageId: {
           problemId: problemId,
-          languageId: languageId
-        }
-      }
+          languageId: languageId,
+        },
+      },
     });
 
     if (!languageDetail) {
@@ -138,7 +138,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
 
     let finalResult: Judge0Submission | null = null;
     let allTestsPassed = true;
@@ -150,14 +149,33 @@ export async function POST(request: NextRequest) {
 
       if (problem.testStrategy === "DRIVER_CODE") {
         if (!languageDetail.driverCodeTemplate) {
-          throw new Error(`Problem ${problemId} is misconfigured for language ${languageDetail.language}: missing driver code template.`);
+          throw new Error(
+            `Problem ${problemId} is misconfigured for language ${languageDetail.language}: missing driver code template.`
+          );
         }
         source_code = languageDetail.driverCodeTemplate
-          .replace("{{USER_CODE}}", code)
-          .replace("{{TEST_INPUT}}", testCase.input || "");
+          .replace("{{USER_CODE}}", code.trim())
+          .replace("{{RAW_TEST_INPUT}}", testCase.input || "");
       } else {
         source_code = code;
         stdin = testCase.input || undefined;
+      }
+
+      const submissionData: {
+        language_id: number;
+        source_code: string;
+        stdin?: string;
+        expected_output: string | null;
+        compiler_options?: string;
+      } = {
+        language_id: languageId,
+        source_code,
+        stdin,
+        expected_output: testCase.expected,
+      };
+
+      if (languageId === 94) {
+        submissionData.compiler_options = "--lib es2020,dom";
       }
 
       const options = {
@@ -169,17 +187,13 @@ export async function POST(request: NextRequest) {
           "X-RapidAPI-Key": process.env.JUDGE0_API_KEY,
           "X-RapidAPI-Host": process.env.JUDGE0_API_HOST,
         },
-        data: {
-           language_id: languageId,
-          source_code,
-          stdin,
-          expected_output: testCase.expected,
-        },
+        data: submissionData,
       };
 
       const judgeResponse = await axios.request(options);
       const result: Judge0Submission = judgeResponse.data;
       finalResult = result;
+
       if (result.status.id !== 3) {
         allTestsPassed = false;
         firstFailedTestCase = testCase;
@@ -236,7 +250,7 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           problemId: problem.id,
           code: code,
-            languageId: languageId,
+          languageId: languageId,
           status: mapJudge0StatusToEnum(finalResult!.status.description),
           executionTime: parseFloat(finalResult!.time) || null,
           executionMemory: finalResult!.memory || null,
@@ -311,7 +325,6 @@ export async function POST(request: NextRequest) {
         executionMemory,
       });
     }
-
   } catch (error) {
     console.error("Submission failed:", error);
     let errorMessage = "An unknown error occurred during submission.";

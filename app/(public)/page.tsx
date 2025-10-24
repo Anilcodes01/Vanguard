@@ -1,6 +1,6 @@
-import UserLoggedInLanding from './components/Landing/UserLoggedinLanding';
-import UsernotLoggedInLanding from './components/Landing/UserNotLoggedinLanding';
-import { createClient } from './utils/supabase/server';
+import UserLoggedInLanding from '../components/Landing/UserLoggedinLanding';
+import UsernotLoggedInLanding from '../components/Landing/UserNotLoggedinLanding';
+import { createClient } from '../utils/supabase/server';
 
 export default async function UserDashboard() {
    const supabase = await createClient();
