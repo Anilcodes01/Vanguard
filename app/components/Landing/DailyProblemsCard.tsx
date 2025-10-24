@@ -21,7 +21,7 @@ export const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
     <div className="bg-neutral-900/50 p-6 rounded-2xl border border-neutral-800 flex flex-col justify-between shadow-lg">
       <div>
         <div className="mb-3">
-          <p className="text-sm font-medium text-sky-400 mb-1">
+          <p className="text-sm font-medium text-green-400 mb-1">
             Daily Challenge
           </p>
           <h2 className="text-xl font-bold text-white tracking-tight">
@@ -60,7 +60,7 @@ export const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
         </div>
         
         <Link href={`/problems/${problem.id}`}>
-          <button className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded-md transition-all duration-300 flex items-center justify-center gap-1.5 text-sm group">
+          <button className="bg-green-600 hover:bg-green-700 cursor-pointer text-white font-bold py-2 px-4 rounded-md transition-all duration-300 flex items-center justify-center gap-1.5 text-sm group">
             Solve
             <ArrowRight
               size={14}

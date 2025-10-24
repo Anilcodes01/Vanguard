@@ -2,9 +2,24 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image"; 
-import toast from "react-hot-toast"; 
-import { UploadCloud } from "lucide-react"; 
+import Image from "next/image";
+import toast from "react-hot-toast";
+import { UploadCloud, Check, ChevronsUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 const domainOptions = [
   "Web Development",
@@ -25,6 +40,7 @@ export default function OnboardingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [open, setOpen] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -118,7 +134,7 @@ export default function OnboardingPage() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="relative h-32 w-32 rounded-full border-2 border-dashed border-gray-600 bg-gray-800/50 flex items-center justify-center text-gray-400 transition-all hover:border-green-500 cursor-pointer hover:bg-gray-800 overflow-hidden"
+              className="relative h-32 w-32 rounded-full border-2 border-dashed border-gray-600 bg-green-800/50 flex items-center justify-center text-gray-400 transition-all hover:border-green-500 cursor-pointer hover:bg-green-800 overflow-hidden"
             >
               {avatarPreview ? (
                 <Image
@@ -138,35 +154,59 @@ export default function OnboardingPage() {
             </button>
           </div>
 
-          <div className="relative">
-            <select
-              id="domain"
-              value={domain}
-              onChange={(e) => setDomain(e.target.value)}
-              required
-              className={`peer w-full appearance-none rounded-md border border-gray-600 bg-transparent px-4 py-2.5 text-white focus:border-green-500 focus:outline-none ${
-                domain ? "text-white" : "text-gray-400"
-              }`}
-            >
-              <option value="" disabled>
-                Select your domain...
-              </option>
-              {domainOptions.map((opt) => (
-                <option
-                  key={opt}
-                  value={opt}
-                  className="bg-[#262626] text-white"
-                >
-                  {opt}
-                </option>
-              ))}
-            </select>
-            <label
-              htmlFor="domain"
-              className="absolute -top-3.5 left-3 bg-[#262626] px-1 text-sm text-gray-400 transition-all peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-green-500"
-            >
+          <div>
+            <label className="text-sm text-gray-400 mb-2 block">
               Primary Domain
             </label>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-full justify-between bg-transparent border-gray-600 text-white hover:bg-neutral-800 hover:text-white focus:border-green-500 h-auto py-2.5"
+                >
+                  {domain
+                    ? domainOptions.find((opt) => opt === domain)
+                    : "Select your domain..."}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-neutral-800 border-gray-700 text-white">
+                <Command className="bg-neutral-800 text-white">
+                  <CommandInput
+                    placeholder="Search domain..."
+                    className="h-9 border-gray-700 placeholder:text-gray-500"
+                  />
+                  <CommandEmpty>No domain found.</CommandEmpty>
+                  <CommandList>
+                    <CommandGroup>
+                      {domainOptions.map((opt) => (
+                        <CommandItem
+                          key={opt}
+                          value={opt}
+                          onSelect={(currentValue) => {
+                            setDomain(
+                              currentValue === domain ? "" : currentValue
+                            );
+                            setOpen(false);
+                          }}
+                          className="aria-selected:bg-green-500/20 text-white cursor-pointer"
+                        >
+                          {opt}
+                          <Check
+                            className={cn(
+                              "ml-auto h-4 w-4",
+                              domain === opt ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="relative">
@@ -175,15 +215,14 @@ export default function OnboardingPage() {
               type="text"
               value={collegeName}
               onChange={(e) => setCollegeName(e.target.value)}
-              required
-              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-white placeholder-transparent focus:border-green-500 focus:outline-none"
+              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2.5 text-white placeholder-transparent focus:border-green-500 focus:outline-none"
               placeholder="College Name"
             />
             <label
               htmlFor="collegeName"
-              className="absolute -top-3.5 left-3 bg-[#262626] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-green-500"
+              className="absolute -top-2.5 left-3 bg-[#262626] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-green-500"
             >
-              College Name
+              College Name (Optional)
             </label>
           </div>
 

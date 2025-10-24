@@ -95,7 +95,7 @@ const handleSignOut = async () => {
 
       <div
         className={`
-          absolute right-0 mt-2 w-56 origin-top-right rounded-xl bg-neutral-900 
+          absolute right-0 mt-2 w-56 origin-top-right rounded-xl bg-neutral-900 z-50
           border border-neutral-800 p-1.5 shadow-lg
           transition-all duration-150 ease-in-out
           ${
@@ -112,7 +112,7 @@ const handleSignOut = async () => {
           </p>
         </div>
 
-        <div className="my-1 h-px bg-neutral-800" />
+        <div className="my-1 h-px z-10000 bg-neutral-800" />
 
         <DropdownMenuItem onClick={handleProfileClick}>
           <UserIcon size={14} className="text-neutral-400" />
