@@ -60,15 +60,15 @@ export default function SectionFour() {
         </div>
 
         <h1 className="text-5xl md:text-6xl lg:text-7xl font-sans font-bold mb-6 tracking-tight">
-          <span className="text-white">Ready to Build </span>
+          <span className="text-white">Ready to Launch </span>
           <span className="block mt-2 bg-gradient-to-r from-green-400 via-emerald-400 to-green-500 text-transparent bg-clip-text animate-gradient">
-            the Future?
+            Your Tech Career?
           </span>
         </h1>
         
         <p className="text-xl font-sans text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Join thousands of developers revolutionizing the industry. 
-          <span className="block mt-2 text-green-400 font-semibold">It&apos;s free to get started.</span>
+          Join thousands of students turning daily practice into career success.
+          <span className="block mt-2 text-green-400 font-semibold">Your journey to a verified internship starts here.</span>
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
@@ -105,7 +105,7 @@ export default function SectionFour() {
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
             </div>
-            <span>Free forever plan</span>
+            <span>Free-tier with daily challenges</span>
           </div>
           
           <div className="flex items-center gap-2">
@@ -123,7 +123,7 @@ export default function SectionFour() {
                 <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
               </svg>
             </div>
-            <span>Join 10,000+ developers</span>
+            <span>Join 10,000+ students</span>
           </div>
         </div>
 

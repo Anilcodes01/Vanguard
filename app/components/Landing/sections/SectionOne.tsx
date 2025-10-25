@@ -12,9 +12,9 @@ export default function SectionOne() {
   }, []);
 
   const stats = [
-    { value: "10K+", label: "Active Developers" },
-    { value: "500+", label: "Coding Challenges" },
-    { value: "50K+", label: "Solutions Submitted" }
+    { value: "10K+", label: "Active Students" },
+    { value: "500+", label: "Portfolio Projects" },
+    { value: "50K+", label: "Daily Submissions" }
   ];
 
   const codeSnippets = [
@@ -62,7 +62,7 @@ export default function SectionOne() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
-          <span>Join 10,000+ developers mastering their craft</span>
+          <span>Join 10,000+ students building their careers</span>
         </div>
 
         <h1 
@@ -73,10 +73,10 @@ export default function SectionOne() {
             opacity: 0
           }}
         >
-          Master the Code.
+          Turn Daily Practice
           <br />
           <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">
-            Conquer the Challenge
+            Into a Verified Internship
           </span>
         </h1>
 
@@ -88,7 +88,7 @@ export default function SectionOne() {
             opacity: 0
           }}
         >
-          An interactive platform for developers to sharpen skills, solve real world problems, and climb the leaderboard.
+          A gamified platform for Indian college students to solve daily challenges, build a portfolio, and land a verified virtual internship.
         </p>
 
         <div 
@@ -164,7 +164,7 @@ export default function SectionOne() {
             <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <span>Join the community</span>
+            <span>Join a cohort of learners</span>
           </div>
         </div>
       </div>

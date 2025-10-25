@@ -51,18 +51,18 @@ export default function SectionTwo() {
     const cardData = [
         {
             icon: <RiGroupLine />,
-            title: 'Real-Time Collaboration',
-            description: 'Code together, share projects, and review code seamlessly with our integrated collaboration tools.'
+            title: 'Daily Habit Engine',
+            description: 'Solve daily DSA problems and build mini-projects. Maintain your streak, earn XP, and watch your skills grow consistently.'
         },
         {
             icon: <LuWrench />,
-            title: 'Powerful Built-in Tools',
-            description: 'Utilize our integrated debugger, linter, and version control systems right out of the box.'
+            title: 'Gamified Progress & Auto-Portfolio',
+            description: 'Climb weekly leaderboards and earn badges for achievements. Every project you complete is automatically added to your recruiter-ready portfolio.'
         },
         {
             icon: <IoRocketOutline />,
-            title: 'One-Click Deployment',
-            description: 'Deploy your applications directly from the development environment with a single click.'
+            title: 'AI-Powered Virtual Internship',
+            description: 'Convert your hard work into a verified, 2-month virtual internship. Get AI-driven feedback, a job-readiness score, and showcase your skills to recruiters.'
         }
     ];
 
@@ -73,10 +73,10 @@ export default function SectionTwo() {
                     Platform Features
                 </div>
                 <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-                    Why Choose Our Platform?
+                    Why Choose Adapt?
                 </h1>
                 <p className="text-gray-400 text-lg">
-                    Everything you need to learn, build, and deploy your projects in one place
+                    Everything you need to build skills, create a portfolio, and earn a verified internship.
                 </p>
             </div>
             

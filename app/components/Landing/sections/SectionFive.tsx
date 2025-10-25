@@ -2,24 +2,24 @@ import { useState } from 'react';
 
 const faqData = [
   {
-    question: "What programming languages does the platform support?",
-    answer: "Our platform supports a wide range of popular programming languages including JavaScript, Python, Java, C++, Ruby, Go, and more. We are constantly expanding our language support based on developer demand."
+    question: "Is Adapt really free to use?",
+    answer: "Yes! Our core Habit Engine is completely free. You can solve daily problems, build mini-projects, maintain streaks, and create your portfolio without any cost. The 2-month virtual internship is a paid, cohort-based program you can enroll in when you're ready."
   },
   {
-    question: "How does the pricing work?",
-    answer: "We offer a flexible pricing model to suit your needs. This includes a free tier for individual developers, a professional plan with advanced features for small teams, and an enterprise plan with dedicated support and custom integrations for larger organizations. You can find detailed information on our pricing page."
+    question: "What do I get from the paid virtual internship?",
+    answer: "The paid internship provides a structured, 2-month experience with real-world projects, AI-driven evaluation, a skill graph, a job-readiness score, a verified LinkedIn-embeddable record, mentor AMAs, and access to our recruiter showcase for top performers."
   },
   {
-    question: "Is my code secure on your platform?",
-    answer: "Absolutely. We prioritize the security of your code with measures such as end-to-end encryption, regular security audits, and compliance with industry standards. You retain full ownership of your intellectual property."
+    question: "Will recruiters recognize this internship?",
+    answer: "We focus on verifiable experience, not just a certificate. We are building pilot partnerships with startups and colleges to ensure our verified internship records are recognized. Top performers also get a human-signed reference letter and are featured in our recruiter showcase."
   },
   {
-    question: "Can I collaborate with my team?",
-    answer: "Yes, our platform is built for collaboration. You can invite team members, manage permissions, and work together on projects in real-time. Our tools are designed to streamline your team's workflow and enhance productivity."
+    question: "How does the 'Internship Ready' trigger work?",
+    answer: "After you reach milestones like a 30-day streak or completing 50 projects, our system generates a preview of your 'AI Readiness Report'. This highlights your strengths and shows how the paid internship can help you level up, encouraging you to convert when you're prepared."
   },
   {
-    question: "What kind of technical support do you offer?",
-    answer: "We provide comprehensive technical support to all our users. This includes detailed documentation, community forums, and email support for all plans. For our enterprise customers, we offer dedicated account managers and 24/7 priority support to ensure any issues are resolved quickly."
+    question: "What domains or tracks can I choose from?",
+    answer: "In Phase 1, we focus on high-demand tracks like Web Development, Data Science, and Algorithms. You can set your preference upon signing up, and we will be expanding our offerings based on student feedback and industry demand."
   }
 ];
 
@@ -89,7 +89,7 @@ export default function SectionFive() {
             Frequently Asked Questions
           </h2>
           <p className="text-gray-400 text-lg">
-            Everything you need to know about our platform
+            Everything you need to know about the Adapt platform.
           </p>
         </div>
 

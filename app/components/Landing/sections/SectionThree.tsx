@@ -60,24 +60,25 @@ export default function SectionThree() {
   const cardData = [
     {
       review:
-        "The collaborating tools on this platform have revolutionized our workflow. Real-time coding and instant feedback are game-changers for remote teams.",
-      avatarUrl: "https://avatar.iran.liara.run/public/1",
-      name: "Alex Johnson",
-      designation: "Senior Developer at TechCorp",
-    },
-    {
-      review:
-        "An incredibly powerful and intuitive platform. The seamless integration with our existing CI/CD pipelines saved us countless hours of setup.",
+        "The AI Readiness Report showed me I was ready for the next step. The virtual internship was intense but rewarding, giving me real experience I couldn't find elsewhere.",
       avatarUrl: "https://avatar.iran.liara.run/public/98",
-      name: "Brenda Smith",
-      designation: "Lead Engineer at Innovate Solutions",
+      name: "Rohan Verma",
+      designation: "Engineering Student, Delhi",
     },
     {
       review:
-        "From deployment to monitoring, this platform provides a robust, all-in-one solution. It's the backbone of our entire development process.",
+        "The daily challenges made coding a habit, not a chore. The streak system kept me motivated, and I built a portfolio I'm actually proud to show recruiters.",
+      avatarUrl: "https://avatar.iran.liara.run/public/1",
+      name: "Priya Sharma",
+      designation: "B.Tech Student, Mumbai",
+    },
+    
+    {
+      review:
+        "The verified internship record made a huge difference in my job applications. I finally had tangible proof of my skills to stand out from the crowd.",
       avatarUrl: "https://avatar.iran.liara.run/public/79",
-      name: "Charles Lee",
-      designation: "CEO at StartUp Hub",
+      name: "Anjali Gupta",
+      designation: "Computer Science Major, Bangalore",
     },
   ];
 
@@ -88,11 +89,10 @@ export default function SectionThree() {
           Testimonials
         </div>
         <h1 className="text-5xl font-bold font-sans text-white tracking-tight">
-          Trusted By Developers Worldwide
+          Trusted By Students Across India
         </h1>
         <p className="text-gray-400 text-lg leading-relaxed">
-          Our platform empowers teams to build, ship, and scale their
-          applications with confidence. Here&apos;s what they have to say.
+          Our platform empowers students to bridge the gap between academics and industry. Here's what they have to say.
         </p>
       </div>
 
@@ -123,7 +123,7 @@ export default function SectionThree() {
           ))}
         </div>
         <p className="text-gray-400 text-sm">
-          Rated <span className="text-white font-semibold">4.9/5</span> by over <span className="text-white font-semibold">10,000+</span> developers
+          Rated <span className="text-white font-semibold">4.9/5</span> by over <span className="text-white font-semibold">10,000+</span> students
         </p>
       </div>
 
