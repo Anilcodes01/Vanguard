@@ -92,7 +92,7 @@ export default function SectionThree() {
           Trusted By Students Across India
         </h1>
         <p className="text-gray-400 text-lg leading-relaxed">
-          Our platform empowers students to bridge the gap between academics and industry. Here's what they have to say.
+          Our platform empowers students to bridge the gap between academics and industry. Here&apos;s what they have to say.
         </p>
       </div>
 
