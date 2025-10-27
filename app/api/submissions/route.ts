@@ -86,6 +86,11 @@ function mapJudge0StatusToEnum(description: string): SubmissionStatus {
   return mapping[description] || SubmissionStatus.InternalError;
 }
 
+type TestCaseResult = {
+  testCaseId: string;
+  status: string;
+};
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -139,9 +144,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let finalResult: Judge0Submission | null = null;
     let allTestsPassed = true;
-    let firstFailedTestCase = null;
+    let firstFailedResult: Judge0Submission | null = null;
+    let firstFailedTestCaseData: { input: string | null, expected: string | null } | null = null;
+    let lastResult: Judge0Submission | null = null;
+    const testCaseResults: TestCaseResult[] = [];
 
     for (const testCase of problem.testCases) {
       let source_code = code;
@@ -161,22 +168,13 @@ export async function POST(request: NextRequest) {
         stdin = testCase.input || undefined;
       }
 
-      const submissionData: {
-        language_id: number;
-        source_code: string;
-        stdin?: string;
-        expected_output: string | null;
-        compiler_options?: string;
-      } = {
+      const submissionData = {
         language_id: languageId,
         source_code,
         stdin,
         expected_output: testCase.expected,
+        compiler_options: languageId === 94 ? "--lib es2020,dom" : undefined,
       };
-
-      if (languageId === 94) {
-        submissionData.compiler_options = "--lib es2020,dom";
-      }
 
       const options = {
         method: "POST",
@@ -192,16 +190,25 @@ export async function POST(request: NextRequest) {
 
       const judgeResponse = await axios.request(options);
       const result: Judge0Submission = judgeResponse.data;
-      finalResult = result;
+
+      lastResult = result;
+      testCaseResults.push({
+        testCaseId: testCase.id.toString(),
+        status: result.status.description,
+      });
 
       if (result.status.id !== 3) {
         allTestsPassed = false;
-        firstFailedTestCase = testCase;
+        firstFailedResult = result;
+        firstFailedTestCaseData = {
+          input: testCase.input,
+          expected: testCase.expected
+        };
         break;
       }
     }
 
-    if (!finalResult) {
+    if (!lastResult) {
       throw new Error("Code execution failed to produce a result.");
     }
 
@@ -251,9 +258,9 @@ export async function POST(request: NextRequest) {
           problemId: problem.id,
           code: code,
           languageId: languageId,
-          status: mapJudge0StatusToEnum(finalResult!.status.description),
-          executionTime: parseFloat(finalResult!.time) || null,
-          executionMemory: finalResult!.memory || null,
+          status: mapJudge0StatusToEnum(lastResult!.status.description),
+          executionTime: parseFloat(lastResult!.time) || null,
+          executionMemory: lastResult!.memory || null,
         },
       });
 
@@ -304,8 +311,8 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const executionTime = parseFloat(finalResult.time) || 0;
-    const executionMemory = finalResult.memory || 0;
+    const executionTime = parseFloat(lastResult.time) || 0;
+    const executionMemory = lastResult.memory || 0;
 
     if (allTestsPassed) {
       return NextResponse.json({
@@ -314,15 +321,17 @@ export async function POST(request: NextRequest) {
         starsEarned: isFirstSolve ? starsEarned : 0,
         executionTime,
         executionMemory,
+        testCaseResults,
       });
     } else {
       return NextResponse.json({
-        status: finalResult.status.description,
-        input: firstFailedTestCase?.input,
-        userOutput: finalResult.stdout,
-        expectedOutput: firstFailedTestCase?.expected,
+        status: firstFailedResult!.status.description,
+        input: firstFailedTestCaseData?.input,
+        userOutput: firstFailedResult!.stdout,
+        expectedOutput: firstFailedTestCaseData?.expected,
         executionTime,
         executionMemory,
+        testCaseResults,
       });
     }
   } catch (error) {

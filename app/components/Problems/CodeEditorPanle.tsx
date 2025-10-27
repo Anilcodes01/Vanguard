@@ -1,13 +1,14 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { BsCheck2Circle } from "react-icons/bs";
-import { ChevronUp, Maximize, Plus } from "lucide-react";
-import axios from "axios";
+import { ChevronUp, Maximize, Plus, X, Loader2 } from "lucide-react";
 import { EditorHeader } from "./CodeEditor/EditorHeader";
 import { RenderOutput } from "./CodeEditor/RenderOutput";
 import { TestCaseInput } from "./CodeEditor/TestCaseInput";
 import { mapLanguageToMonaco } from "@/lib/languageMappings";
 import { SubmissionResult, ProblemLanguageDetail } from "@/types";
+
+type TestCaseStatus = "pending" | "running" | "passed" | "failed";
 
 interface CodeEditorPanelProps {
   problemId: string;
@@ -15,31 +16,38 @@ interface CodeEditorPanelProps {
   maxTimeInMinutes: number;
   setCode: (code: string) => void;
   handleSubmit: (startTime: number | null) => void;
+  handleRunCode: (activeCaseIndex: number) => void;
   isSubmitting: boolean;
+  isCodeRunning: boolean;
   submissionResult: SubmissionResult | null;
-  testCases: { id: number, input: string | null, expected: string | null }[];
+  runResult: SubmissionResult | null;
+  testCases: { id: number; input: string | null; expected: string | null }[];
   availableLanguages: ProblemLanguageDetail[];
   selectedLanguage: ProblemLanguageDetail;
   onLanguageChange: (language: ProblemLanguageDetail) => void;
+  submissionProgress: number;
+  testCaseStatuses: TestCaseStatus[];
 }
 
 export default function CodeEditorPanel({
-  problemId,
   code,
   maxTimeInMinutes,
   setCode,
   handleSubmit,
+  handleRunCode,
   isSubmitting,
+  isCodeRunning,
   submissionResult,
+  runResult,
   testCases,
   availableLanguages,
   selectedLanguage,
   onLanguageChange,
+  submissionProgress,
+  testCaseStatuses,
 }: CodeEditorPanelProps) {
   const [activeTab, setActiveTab] = useState<"testcase" | "result">("testcase");
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [runResult, setRunResult] = useState<SubmissionResult | null>(null);
   const [isStarted, setIsStarted] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -47,7 +55,7 @@ export default function CodeEditorPanel({
   const [isResizing, setIsResizing] = useState(false);
   const [editorHeight, setEditorHeight] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const handleStart = () => {
     setIsStarted(true);
     setStartTime(Date.now());
@@ -56,10 +64,9 @@ export default function CodeEditorPanel({
 
   useEffect(() => {
     if (containerRef.current && editorHeight === null) {
-      setEditorHeight(containerRef.current.offsetHeight * 0.80);
+      setEditorHeight(containerRef.current.offsetHeight * 0.8);
     }
-  }, [containerRef.current]);
-
+  }, []);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -74,12 +81,10 @@ export default function CodeEditorPanel({
     if (isResizing && containerRef.current) {
       const containerTop = containerRef.current.getBoundingClientRect().top;
       const newHeight = e.clientY - containerTop;
-      
       const minHeight = 300;
       const bottomPanelMinHeight = 156;
       const resizerHeight = 8;
       const maxHeight = containerRef.current.offsetHeight - bottomPanelMinHeight - resizerHeight;
-
       if (newHeight > minHeight && newHeight < maxHeight) {
         setEditorHeight(newHeight);
       }
@@ -97,89 +102,87 @@ export default function CodeEditorPanel({
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
-
   useEffect(() => {
-    if (!isStarted || !startTime || submissionResult?.status === 'Accepted') {
+    if (!isStarted || !startTime || submissionResult?.status === "Accepted") {
       return;
     }
-
     const timerInterval = setInterval(() => {
       setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
     }, 1000);
-
     return () => clearInterval(timerInterval);
   }, [isStarted, startTime, submissionResult]);
+
+  useEffect(() => {
+      if (runResult || submissionResult) {
+          setActiveTab("result");
+      }
+  }, [runResult, submissionResult]);
 
   const formatTime = (elapsedSeconds: number): string => {
     if (elapsedSeconds <= maxTimeInSeconds) {
       const remainingSeconds = maxTimeInSeconds - elapsedSeconds;
       const min = Math.floor(remainingSeconds / 60);
       const sec = remainingSeconds % 60;
-      return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
     } else {
       const extraSeconds = elapsedSeconds - maxTimeInSeconds;
       const min = Math.floor(extraSeconds / 60);
       const sec = extraSeconds % 60;
-      return `+${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      return `+${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
     }
   };
 
   const getTimerColor = (elapsedSeconds: number): string => {
     if (elapsedSeconds > maxTimeInSeconds) {
-      return 'text-red-500';
+      return "text-red-500";
     }
     const remainingSeconds = maxTimeInSeconds - elapsedSeconds;
     if (remainingSeconds <= 60) {
-      return 'text-yellow-400';
+      return "text-yellow-400";
     }
-    return 'text-gray-300';
+    return "text-gray-300";
   };
 
-  const handleRun = async () => {
-    if (!isStarted) return;
-    setIsRunning(true);
-    setRunResult(null);
-    const currentTestCase = testCases[activeCaseIndex];
-    if (!currentTestCase) return;
-
-    try {
-      const response = await axios.post("/api/run", {
-        problemId,
-        code,
-        input: currentTestCase.input,
-        expectedOutput: currentTestCase.expected,
-        languageId: selectedLanguage.languageId,
-      });
-      setRunResult(response.data);
-    } catch {
-      setRunResult({ status: "Error", message: "Failed to connect to the server." });
-    } finally {
-      setIsRunning(false);
-      setActiveTab("result");
+  const getTestCaseStatusStyle = (status: TestCaseStatus) => {
+    switch (status) {
+      case "running": return "bg-zinc-700 text-white border border-sky-500";
+      case "passed": return "bg-emerald-800/60 text-emerald-300 border border-emerald-600";
+      case "failed": return "bg-red-800/60 text-red-300 border border-red-600";
+      default: return "bg-zinc-800 text-gray-400 hover:bg-zinc-700";
+    }
+  };
+  
+  const getTestCaseStatusIcon = (status: TestCaseStatus) => {
+    switch (status) {
+        case 'running': return <Loader2 className="h-4 w-4 animate-spin" />;
+        case 'passed': return <BsCheck2Circle className="h-4 w-4 text-emerald-400" />;
+        case 'failed': return <X className="h-4 w-4 text-red-400" />;
+        default: return null;
     }
   };
 
   const displayResult = submissionResult || runResult;
-
+  
   return (
     <div ref={containerRef} className="w-1/2 flex flex-col h-full">
-      <div 
+      <div
         className="bg-zinc-900 rounded-lg shadow-2xl flex flex-col overflow-hidden flex-shrink-0"
-        style={{ height: editorHeight ? `${editorHeight}px` : '60%' }}
+        style={{ height: editorHeight ? `${editorHeight}px` : "60%" }}
       >
         <EditorHeader
           onStart={handleStart}
-          onRun={handleRun}
+          onRun={() => handleRunCode(activeCaseIndex)}
           onSubmit={() => handleSubmit(startTime)}
           isStarted={isStarted}
-          isRunning={isRunning}
+          isRunning={isCodeRunning && !isSubmitting}
           isSubmitting={isSubmitting}
           displayTime={formatTime(elapsedTime)}
           timerColor={getTimerColor(elapsedTime)}
           availableLanguages={availableLanguages}
           selectedLanguage={selectedLanguage}
           onLanguageChange={onLanguageChange}
-            maxTimeInMinutes={maxTimeInMinutes}
+          maxTimeInMinutes={maxTimeInMinutes}
+          submissionProgress={submissionProgress}
         />
 
         <div className="flex-grow relative">
@@ -225,57 +228,47 @@ export default function CodeEditorPanel({
           <div className="flex items-center gap-4 text-sm font-medium">
             <button
               onClick={() => setActiveTab("testcase")}
-              className={`flex items-center gap-2 p-1 rounded-md ${
-                activeTab === "testcase" ? "text-white" : "text-gray-400"
-              }`}
+              className={`flex items-center gap-2 p-1 rounded-md ${activeTab === "testcase" ? "text-white" : "text-gray-400"}`}
             >
-              <BsCheck2Circle
-                className={`${
-                  activeTab === "testcase" ? "text-green-400" : ""
-                }`}
-              />
+              <BsCheck2Circle className={`${activeTab === "testcase" ? "text-green-400" : ""}`} />
               Testcase
             </button>
             <span className="text-zinc-600">|</span>
             <button
               onClick={() => setActiveTab("result")}
-              className={`p-1 rounded-md ${
-                activeTab === "result" ? "text-white" : "text-gray-400"
-              }`}
+              className={`p-1 rounded-md ${activeTab === "result" ? "text-white" : "text-gray-400"}`}
             >
               Test Result
             </button>
           </div>
           <div className="flex items-center gap-2 text-gray-400">
-            <button className="hover:text-white">
-              <Maximize size={16} />
-            </button>
-            <button className="hover:text-white">
-              <ChevronUp size={20} />
-            </button>
+            <button className="hover:text-white"><Maximize size={16} /></button>
+            <button className="hover:text-white"><ChevronUp size={20} /></button>
           </div>
         </div>
 
         <div className="flex-grow overflow-y-auto">
           {activeTab === "testcase" && (
             <div>
-              <div className="flex items-center gap-2 px-4 pt-2">
-                {testCases.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setActiveCaseIndex(index)}
-                    className={`px-3 py-1 text-sm rounded-lg ${
-                      activeCaseIndex === index
-                        ? "bg-zinc-700 text-white"
-                        : "bg-zinc-800 text-gray-400 hover:bg-zinc-700"
-                    }`}
-                  >
-                    Case {index + 1}
+              <div className="flex items-center gap-2 px-4 pt-2 flex-wrap">
+                  {testCases.map((_, index) => (
+                      <button
+                          key={index}
+                          onClick={() => setActiveCaseIndex(index)}
+                          disabled={isCodeRunning}
+                          className={`flex justify-center items-center gap-2 w-24 h-8 px-3 py-1 text-sm rounded-lg transition-colors border ${
+                              activeCaseIndex === index && testCaseStatuses[index] === 'pending'
+                                ? "bg-zinc-700 text-white border-transparent"
+                                : getTestCaseStatusStyle(testCaseStatuses[index])
+                          } disabled:opacity-70 disabled:cursor-not-allowed`}
+                      >
+                           {getTestCaseStatusIcon(testCaseStatuses[index])}
+                           <span>Case {index + 1}</span>
+                      </button>
+                  ))}
+                  <button className="p-1.5 rounded-lg bg-zinc-800 text-gray-400 hover:bg-zinc-700" disabled={isCodeRunning}>
+                      <Plus size={16} />
                   </button>
-                ))}
-                <button className="p-1.5 rounded-lg bg-zinc-800 text-gray-400 hover:bg-zinc-700">
-                  <Plus size={16} />
-                </button>
               </div>
               <TestCaseInput input={testCases[activeCaseIndex]?.input} />
             </div>

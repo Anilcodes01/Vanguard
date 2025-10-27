@@ -1,4 +1,4 @@
-import { Clock, Play, ShieldCheck, ChevronDown, Rocket } from "lucide-react";
+import { Clock, Play, ShieldCheck, ChevronDown, Rocket, Loader2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +22,7 @@ interface EditorHeaderProps {
   selectedLanguage: ProblemLanguageDetail;
   onLanguageChange: (language: ProblemLanguageDetail) => void;
   maxTimeInMinutes: number;
+  submissionProgress: number;
 }
 
 export const EditorHeader = ({
@@ -37,6 +38,7 @@ export const EditorHeader = ({
   selectedLanguage,
   onLanguageChange,
   maxTimeInMinutes,
+   submissionProgress,
 }: EditorHeaderProps) => (
   <div className="flex items-center justify-between px-4 py-2.5 bg-neutral-900 border-b border-neutral-800">
     <DropdownMenu>
@@ -102,23 +104,38 @@ export const EditorHeader = ({
           Start
         </Button>
       )}
-      <Button
+    <Button
         onClick={onRun}
         variant="secondary"
         disabled={!isStarted || isRunning || isSubmitting}
-        className="bg-neutral-800 text-neutral-300 hover:bg-neutral-700 disabled:opacity-50 h-auto px-4 py-1.5"
+        className="bg-neutral-800 text-neutral-300 hover:bg-neutral-700 disabled:opacity-50 h-auto px-4 py-1.5 w-[120px] flex justify-center items-center"
       >
-        <Play size={15} className="mr-2" />
-        {isRunning ? "Running..." : "Run Code"}
+        {isRunning ? (
+            <>
+              <Loader2 size={16} className="mr-2 animate-spin" />
+              Running...
+            </>
+        ) : (
+            <>
+              <Play size={15} className="mr-2" />
+              Run Code
+            </>
+        )}
       </Button>
       <Button
-        onClick={onSubmit}
-        disabled={!isStarted || isRunning || isSubmitting}
-        className="bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 h-auto px-4 py-1.5"
-      >
-        <Rocket size={15} className="mr-2" />
-        {isSubmitting ? "Submitting..." : "Submit"}
-      </Button>
+            onClick={onSubmit}
+            disabled={!isStarted || isRunning || isSubmitting}
+            className="relative overflow-hidden bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 h-auto px-4 py-1.5"
+        >
+            <div
+                className="absolute top-0 left-0 h-full bg-emerald-800/70 transition-all duration-300"
+                style={{ width: `${submissionProgress}%` }}
+            />
+            <span className="relative z-10 flex items-center">
+              <Rocket size={15} className="mr-2" />
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </span>
+        </Button>
     </div>
   </div>
 );
