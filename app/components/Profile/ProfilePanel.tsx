@@ -153,7 +153,7 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
           </button>
         )}
         <Link
-          href="/settings/profile"
+          href={`/editProfile/${user.username}`}
           className="group flex w-full items-center justify-center gap-2 rounded-lg bg-neutral-800/80 px-4 py-2 text-sm text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-neutral-200"
         >
           <Pencil size={14} />

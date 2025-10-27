@@ -396,16 +396,31 @@ enum one_time_token_type {
 }
 
 
+
 model Profiles {
   id           String  @id @db.Uuid
   name         String?
   username     String? @unique
   avatar_url   String?
-  domain       String?
-  college_name String?
   onboarded    Boolean @default(false)
   xp           Int     @default(0)
   stars        Int     @default(0)
+  domain String?
+  college_name     String?
+  year_of_study    String?
+  primary_field    String?
+  comfort_level    String?
+  preferred_langs  String[]
+  platform_exp     String?
+  main_goal        String[]
+  challenge_pref   String[]
+  motivation       String[]
+  time_dedication  String?   
+  internship_interest String?
+  role_interest    String[]
+  project_pref     String?
+  playstyle        String?
+  first_badge      String?
 
   league           League @default(Bronze)
   currentGroupId   String? @map("current_group_id") @db.Uuid
@@ -413,7 +428,7 @@ model Profiles {
   users users @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@map("profiles")
-  @@schema("public") 
+  @@schema("public")
 }
 
 model LeaderboardGroup {

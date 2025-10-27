@@ -14,13 +14,34 @@ export async function POST(request: Request) {
   }
 
   const formData = await request.formData();
-  const domain = formData.get('domain') as string;
-  const college_name = formData.get('college_name') as string;
   const avatarFile = formData.get('avatar') as File | null;
 
-  if (!domain || !college_name) {
+  const getArray = (key: string) => formData.getAll(key).map(String);
+  const getString = (key: string) => formData.get(key) as string | null;
+
+  const data = {
+    domain: getString('domain'),
+    name: getString('name'),
+    college_name: getString('college_name'),
+    year_of_study: getString('year_of_study'),
+    primary_field: getString('primary_field'),
+    comfort_level: getString('comfort_level'),
+    preferred_langs: getArray('preferred_langs'),
+    platform_exp: getString('platform_exp'),
+    main_goal: getArray('main_goal'),
+    challenge_pref: getArray('challenge_pref'),
+    motivation: getArray('motivation'),
+    time_dedication: getString('time_dedication'),
+    internship_interest: getString('internship_interest'),
+    role_interest: getArray('role_interest'),
+    project_pref: getString('project_pref'),
+    playstyle: getString('playstyle'),
+    first_badge: getString('first_badge'),
+  };
+
+  if (!data.name || !data.domain) {
     return NextResponse.json(
-      { error: 'Domain and College Name are required.' },
+      { error: 'Name and Domain are required.' },
       { status: 400 }
     );
   }
@@ -28,47 +49,37 @@ export async function POST(request: Request) {
   let avatar_url: string | null = null;
   if (avatarFile) {
     const fileExtension = avatarFile.name.split('.').pop();
-    const fileName = `${user.id}.${fileExtension}`; 
-    const filePath = `${user.id}/${fileName}`; 
+    const fileName = `${user.id}.${fileExtension}`;
+    const filePath = `${user.id}/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from('avatars')
-      .upload(filePath, avatarFile, {
-        upsert: true, 
-      });
+      .upload(filePath, avatarFile, { upsert: true });
 
     if (uploadError) {
       console.error('Supabase upload error:', uploadError);
-      return NextResponse.json(
-        { error: 'Failed to upload avatar.' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to upload avatar.' }, { status: 500 });
     }
 
-    const { data: urlData } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(filePath);
-    
+    const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath);
     avatar_url = urlData.publicUrl;
   }
 
   try {
+    const updateData = {
+      ...data,
+      onboarded: true,
+      ...(avatar_url && { avatar_url }),
+    };
+
     await prisma.profiles.update({
       where: { id: user.id },
-      data: {
-        domain,
-        college_name,
-        avatar_url,
-        onboarded: true,
-      },
+      data: updateData,
     });
 
     return NextResponse.json({ message: 'Profile updated successfully.' });
   } catch (error) {
     console.error('Onboarding API Error:', error);
-    return NextResponse.json(
-      { error: 'An internal error occurred.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'An internal error occurred.' }, { status: 500 });
   }
 }
