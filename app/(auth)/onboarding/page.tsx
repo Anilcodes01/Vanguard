@@ -137,7 +137,7 @@ export default function OnboardingPage() {
               formData={formData}
               setFormData={setFormData}
               avatarPreview={avatarPreview}
-              // @ts-expect-error 
+              // @ts-expect-error The prop type is valid but TypeScript struggles with the ref.
               fileInputRef={fileInputRef}
               handleFileChange={handleFileChange}
               openDomainPopover={openDomainPopover}
