@@ -12,10 +12,21 @@ interface ApiResponse {
   totalCount: number;
 }
 
+interface FetchParams {
+  page: number;
+  difficulty: "All" | Problem["difficulty"]
+}
+
 export const fetchProblemsPage = createAsyncThunk(
   "problemsList/fetchPage",
-  async (page: number) => {
-    const response = await fetch(`/api/problems/list?page=${page}`);
+  async ({page, difficulty}: FetchParams) => {
+    let url = `/api/problems/list?page=${page}`
+    if(difficulty !== 'All') {
+      url +=`&difficulty=${difficulty}`
+    }
+
+    const response = await fetch(url);
+
     if (!response.ok) {
       throw new Error("Failed to fetch problems");
     }
@@ -68,6 +79,7 @@ const problemsListSlice = createSlice({
 
           state.nextPage += 1;
           state.hasMore = state.problems.length < state.totalCount;
+          state.error = null
         }
       )
       .addCase(fetchProblemsPage.rejected, (state, action) => {

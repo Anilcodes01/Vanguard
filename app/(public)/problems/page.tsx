@@ -10,8 +10,17 @@ import {
   resetProblemsList,
 } from "@/app/store/features/problems/problemsSlice";
 
+type FilterType = "All" | "Beginner" | "Intermediate" | "Advanced";
+const difficultyFilters: FilterType[] = [
+  "All",
+  "Beginner",
+  "Intermediate",
+  "Advanced",
+];
+
 export default function Problems() {
   const dispatch: AppDispatch = useDispatch();
+  const [activeFilter, setActiveFilter] = useState<FilterType>("All");
 
   const { problems, status, error, hasMore, nextPage } = useSelector(
     (state: RootState) => state.problemsList
@@ -20,16 +29,24 @@ export default function Problems() {
   const isLoading = status === "loading";
 
   useEffect(() => {
-    dispatch(fetchProblemsPage(1));
+    dispatch(fetchProblemsPage({ page: 1, difficulty: "All" }));
 
     return () => {
       dispatch(resetProblemsList());
     };
   }, [dispatch]);
 
+  const handleFilterChange = (newFilter: FilterType) => {
+    if (newFilter === activeFilter) return;
+
+    setActiveFilter(newFilter);
+    dispatch(resetProblemsList());
+    dispatch(fetchProblemsPage({ page: 1, difficulty: newFilter }));
+  };
+
   const loadMoreProblems = () => {
     if (!isLoading && hasMore) {
-      dispatch(fetchProblemsPage(nextPage));
+      dispatch(fetchProblemsPage({ page: nextPage, difficulty: activeFilter }));
     }
   };
 
@@ -56,6 +73,22 @@ export default function Problems() {
           <p className="text-gray-400 text-lg">
             Sharpen your skills with curated coding challenges
           </p>
+        </div>
+
+        <div className="flex items-center gap-2 mb-8">
+          {difficultyFilters.map((filter) => (
+            <button
+              key={filter}
+              onClick={() => handleFilterChange(filter)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors duration-200 ${
+                activeFilter === filter
+                  ? "bg-sky-500 text-white"
+                  : "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-200"
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
         </div>
 
         {error && nextPage === 1 ? (
