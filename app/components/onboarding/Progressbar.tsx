@@ -10,7 +10,7 @@ export const ProgressBar = ({ currentStep }: { currentStep: number }) => {
 
   return (
     <div className="flex w-full max-w-lg mx-auto items-start justify-between relative">
-      <div className="absolute top-5 left-5 right-5 h-0.5 bg-slate-700"></div>=
+      <div className="absolute top-5 left-5 right-5 h-0.5 bg-slate-700"></div>
       <div
         className="absolute top-5 left-5 h-0.5 bg-green-500 transition-all duration-500"
         style={{
