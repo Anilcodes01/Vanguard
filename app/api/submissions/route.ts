@@ -16,6 +16,7 @@ async function assignUserToLeaderboardGroup(
   userId: string,
   tx: Prisma.TransactionClient
 ) {
+  // ... (this function is correct, no changes needed)
   const userProfile = await tx.profiles.findUnique({
     where: { id: userId },
     include: { currentGroup: true },
@@ -75,6 +76,7 @@ type Judge0Submission = {
 };
 
 function mapJudge0StatusToEnum(description: string): SubmissionStatus {
+  // ... (this function is correct, no changes needed)
   const mapping: { [key: string]: SubmissionStatus } = {
     Accepted: SubmissionStatus.Accepted,
     "Wrong Answer": SubmissionStatus.WrongAnswer,
@@ -146,7 +148,10 @@ export async function POST(request: NextRequest) {
 
     let allTestsPassed = true;
     let firstFailedResult: Judge0Submission | null = null;
-    let firstFailedTestCaseData: { input: string | null, expected: string | null } | null = null;
+    let firstFailedTestCaseData: {
+      input: string | null;
+      expected: string | null;
+    } | null = null;
     let lastResult: Judge0Submission | null = null;
     const testCaseResults: TestCaseResult[] = [];
 
@@ -170,16 +175,21 @@ export async function POST(request: NextRequest) {
 
       const submissionData = {
         language_id: languageId,
-        source_code,
-        stdin,
-        expected_output: testCase.expected,
-        compiler_options: languageId === 94 ? "--lib es2020,dom" : undefined,
+        source_code: Buffer.from(source_code).toString("base64"),
+        stdin: stdin ? Buffer.from(stdin).toString("base64") : undefined,
+        expected_output: testCase.expected
+          ? Buffer.from(testCase.expected).toString("base64")
+          : null,
+        compiler_options:
+          languageId === 94
+            ? Buffer.from("--lib es2020,dom").toString("base64")
+            : undefined,
       };
 
       const options = {
         method: "POST",
         url: `${process.env.JUDGE0_API_URL}/submissions`,
-        params: { base64_encoded: "false", wait: "true", fields: "*" },
+        params: { base64_encoded: "true", wait: "true", fields: "*" },
         headers: {
           "content-type": "application/json",
           "X-RapidAPI-Key": process.env.JUDGE0_API_KEY,
@@ -190,6 +200,16 @@ export async function POST(request: NextRequest) {
 
       const judgeResponse = await axios.request(options);
       const result: Judge0Submission = judgeResponse.data;
+
+      result.stdout = result.stdout
+        ? Buffer.from(result.stdout, "base64").toString("utf-8")
+        : null;
+      result.stderr = result.stderr
+        ? Buffer.from(result.stderr, "base64").toString("utf-8")
+        : null;
+      result.compile_output = result.compile_output
+        ? Buffer.from(result.compile_output, "base64").toString("utf-8")
+        : null;
 
       lastResult = result;
       testCaseResults.push({
@@ -202,7 +222,7 @@ export async function POST(request: NextRequest) {
         firstFailedResult = result;
         firstFailedTestCaseData = {
           input: testCase.input,
-          expected: testCase.expected
+          expected: testCase.expected,
         };
         break;
       }
