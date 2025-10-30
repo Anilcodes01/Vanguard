@@ -7,10 +7,9 @@ import { fetchDashboardData } from "@/app/store/features/dashboard/dashboardSlic
 import { fetchInProgressProjects } from "@/app/store/features/projects/inProgressSlice";
 import FullProjectCardSkeleton from "./Projects/ProjectCardSkeleton";
 import LeaderboardWidget from "./LeaderWidget";
-import ProjectCard from "./Projects/ProjectsCard";
 import { fetchLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
 import { DailyProblemCard, AllProblemsSolvedCard } from "./DailyProblemsCard";
-import Link from "next/link";
+import InProgressProjectCard from "./Projects/InProgressProjectCard"; 
 
 export default function UserLoggedInLanding() {
   const dispatch: AppDispatch = useDispatch();
@@ -79,8 +78,8 @@ export default function UserLoggedInLanding() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="md:col-span-2">
+            <div className="space-y-8">
+              <div>
                 {dailyProblem ? (
                   <DailyProblemCard problem={dailyProblem} />
                 ) : (
@@ -88,26 +87,25 @@ export default function UserLoggedInLanding() {
                 )}
               </div>
 
-              <div className="md:col-span-2">
-                <h2 className="text-2xl font-semibold  text-neutral-300">
+              <div>
+                <h2 className="text-2xl font-semibold mb-4 text-neutral-300">
                   Your In-Progress Projects
                 </h2>
+                {inProgressProjects.length > 0 ? (
+                  <div className="space-y-4">
+                    {inProgressProjects.map((project) => (
+                      <InProgressProjectCard key={project.id} project={project} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-neutral-900/50 p-8 rounded-xl border border-neutral-800 text-center">
+                    <p className="text-neutral-400">
+                      You have no projects in progress. Start one from the
+                      projects page!
+                    </p>
+                  </div>
+                )}
               </div>
-
-              {inProgressProjects.length > 0 ? (
-                inProgressProjects.map((project) => (
-                  <Link href={`/projects/${project.id}`} key={project.id}>
-                    <ProjectCard project={project} />
-                  </Link>
-                ))
-              ) : (
-                <div className="md:col-span-2 bg-neutral-900/50 p-8 rounded-2xl border border-neutral-800 text-center">
-                  <p className="text-neutral-400">
-                    You have no projects in progress. Start one from the
-                    projects page!
-                  </p>
-                </div>
-              )}
             </div>
           </div>
 

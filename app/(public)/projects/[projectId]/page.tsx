@@ -255,7 +255,7 @@ export default function IndividualProjectPage() {
 
   return (
     <main className="min-h-screen bg-[#262626] text-white p-4 sm:p-8">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8">
         <div className="lg:col-span-3">
           <div className="relative aspect-video w-full bg-[#333] rounded-lg overflow-hidden mb-6 border border-neutral-700">
             {project.coverImage ? (

@@ -1,0 +1,47 @@
+"use-client";
+
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import ProjectStatusTimer from "./ProjectStatusTimer";
+import { InProgressProject } from "@/app/store/features/projects/inProgressSlice";
+
+interface InProgressProjectCardProps {
+  project: InProgressProject;
+}
+
+export default function InProgressProjectCard({
+  project,
+}: InProgressProjectCardProps) {
+  return (
+    <Link
+      href={`/projects/${project.id}`}
+      className="block bg-neutral-900/50 border border-neutral-800 rounded-xl p-5 transition-all duration-300 hover:bg-neutral-800/60 hover:border-neutral-700"
+    >
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+        <div className="flex-1">
+          <h3 className="text-lg font-bold text-neutral-100">{project.name}</h3>
+          <p className="text-sm text-neutral-400 line-clamp-2 mt-1 mb-3">
+            {project.description}
+          </p>
+          <span className="inline-block bg-sky-500/20 text-sky-400 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+            {project.domain}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end shrink-0">
+          {project.startedAt && (
+            <ProjectStatusTimer
+              startedAt={project.startedAt}
+              maxTime={project.maxTime}
+            />
+          )}
+
+          <div className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm">
+            <span>Continue</span>
+            <ArrowRight size={16} />
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
