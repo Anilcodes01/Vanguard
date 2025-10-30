@@ -9,7 +9,7 @@ type ProjectStatusResponse = {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   const supabase =await createClient();
   const {
@@ -20,7 +20,7 @@ export async function GET(
     return NextResponse.json<ProjectStatusResponse>({ status: "NotStarted" });
   }
 
-  const { projectId } = params;
+  const { projectId } =await params;
 
   try {
     const submission = await prisma.submittedProjects.findFirst({

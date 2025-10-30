@@ -240,7 +240,7 @@ export default function IndividualProjectPage() {
         return (
           <div className="text-center bg-red-500/10 border border-red-500/30 rounded-lg p-6">
             <AlertTriangle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-red-300">Time's Up!</h2>
+            <h2 className="text-2xl font-semibold text-red-300">Time&apos;s Up!</h2>
             <p className="text-neutral-400 text-sm mt-2">
               The deadline for this project has passed.
             </p>
