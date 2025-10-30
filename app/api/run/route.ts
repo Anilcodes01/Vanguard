@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("--- JUDGE0 EXECUTION FAILED ---");
     let errorMessage = "An unknown error occurred during execution.";
-    let errorDetails: any = {};
+    let errorDetails: unknown = {};
     if (axios.isAxiosError(error)) {
       console.error("Axios error status:", error.response?.status);
       console.error(
