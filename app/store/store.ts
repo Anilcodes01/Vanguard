@@ -6,6 +6,7 @@ import projectsReducer from './features/projects/projectSlice';
 import viewedProfileReducer from './features/viewedProfile/viewedProfileSlice'; 
 import problemsListReducer from './features/problems/problemsSlice'
 import leaderboardReducer from './features/leaderboard/leaderboardSlice'
+import inProgressProjectsReducer from './features/projects/inProgressSlice'
 
 export const store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ export const store = configureStore({
     projects: projectsReducer,
     viewedProfile: viewedProfileReducer,
     problemsList: problemsListReducer,
-    leaderboard: leaderboardReducer
+    leaderboard: leaderboardReducer,
+     inProgressProjects: inProgressProjectsReducer,
   },
 });
 

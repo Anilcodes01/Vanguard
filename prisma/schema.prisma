@@ -53,6 +53,7 @@ model users {
   submissions                 Submission[]
   problemSolutions            ProblemSolution[]
   SubmittedProjects           SubmittedProjects[]
+  ProjectProgress             ProjectProgress[]
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -586,6 +587,7 @@ model Project {
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   SubmittedProjects SubmittedProjects[]
+  ProjectProgress   ProjectProgress[]
 
   @@map("projects")
   @@schema("public")
@@ -607,15 +609,29 @@ enum League {
 }
 
 model SubmittedProjects {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   githubUrl String?
-  liveUrl String?
+  liveUrl   String?
   userId    String
-  user      users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectId String
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@schema("public")
+}
+
+model ProjectProgress {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id") @db.Uuid
+  projectId String   @map("project_id")
+  startedAt DateTime @default(now()) @map("started_at")
+
+  user    users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@map("project_progress")
   @@schema("public")
 }

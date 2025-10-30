@@ -4,14 +4,13 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { fetchDashboardData } from "@/app/store/features/dashboard/dashboardSlice";
-import { fetchProjects } from "@/app/store/features/projects/projectSlice";
+import { fetchInProgressProjects } from "@/app/store/features/projects/inProgressSlice";
 import FullProjectCardSkeleton from "./Projects/ProjectCardSkeleton";
 import LeaderboardWidget from "./LeaderWidget";
-import {  Lock } from "lucide-react";
 import ProjectCard from "./Projects/ProjectsCard";
 import { fetchLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
-import { DailyProblemCard , AllProblemsSolvedCard} from "./DailyProblemsCard";
-
+import { DailyProblemCard, AllProblemsSolvedCard } from "./DailyProblemsCard";
+import Link from "next/link";
 
 export default function UserLoggedInLanding() {
   const dispatch: AppDispatch = useDispatch();
@@ -24,10 +23,10 @@ export default function UserLoggedInLanding() {
   } = useSelector((state: RootState) => state.dashboard);
 
   const {
-    projects,
-    status: projectsStatus,
-    error: projectsError,
-  } = useSelector((state: RootState) => state.projects);
+    projects: inProgressProjects,
+    status: inProgressStatus,
+    error: inProgressError,
+  } = useSelector((state: RootState) => state.inProgressProjects);
 
   const {
     leaderboard,
@@ -41,21 +40,21 @@ export default function UserLoggedInLanding() {
     if (dashboardStatus === "idle") {
       dispatch(fetchDashboardData());
     }
-    if (projectsStatus === "idle") {
-      dispatch(fetchProjects());
+    if (inProgressStatus === "idle") {
+      dispatch(fetchInProgressProjects());
     }
     if (leaderboardStatus === "idle") {
       dispatch(fetchLeaderboard());
     }
-  }, [dashboardStatus, projectsStatus, leaderboardStatus, dispatch]);
+  }, [dashboardStatus, inProgressStatus, leaderboardStatus, dispatch]);
 
   const isPageLoading =
     dashboardStatus === "loading" ||
     dashboardStatus === "idle" ||
-    projectsStatus === "loading" ||
-    projectsStatus === "idle";
+    inProgressStatus === "loading" ||
+    inProgressStatus === "idle";
 
-  const combinedError = dashboardError || projectsError || leaderboardError;
+  const combinedError = dashboardError || inProgressError || leaderboardError;
 
   if (isPageLoading) {
     return <FullProjectCardSkeleton />;
@@ -89,23 +88,23 @@ export default function UserLoggedInLanding() {
                 )}
               </div>
 
-              {projects.length > 0 ? (
-                projects.map((project) => (
-                  <div key={project.id} className="relative group rounded-2xl overflow-hidden">
-                    <div className="absolute inset-0 z-10 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-center text-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <Lock className="w-10 h-10 text-neutral-400 mb-2" />
-                      <p className="font-bold text-white text-lg">Coming Soon</p>
-                    </div>
+              <div className="md:col-span-2">
+                <h2 className="text-2xl font-semibold  text-neutral-300">
+                  Your In-Progress Projects
+                </h2>
+              </div>
 
-                    <div className="pointer-events-none">
-                      <ProjectCard project={project} />
-                    </div>
-                  </div>
+              {inProgressProjects.length > 0 ? (
+                inProgressProjects.map((project) => (
+                  <Link href={`/projects/${project.id}`} key={project.id}>
+                    <ProjectCard project={project} />
+                  </Link>
                 ))
               ) : (
                 <div className="md:col-span-2 bg-neutral-900/50 p-8 rounded-2xl border border-neutral-800 text-center">
                   <p className="text-neutral-400">
-                    No projects found right now. Check back later!
+                    You have no projects in progress. Start one from the
+                    projects page!
                   </p>
                 </div>
               )}

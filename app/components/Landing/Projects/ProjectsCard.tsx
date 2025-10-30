@@ -1,14 +1,18 @@
+"use client";
+
 import Image from "next/image";
 import { Layers, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ProjectCountdownTimer from "../ProjectCountdownTimer";
 
-type Project = {
+type ProjectWithProgress = {
   id: string;
   name: string;
   description: string;
   domain: string;
   maxTime: string;
   coverImage: string | null;
+  startedAt?: string;
 };
 
 const PlaceholderIcon = () => (
@@ -17,8 +21,13 @@ const PlaceholderIcon = () => (
   </div>
 );
 
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({
+  project,
+}: {
+  project: ProjectWithProgress;
+}) {
   const router = useRouter();
+
   return (
     <div
       onClick={() => {
@@ -55,9 +64,22 @@ export default function ProjectCard({ project }: { project: Project }) {
             <Layers size={16} className="text-blue-400" />
             <span className="font-medium">{project.domain}</span>
           </span>
+
           <span className="inline-flex items-center gap-2">
-            <Clock size={16} className="text-green-400" />
-            <span>{project.maxTime}</span>
+            <Clock
+              size={16}
+              className={
+                project.startedAt ? "text-yellow-400" : "text-green-400"
+              }
+            />
+            {project.startedAt ? (
+              <ProjectCountdownTimer
+                startedAt={project.startedAt}
+                maxTime={project.maxTime}
+              />
+            ) : (
+              <span>{project.maxTime} days</span>
+            )}
           </span>
         </div>
       </div>
