@@ -28,7 +28,7 @@ export async function GET(
       );
     }
 
-    const [submissions, problemSolutions] = await Promise.all([
+    const [submissions, problemSolutions, submittedProjects] = await Promise.all([
       prisma.submission.findMany({
         where: { userId: profile.id },
         orderBy: { createdAt: 'desc' },
@@ -36,17 +36,36 @@ export async function GET(
           problem: {
             select: { title: true },
           },
+          
+          
         },
+        
       }),
       prisma.problemSolution.findMany({
         where: { userId: profile.id }, 
       }),
+       prisma.submittedProjects.findMany({
+        where: {
+          userId: profile.id
+        },
+        orderBy: {
+          createdAt: 'desc'
+        },
+        include: {
+          project: {
+            select: {
+              name: true
+            }
+          }
+        }
+      })
     ]);
 
     const userData = {
       profiles: [profile], 
       submissions,
       problemSolutions,
+      submittedProjects
     };
 
     return NextResponse.json(

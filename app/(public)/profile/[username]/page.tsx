@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, use } from "react";
+import { use, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { fetchProfileByUsername } from "@/app/store/features/viewedProfile/viewedProfileSlice";
@@ -11,6 +11,7 @@ import {
   LoadingSpinner,
   StatCard,
 } from "@/app/components/Profile/ProfilePanel";
+import SubmittedProjectsList from "@/app/components/Profile/SubmittedProjectsList";
 
 export default function ProfilePage({
   params,
@@ -27,10 +28,10 @@ export default function ProfilePage({
   const profileData = profilesCache[username];
 
   useEffect(() => {
-    if (!profileData) {
+    if (!profileData && status !== "loading") {
       dispatch(fetchProfileByUsername(username));
     }
-  }, [username, profileData, dispatch]);
+  }, [username, profileData, dispatch, status]);
 
   const isLoading = status === "loading" || !profileData;
 
@@ -137,11 +138,16 @@ export default function ProfilePage({
                 </div>
               )}
             </div>
+
+            <SubmittedProjectsList
+              projects={profileData.submittedProjects ?? []}
+            />
           </div>
 
           <div className="w-full lg:w-80 shrink-0">
             {(() => {
-              const league = (profile as { league?: string }).league ?? "Unranked";
+              const league =
+                "league" in profile ? String(profile.league) : "Unranked";
               return <ProfilePanel user={{ ...profile, league }} />;
             })()}
           </div>

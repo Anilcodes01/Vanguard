@@ -97,13 +97,63 @@ export type ProblemSolution = {
   status: "Solved" | "Attempted";
 };
 
+export type League =
+  | "Bronze"
+  | "Silver"
+  | "Gold"
+  | "Sapphire"
+  | "Ruby"
+  | "Emerald"
+  | "Amethyst"
+  | "Pearl"
+  | "Obsidian"
+  | "Diamond";
 
-export type UserData = {
-  email: string | null;
-  profiles: ProfileData[];
+
+export interface Profile {
+  id: string;
+  name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+  onboarded: boolean;
+  xp: number;
+  stars: number;
+  domain: string | null;
+  college_name: string | null;
+  year_of_study: string | null;
+  primary_field: string | null;
+  comfort_level: string | null;
+  preferred_langs: string[];
+  platform_exp: string | null;
+  main_goal: string[];
+  challenge_pref: string[];
+  motivation: string[];
+  time_dedication: string | null;
+  internship_interest: string | null;
+  role_interest: string[];
+  project_pref: string | null;
+  playstyle: string | null;
+  first_badge: string | null;
+  league: League;
+}
+
+export interface SubmittedProject {
+  id: string;
+  githubUrl: string | null;
+  liveUrl: string | null;
+  createdAt: string;
+  project: {
+    name: string;
+  };
+}
+export interface UserData {
+  profiles: Profile[]; 
   submissions: Submission[];
-  problemSolutions: ProblemSolution[];
-};
+  problemSolutions: ProblemSolution[]; 
+  submittedProjects: SubmittedProject[];
+}
+
+
 
 export type LeaderboardMember = {
   id: string;

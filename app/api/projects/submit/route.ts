@@ -65,3 +65,16 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+
+export async function  GET() {
+  
+  try {
+    
+  } catch (error) {
+    return NextResponse.json({
+      message: 'An error occured while fetching the submitted projects',
+      error: error
+    }, {status: 500})
+  }
+}
