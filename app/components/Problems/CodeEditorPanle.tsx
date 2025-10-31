@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { BsCheck2Circle } from "react-icons/bs";
-import { ChevronUp, Maximize, Plus, X, Loader2 } from "lucide-react";
+import { ChevronUp, Maximize, Plus, X, Loader2, ChevronDown } from "lucide-react";
 import { EditorHeader } from "./CodeEditor/EditorHeader";
 import { RenderOutput } from "./CodeEditor/RenderOutput";
 import { TestCaseInput } from "./CodeEditor/TestCaseInput";
@@ -27,6 +27,9 @@ interface CodeEditorPanelProps {
   onLanguageChange: (language: ProblemLanguageDetail) => void;
   submissionProgress: number;
   testCaseStatuses: TestCaseStatus[];
+   problemTitle: string;
+  isMobileDetailsVisible: boolean;
+  onToggleMobileDetails: () => void;
 }
 
 export default function CodeEditorPanel({
@@ -45,6 +48,9 @@ export default function CodeEditorPanel({
   onLanguageChange,
   submissionProgress,
   testCaseStatuses,
+  problemTitle,
+  isMobileDetailsVisible,
+  onToggleMobileDetails,
 }: CodeEditorPanelProps) {
   const [activeTab, setActiveTab] = useState<"testcase" | "result">("testcase");
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
@@ -164,7 +170,19 @@ export default function CodeEditorPanel({
   const displayResult = submissionResult || runResult;
   
   return (
-    <div ref={containerRef} className="w-1/2 flex flex-col h-full">
+    <div ref={containerRef} className=" flex flex-col h-full">
+        <button
+        onClick={onToggleMobileDetails}
+        className="lg:hidden flex items-center justify-between w-full p-3 bg-zinc-900 rounded-t-lg border-b border-zinc-700 text-left"
+      >
+        <span className="font-semibold text-white truncate pr-4">{problemTitle}</span>
+        <ChevronDown
+          size={20}
+          className={`text-gray-400 flex-shrink-0 transition-transform duration-200 ${
+            isMobileDetailsVisible ? "rotate-180" : ""
+          }`}
+        />
+      </button>
       <div
         className="bg-zinc-900 rounded-lg shadow-2xl flex flex-col overflow-hidden flex-shrink-0"
         style={{ height: editorHeight ? `${editorHeight}px` : "60%" }}

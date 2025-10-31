@@ -40,7 +40,7 @@ export const EditorHeader = ({
   maxTimeInMinutes,
    submissionProgress,
 }: EditorHeaderProps) => (
-  <div className="flex items-center justify-between px-4 py-2.5 bg-neutral-900 border-b border-neutral-800">
+  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-2.5 bg-neutral-900 border-b border-neutral-800">
     <DropdownMenu>
       <DropdownMenuTrigger asChild disabled={isStarted}>
         <Button
@@ -108,7 +108,7 @@ export const EditorHeader = ({
         onClick={onRun}
         variant="secondary"
         disabled={!isStarted || isRunning || isSubmitting}
-        className="bg-neutral-800 text-neutral-300 hover:bg-neutral-700 disabled:opacity-50 h-auto px-4 py-1.5 w-[120px] flex justify-center items-center"
+        className="bg-neutral-800 text-neutral-300 hover:bg-neutral-700 disabled:opacity-50 h-auto px-4 py-1.5 flex justify-center items-center"
       >
         {isRunning ? (
             <>

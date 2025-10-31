@@ -45,7 +45,7 @@ export const RenderOutput = ({ result }: { result: SubmissionResult | null }) =>
       </div>
       
       {(result.executionTime != null && result.executionMemory != null) && (
-        <div className="grid grid-cols-2 gap-3 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
           <StatCard 
             icon={Clock} 
             label="Runtime" 

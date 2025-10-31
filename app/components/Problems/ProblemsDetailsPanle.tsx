@@ -1,5 +1,4 @@
 import { Tag, ChevronDown, CheckCircle2, Edit3 } from 'lucide-react';
-import { SolutionStatus } from '@prisma/client';
 import React, { useState } from 'react';
 import { ProblemDetails } from '@/types';
 
@@ -43,10 +42,10 @@ export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProp
 
 
   return (
-    <div className="w-1/2 p-6 flex flex-col gap-4 shadow-2xl rounded-lg overflow-y-auto bg-[#262626]">
+    <div className="w-full  p-4 lg:p-6 flex flex-col gap-4  rounded-lg lg:overflow-y-auto bg-[#262626]">
       <div className="flex flex-col">
-        <h1 className="text-4xl font-bold text-white mb-2">{problem.title}</h1>
-        <div className="flex gap-4 items-center">
+        <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">{problem.title}</h1>
+        <div className="flex gap-4 items-center flex-wrap">
           <span
             className={`px-3 py-1 text-sm rounded-full ${
               difficultyStyles[problem.difficulty]

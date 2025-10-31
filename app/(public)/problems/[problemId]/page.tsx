@@ -37,6 +37,11 @@ export default function ProblemPage() {
   const [submissionProgress, setSubmissionProgress] = useState(0);
   const [testCaseStatuses, setTestCaseStatuses] = useState<TestCaseStatus[]>([]);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [isMobileDetailsVisible, setIsMobileDetailsVisible] = useState(false);
+
+  const toggleMobileDetails = () => {
+    setIsMobileDetailsVisible(prev => !prev);
+  };
 
   const isCodeRunning = testCaseStatuses.includes('running') || isSubmitting;
 
@@ -202,26 +207,38 @@ export default function ProblemPage() {
   }
 
   return (
-    <div className="flex h-screen p- gap-2 text-black overflow-hidden bg-[#262626]">
-      <ProblemDetailsPanel problem={problem} />
-      <CodeEditorPanel
-        problemId={problem.id}
-        maxTimeInMinutes={problem.maxTime}
-        code={code}
-        setCode={setCode}
-        handleSubmit={handleSubmit}
-        handleRunCode={handleRunCode}
-        isSubmitting={isSubmitting}
-        isCodeRunning={isCodeRunning}
-        submissionResult={submissionResult}
-        runResult={runResult}
-        testCases={problem.testCases || []}
-        availableLanguages={problem.problemLanguageDetails}
-        selectedLanguage={selectedLanguage}
-        onLanguageChange={setSelectedLanguage}
-        submissionProgress={submissionProgress}
-        testCaseStatuses={testCaseStatuses}
-      />
+    <div className="flex flex-col lg:flex-row lg:h-screen p-2 gap-2 text-black lg:overflow-hidden bg-[#262626]">
+      <div className={`
+        lg:w-1/2 lg:block
+        ${isMobileDetailsVisible ? 'block' : 'hidden'}
+      `}>
+        <ProblemDetailsPanel problem={problem} />
+      </div>
+      
+      <div className="w-full lg:w-1/2  flex-grow">
+        <CodeEditorPanel
+          problemId={problem.id}
+          maxTimeInMinutes={problem.maxTime}
+          code={code}
+          setCode={setCode}
+          handleSubmit={handleSubmit}
+          handleRunCode={handleRunCode}
+          isSubmitting={isSubmitting}
+          isCodeRunning={isCodeRunning}
+          submissionResult={submissionResult}
+          runResult={runResult}
+          testCases={problem.testCases || []}
+          availableLanguages={problem.problemLanguageDetails}
+          selectedLanguage={selectedLanguage}
+          onLanguageChange={setSelectedLanguage}
+          submissionProgress={submissionProgress}
+          testCaseStatuses={testCaseStatuses}
+          problemTitle={problem.title}
+          isMobileDetailsVisible={isMobileDetailsVisible}
+          onToggleMobileDetails={toggleMobileDetails}
+        />
+      </div>
+
       {rewardData && (
         <SuccessModal
           xp={rewardData.xpEarned}
