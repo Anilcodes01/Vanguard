@@ -11,11 +11,12 @@ interface TrustCardProps {
 function TrustCard({ review, avatarUrl, name, designation, index }: TrustCardProps) {
   return (
     <div 
-      className="group relative border border-gray-700 flex flex-col gap-6 p-8 rounded-2xl  hover:border-green-500 transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/20 hover:-translate-y-1"
+      className="group relative border border-gray-700 flex flex-col gap-6 p-8 rounded-2xl hover:border-green-500 transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/20 hover:-translate-y-1"
       style={{
         animationDelay: `${index * 150}ms`,
         animation: 'fadeInUp 0.6s ease-out forwards',
-        opacity: 0
+        opacity: 0,
+        maxWidth: '380px' // Added max-width for consistency in wrap layout
       }}
     >
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
@@ -83,15 +84,15 @@ export default function SectionThree() {
   ];
 
   return (
-    <div className="flex flex-col items-center gap-12 justify-center min-h-screen  p-8 py-20">
+    <div className="flex flex-col items-center gap-12 justify-center min-h-screen py-20 px-4 sm:p-8">
       <div className="flex flex-col gap-4 text-center max-w-3xl">
         <div className="inline-block mx-auto px-4 py-1.5 rounded-full bg-green-500/20 text-green-400 text-sm font-medium mb-2 border border-green-500/30">
           Testimonials
         </div>
-        <h1 className="text-5xl font-bold font-sans text-white tracking-tight">
+        <h1 className="text-4xl sm:text-5xl font-bold font-sans text-white tracking-tight">
           Trusted By Students Across India
         </h1>
-        <p className="text-gray-400 text-lg leading-relaxed">
+        <p className="text-gray-400 text-base sm:text-lg leading-relaxed">
           Our platform empowers students to bridge the gap between academics and industry. Here&apos;s what they have to say.
         </p>
       </div>
@@ -122,7 +123,7 @@ export default function SectionThree() {
             </svg>
           ))}
         </div>
-        <p className="text-gray-400 text-sm">
+        <p className="text-gray-400 text-sm text-center">
           Rated <span className="text-white font-semibold">4.9/5</span> by over <span className="text-white font-semibold">10,000+</span> students
         </p>
       </div>

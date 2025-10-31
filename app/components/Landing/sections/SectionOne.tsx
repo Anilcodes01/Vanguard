@@ -27,7 +27,7 @@ export default function SectionOne() {
   ];
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen w-full  overflow- px-8 py-20">
+    <div className="relative flex flex-col items-center justify-center min-h-screen w-full overflow-hidden px-4 md:px-8 py-20">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-96 h-96 bg-green-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -52,13 +52,13 @@ export default function SectionOne() {
 
       <div className="relative z-10 flex flex-col w-full gap-8 items-center justify-center">
         <div 
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/20 text-green-400 text-sm font-medium border border-green-500/30 backdrop-blur-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/20 text-green-400 text-xs sm:text-sm font-medium border border-green-500/30 backdrop-blur-sm text-center"
           style={{
             animation: 'fadeInDown 0.6s ease-out forwards',
             opacity: 0
           }}
         >
-          <span className="relative flex h-2 w-2">
+          <span className="relative flex h-2 w-2 flex-shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
@@ -66,7 +66,7 @@ export default function SectionOne() {
         </div>
 
         <h1 
-          className="text-5xl lg:text-7xl font-bold text-center font-sans text-white leading-tight tracking-tight"
+          className="text-4xl sm:text-5xl lg:text-7xl font-bold text-center font-sans text-white leading-tight tracking-tight"
           style={{
             animation: 'fadeInUp 0.8s ease-out forwards',
             animationDelay: '0.2s',
@@ -81,7 +81,7 @@ export default function SectionOne() {
         </h1>
 
         <p 
-          className="max-w-2xl text-center font-sans text-gray-400 text-lg leading-relaxed"
+          className="max-w-2xl text-center font-sans text-gray-400 text-base md:text-lg leading-relaxed"
           style={{
             animation: 'fadeInUp 0.8s ease-out forwards',
             animationDelay: '0.4s',
@@ -92,7 +92,7 @@ export default function SectionOne() {
         </p>
 
         <div 
-          className="flex flex-wrap items-center justify-center gap-4 mt-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4 w-full sm:w-auto"
           style={{
             animation: 'fadeInUp 0.8s ease-out forwards',
             animationDelay: '0.6s',
@@ -101,9 +101,9 @@ export default function SectionOne() {
         >
           <button 
             onClick={() => router.push('/signup')} 
-            className="group relative cursor-pointer rounded-xl px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/50 hover:scale-105"
+            className="group relative cursor-pointer rounded-xl px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/50 hover:scale-105 w-full sm:w-auto"
           >
-            <span className="relative z-10 flex items-center gap-2">
+            <span className="relative z-10 flex items-center justify-center gap-2">
               Start Solving Now
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -114,14 +114,14 @@ export default function SectionOne() {
 
           <button 
             onClick={() => router.push('/explore')}
-            className="cursor-pointer rounded-xl px-8 py-4 bg-gray-800 text-white font-semibold border border-gray-700 hover:border-green-500 transition-all duration-300 hover:bg-gray-700"
+            className="cursor-pointer rounded-xl px-8 py-4 bg-gray-800 text-white font-semibold border border-gray-700 hover:border-green-500 transition-all duration-300 hover:bg-gray-700 w-full sm:w-auto"
           >
             Explore Challenges
           </button>
         </div>
 
         <div 
-          className="flex flex-wrap items-center justify-center gap-12 mt-12 pt-12 border-t border-gray-800"
+          className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12 mt-12 pt-12 border-t border-gray-800"
           style={{
             animation: 'fadeInUp 0.8s ease-out forwards',
             animationDelay: '0.8s',
@@ -130,7 +130,7 @@ export default function SectionOne() {
         >
           {stats.map((stat, index) => (
             <div key={index} className="flex flex-col items-center gap-2">
-              <div className="text-4xl font-bold text-white">
+              <div className="text-3xl sm:text-4xl font-bold text-white">
                 {stat.value}
               </div>
               <div className="text-sm text-gray-400 font-medium">
@@ -141,7 +141,7 @@ export default function SectionOne() {
         </div>
 
         <div 
-          className="flex flex-wrap items-center justify-center gap-6 mt-8 text-gray-500 text-sm"
+          className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-6 mt-8 text-gray-500 text-sm"
           style={{
             animation: 'fadeInUp 0.8s ease-out forwards',
             animationDelay: '1s',

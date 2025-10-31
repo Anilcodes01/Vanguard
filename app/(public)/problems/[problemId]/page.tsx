@@ -10,6 +10,7 @@ import CodeEditorPanel from "@/app/components/Problems/CodeEditorPanle";
 import { problemSolved } from "@/app/store/actions";
 import { SuccessModal } from "@/app/components/Problems/CodeEditor/SuccessModal";
 import { ProblemDetails, SubmissionResult, RewardData, ProblemLanguageDetail } from "@/types";
+import { LoadingSpinner } from "@/app/components/Profile/ProfilePanel";
 
 type TestCaseStatus = "pending" | "running" | "passed" | "failed";
 type TestCaseResultItem = {
@@ -191,7 +192,7 @@ export default function ProblemPage() {
   };
 
   if (isLoading) {
-    return <div className="flex justify-center items-center bg-[#262626] h-screen">Loading Problem...</div>;
+    return <LoadingSpinner />
   }
   if (error) {
     return <div className="flex justify-center items-center bg-[#262626] h-screen text-red-500">Error: {error}</div>;

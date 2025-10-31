@@ -16,10 +16,10 @@ export default  function UsernotLoggedInLanding() {
    <div className="w-full">
     <SectionOne />
    </div>
-   <div>
+   <div className="w-full">
     <SectionTwo />
    </div>
-   <div>
+   <div className="w-full">
     <SectionThree />
    </div>
    <div className="w-full">

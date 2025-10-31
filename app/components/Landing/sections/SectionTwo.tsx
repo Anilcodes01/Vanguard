@@ -13,7 +13,7 @@ interface FeatureCardProps {
 function FeatureCard({ icon, title, description, index }: FeatureCardProps) {
     return (
         <div 
-            className="group relative flex flex-col items-start p-8 rounded-2xl  border border-gray-700 hover:border-green-500 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-green-500/20 hover:-translate-y-1 max-w-sm"
+            className="group relative flex flex-col items-start p-8 rounded-2xl border border-gray-700 hover:border-green-500 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-green-500/20 hover:-translate-y-1 w-full max-w-sm"
             style={{
                 animationDelay: `${index * 150}ms`,
                 animation: 'fadeInUp 0.6s ease-out forwards',
@@ -67,20 +67,20 @@ export default function SectionTwo() {
     ];
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen  p-8 py-20">
+        <div className="flex flex-col items-center justify-center min-h-screen py-20 px-4 sm:p-8">
             <div className="text-center mb-16 max-w-3xl">
                 <div className="inline-block px-4 py-1.5 rounded-full bg-green-500/20 text-green-400 text-sm font-medium mb-4 border border-green-500/30">
                     Platform Features
                 </div>
-                <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
+                <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
                     Why Choose Adapt?
                 </h1>
-                <p className="text-gray-400 text-lg">
+                <p className="text-gray-400 text-base sm:text-lg">
                     Everything you need to build skills, create a portfolio, and earn a verified internship.
                 </p>
             </div>
             
-            <div className="flex flex- items-stretch justify-center gap-8 max-w-6xl">
+            <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-8 max-w-6xl w-full">
                 {cardData.map((card, index) => (
                     <FeatureCard
                         key={card.title}
