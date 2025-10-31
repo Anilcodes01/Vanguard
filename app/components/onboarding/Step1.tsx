@@ -166,7 +166,7 @@ export const Step1: React.FC<Step1Props> = ({
     </div>
     <TextInput
       id="college"
-      label="Which college or university are you at? (Optional)"
+      label="Which college or university are you at?"
       value={formData.college_name}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
         setFormData({ ...formData, college_name: e.target.value })

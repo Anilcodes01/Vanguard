@@ -37,14 +37,14 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const { pathname } = request.nextUrl;
 
-  const restrictedRoutesForLoggedInUsers = ['/login', '/signup', '/onboarding'];
+  const restrictedRoutesForLoggedInUsers = ['/login', '/signup'];
 
   if (user) {
     if (restrictedRoutesForLoggedInUsers.includes(pathname)) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   } else {
-    const protectedRoutes = ['/onboarding'];
+    const protectedRoutes: string[] = []; 
     if (protectedRoutes.includes(pathname)) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
@@ -55,7 +55,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-   
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
