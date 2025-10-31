@@ -68,7 +68,7 @@ export default function UserLoggedInLanding() {
   }
 
   return (
-    <div className="min-h-screen bg-[#262626] text-white p-8">
+    <div className="min-h-screen bg-[#262626] text-white lg:p-8 p-4">
       <div className="w-full max-w-7xl mx-auto">
         <div className="text-start w-full mb-8">
           <h1 className="text-4xl font-bold">

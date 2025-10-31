@@ -11,6 +11,7 @@ export interface UserProfile {
   xp: number;
   league: string;
   stars: number;
+  
 }
 
 export const fetchUserProfile = createAsyncThunk('profile/fetchUserProfile', async () => {

@@ -11,6 +11,11 @@ import { logout } from "@/app/store/features/auth/authSlice";
 import { clearProfile } from "@/app/store/features/profile/profileSlice";
 import { UserProfile } from "@/app/store/features/profile/profileSlice";
 
+interface UserAvatarProps {
+  user: UserProfile;
+  onDropdownItemClick?: () => void;
+}
+
 const DropdownMenuItem = ({
   onClick,
   children,
@@ -28,17 +33,14 @@ const DropdownMenuItem = ({
   </button>
 );
 
-export default function UserAvatar({ user }: { user: UserProfile }) {
+export default function UserAvatar({ user, onDropdownItemClick }: UserAvatarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   const dispatch: AppDispatch = useDispatch();
 
-
-const handleSignOut = async () => {
+  const handleSignOut = async () => {
     const supabase = createClient();
-    
     try {
       await supabase.auth.signOut();
     } catch (error) {
@@ -46,6 +48,7 @@ const handleSignOut = async () => {
     } finally {
       dispatch(logout());
       dispatch(clearProfile());
+      onDropdownItemClick?.(); 
       window.location.href = '/'; 
     }
   };
@@ -54,6 +57,7 @@ const handleSignOut = async () => {
     if (user.username) {
       router.push(`/profile/${user.username}`);
       setIsOpen(false);
+      onDropdownItemClick?.(); 
     }
   };
 

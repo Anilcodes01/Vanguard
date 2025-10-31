@@ -37,6 +37,10 @@ export default function NavbarSignedIn() {
     { key: "Projects", name: "Projects", path: "/projects" },
   ];
 
+  const handleDropdownItemClick = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <nav className="relative flex items-center justify-between bg-[#262626] text-white py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full">
       <Link className="text-xl sm:text-2xl flex gap-2 font-bold flex-shrink-0 z-30" href={"/"}>
@@ -100,7 +104,7 @@ export default function NavbarSignedIn() {
                 <span className="font-bold text-white">{profile.xp}</span>
                 <span className="text-gray-400 hidden xl:inline">XP</span>
               </div>
-              <UserAvatar user={profile} />
+              <UserAvatar user={profile} onDropdownItemClick={handleDropdownItemClick} />
             </>
           )
         )}
@@ -143,7 +147,7 @@ export default function NavbarSignedIn() {
                 <Zap size={11} className="text-sky-400" />
                 <span className="font-bold text-white">{profile.xp}</span>
               </div>
-              <UserAvatar user={profile} />
+              <UserAvatar user={profile} onDropdownItemClick={handleDropdownItemClick} />
             </>
           )
         )}
@@ -243,9 +247,8 @@ export default function NavbarSignedIn() {
                           <span className="font-bold text-white">{profile.xp}</span>
                           <span className="text-gray-400">XP</span>
                         </div>
-                        <div onClick={() => setIsMenuOpen(false)}>
-                          <UserAvatar user={profile} />
-                        </div>
+                     
+                        <UserAvatar user={profile} onDropdownItemClick={handleDropdownItemClick} />
                       </>
                     )
                   )}
