@@ -38,6 +38,13 @@ type ProjectStatus =
   | "Submitted"
   | "Expired";
 
+// New type for the combined API response
+type ProjectDataResponse = {
+  project: Project;
+  status: ProjectStatus;
+  startedAt?: string;
+};
+
 const formatTimeLeft = (milliseconds: number) => {
   if (milliseconds <= 0) return "0d 0h 0m 0s";
   const days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
@@ -74,26 +81,22 @@ export default function IndividualProjectPage() {
 
     const fetchInitialData = async () => {
       try {
-        const [projectResponse, statusResponse] = await Promise.all([
-          fetch(`/api/projects/${projectId}`),
-          fetch(`/api/projects/${projectId}/status`),
-        ]);
+        const response = await fetch(`/api/projects/${projectId}`);
 
-        if (!projectResponse.ok)
-          throw new Error("Failed to load project details.");
-        if (!statusResponse.ok)
-          throw new Error("Failed to load project status.");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to load project data.");
+        }
 
-        const projectData: Project = await projectResponse.json();
-        const statusData = await statusResponse.json();
+        const data: ProjectDataResponse = await response.json();
 
-        setProject(projectData);
-        setProjectStatus(statusData.status);
+        setProject(data.project);
+        setProjectStatus(data.status);
 
-        if (statusData.status === "InProgress") {
+        if (data.status === "InProgress" && data.startedAt) {
           const maxTimeInMs =
-            parseInt(projectData.maxTime) * 24 * 60 * 60 * 1000;
-          const startTime = new Date(statusData.startedAt).getTime();
+            parseInt(data.project.maxTime) * 24 * 60 * 60 * 1000;
+          const startTime = new Date(data.startedAt).getTime();
           setEndTime(startTime + maxTimeInMs);
         }
       } catch (err) {

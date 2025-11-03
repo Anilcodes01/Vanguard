@@ -1,9 +1,10 @@
+import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ projectId: string }> }
+  { params }: { params: Promise< { projectId: string } >}
 ) {
   const { projectId } =await params;
 
@@ -28,12 +29,49 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(project, { status: 200 });
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    let status: "NotStarted" | "InProgress" | "Submitted" = "NotStarted";
+    let startedAt: string | null = null;
+
+    if (user) {
+      const submission = await prisma.submittedProjects.findFirst({
+        where: { userId: user.id, projectId: projectId },
+      });
+
+      if (submission) {
+        status = "Submitted";
+      } else {
+        const progress = await prisma.projectProgress.findUnique({
+          where: {
+            userId_projectId: {
+              userId: user.id,
+              projectId: projectId,
+            },
+          },
+        });
+
+        if (progress) {
+          status = "InProgress";
+          startedAt = progress.startedAt.toISOString();
+        }
+      }
+    }
+
+    return NextResponse.json({
+      project,
+      status,
+      startedAt,
+    });
+    
   } catch (error) {
-    console.error("Failed to fetch project:", error);
+    console.error("Failed to fetch project data:", error);
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }
     );
   }
-}
+} 
