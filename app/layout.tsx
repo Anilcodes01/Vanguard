@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
-import { Toaster } from 'react-hot-toast'
+import { Toaster } from "react-hot-toast";
 import StoreProvider from "./components/StoreProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,28 +32,27 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#262626]`}
       >
         <Providers>
-           
-        <StoreProvider>
-          
-        <Toaster
-          position="top-right"
-          reverseOrder={false}
-          toastOptions={{
-            className: '',
-            style: {
-              background: '#363636',
-              color: '#fff',
-            },
-            success: {
-              duration: 3000,
-            },
-            error: {
-              duration: 5000,
-            }
-          }}
-        />
+          <StoreProvider>
+            <Toaster
+              position="top-right"
+              reverseOrder={false}
+              toastOptions={{
+                className: "",
+                style: {
+                  background: "#363636",
+                  color: "#fff",
+                },
+                success: {
+                  duration: 3000,
+                },
+                error: {
+                  duration: 5000,
+                },
+              }}
+            />
             {children}
-        </StoreProvider>
+            <SpeedInsights />
+          </StoreProvider>
         </Providers>
       </body>
     </html>
