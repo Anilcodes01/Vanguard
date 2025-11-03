@@ -12,12 +12,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 
-  const { projectId, githubUrl, liveUrl } = await req.json();
+  const { projectId, githubUrl, liveUrl, description, builtWith } =
+    await req.json();
 
-  if (!projectId || !githubUrl) {
+  if (
+    !projectId ||
+    !githubUrl ||
+    !builtWith ||
+    !Array.isArray(builtWith) ||
+    builtWith.length === 0
+  ) {
     return NextResponse.json(
       {
-        message: "Project ID and GitHub URL are required.",
+        message: "Project ID, GitHub URL, and technologies used are required.",
       },
       { status: 400 }
     );
@@ -43,6 +50,8 @@ export async function POST(req: NextRequest) {
         projectId: projectId,
         githubUrl: githubUrl,
         liveUrl: liveUrl,
+        description: description,
+        builtWith: builtWith,
         userId: user.id,
       },
     });
@@ -66,15 +75,38 @@ export async function POST(req: NextRequest) {
   }
 }
 
-
-export async function  GET() {
-  
+export async function GET() {
   try {
-    
+    const submissions = await prisma.submittedProjects.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+        project: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+    return NextResponse.json(submissions, { status: 200 });
   } catch (error) {
-    return NextResponse.json({
-      message: 'An error occured while fetching the submitted projects',
-      error: error
-    }, {status: 500})
+    console.error("Fetch Submitted Projects Error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json(
+      {
+        message: "An error occurred while fetching the submitted projects",
+        error: errorMessage,
+      },
+      { status: 500 }
+    );
   }
 }

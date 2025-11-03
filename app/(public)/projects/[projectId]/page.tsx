@@ -13,6 +13,8 @@ import {
   PlayCircle,
   CheckCircle,
   AlertTriangle,
+  Code,
+  FileText,
 } from "lucide-react";
 
 type Project = {
@@ -55,6 +57,8 @@ export default function IndividualProjectPage() {
   const [error, setError] = useState<string | null>(null);
   const [githubUrl, setGithubUrl] = useState("");
   const [liveUrl, setLiveUrl] = useState("");
+  const [description, setDescription] = useState("");
+  const [builtWith, setBuiltWith] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<SubmissionStatus>({
     message: null,
@@ -156,10 +160,21 @@ export default function IndividualProjectPage() {
     setSubmissionStatus({ message: null, type: null });
 
     try {
+      const builtWithArray = builtWith
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+
       const response = await fetch("/api/projects/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId, githubUrl, liveUrl }),
+        body: JSON.stringify({
+          projectId,
+          githubUrl,
+          liveUrl,
+          description,
+          builtWith: builtWithArray,
+        }),
       });
       const result = await response.json();
       if (!response.ok)
@@ -168,6 +183,8 @@ export default function IndividualProjectPage() {
       setSubmissionStatus({ message: result.message, type: "success" });
       setGithubUrl("");
       setLiveUrl("");
+      setDescription("");
+      setBuiltWith("");
       setProjectStatus("Submitted");
     } catch (err) {
       if (err instanceof Error)
@@ -240,7 +257,9 @@ export default function IndividualProjectPage() {
         return (
           <div className="text-center bg-red-500/10 border border-red-500/30 rounded-lg p-6">
             <AlertTriangle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-red-300">Time&apos;s Up!</h2>
+            <h2 className="text-2xl font-semibold text-red-300">
+              Time&apos;s Up!
+            </h2>
             <p className="text-neutral-400 text-sm mt-2">
               The deadline for this project has passed.
             </p>
@@ -305,6 +324,49 @@ export default function IndividualProjectPage() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
                     <label
+                      htmlFor="description"
+                      className="block text-sm font-medium text-neutral-300 mb-1"
+                    >
+                      Short Description (Optional)
+                    </label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <FileText className="h-5 w-5 text-gray-400" />
+                      </div>
+                      <textarea
+                        id="description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        rows={3}
+                        className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white"
+                        placeholder="A brief summary of your project..."
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="builtWith"
+                      className="block text-sm font-medium text-neutral-300 mb-1"
+                    >
+                      Technologies Used*
+                    </label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <Code className="h-5 w-5 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        id="builtWith"
+                        value={builtWith}
+                        onChange={(e) => setBuiltWith(e.target.value)}
+                        className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white"
+                        placeholder="Next.js, Tailwind CSS, Prisma"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label
                       htmlFor="githubUrl"
                       className="block text-sm font-medium text-neutral-300 mb-1"
                     >
@@ -349,7 +411,7 @@ export default function IndividualProjectPage() {
                   <div className="pt-2">
                     <button
                       type="submit"
-                      disabled={isSubmitting || !githubUrl}
+                      disabled={isSubmitting || !githubUrl || !builtWith}
                       className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 disabled:opacity-50"
                     >
                       {isSubmitting ? (

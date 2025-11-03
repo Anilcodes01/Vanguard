@@ -181,3 +181,31 @@ export type DailyProblem = {
     maxTime: number;
     topic: string[];
 };
+
+
+
+
+export type User = {
+  profiles: Profile[];
+};
+
+export type Comment = {
+  id: string;
+  text: string;
+  createdAt: string;
+  user: User;
+};
+
+ export type ProjectSubmission = {
+  id: string;
+  description: string | null;
+  builtWith: string[];
+  githubUrl: string | null;
+  liveUrl: string | null;
+  createdAt: string;
+  user: User;
+  project: { name: string };
+  comments: Comment[];
+  upvotesCount: number;
+  hasUpvoted: boolean;
+};

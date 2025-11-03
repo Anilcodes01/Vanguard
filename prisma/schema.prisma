@@ -54,6 +54,10 @@ model users {
   problemSolutions            ProblemSolution[]
   SubmittedProjects           SubmittedProjects[]
   ProjectProgress             ProjectProgress[]
+  discussions Discussions[]
+    // Add these new relations
+  upvotes Upvote[]
+  comments Comment[]
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -588,6 +592,7 @@ model Project {
   updatedAt         DateTime            @updatedAt
   SubmittedProjects SubmittedProjects[]
   ProjectProgress   ProjectProgress[]
+  discussions Discussions[]
 
   @@map("projects")
   @@schema("public")
@@ -609,15 +614,44 @@ enum League {
 }
 
 model SubmittedProjects {
-  id        String   @id @default(uuid())
-  githubUrl String?
-  liveUrl   String?
-  userId    String
-  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projectId String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  description String?
+  builtWith   String[]
+  githubUrl   String?
+  liveUrl     String?
+  userId      String
+  user        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  upvotes     Upvote[]
+  comments    Comment[]
+
+  @@schema("public")
+}
+
+model Upvote {
+  userId             String
+  submittedProjectId String
+
+  user               users             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submittedProject   SubmittedProjects @relation(fields: [submittedProjectId], references: [id], onDelete: Cascade)
+
+  @@id([userId, submittedProjectId])
+  @@schema("public")
+}
+
+model Comment {
+  id                 String   @id @default(uuid())
+  text               String
+  createdAt          DateTime @default(now())
+  userId             String
+  submittedProjectId String
+
+  user               users             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submittedProject   SubmittedProjects @relation(fields: [submittedProjectId], references: [id], onDelete: Cascade)
 
   @@schema("public")
 }
@@ -633,5 +667,16 @@ model ProjectProgress {
 
   @@unique([userId, projectId])
   @@map("project_progress")
+  @@schema("public")
+}
+
+
+model Discussions {
+  id String @id @default(uuid())
+  userId String
+  user users @relation(fields: [userId] , references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
   @@schema("public")
 }
