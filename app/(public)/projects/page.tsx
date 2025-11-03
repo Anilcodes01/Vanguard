@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react';
 import ProjectCard from '@/app/components/Landing/Projects/ProjectsCard';
+import { Loader2 } from 'lucide-react';
 
 type Project = {
   id: string;
@@ -43,14 +44,28 @@ export default function ProjectsPage() {
     fetchData();
   }, []);
 
+   if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-[#262626]">
+        <Loader2 className="w-10 h-10 animate-spin text-white" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-[#262626] text-red-400">
+        Error: {error}
+      </div>
+    );
+  }
+  
   return (
     <main className="min-h-screen bg-[#262626] p-4 sm:p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-white mb-8">Projects</h1>
         
-        {loading && (
-          <div className="text-center text-white text-lg">Loading projects...</div>
-        )}
+    
 
         {error && (
            <div className="text-center text-red-400 text-lg">Error: {error}</div>

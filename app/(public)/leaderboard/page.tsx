@@ -2,7 +2,7 @@
 
 import {  useEffect } from "react";
 import Image from "next/image"; 
-import { Trophy, ArrowUp, ArrowDown } from "lucide-react";
+import { Trophy, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
@@ -108,14 +108,8 @@ export default function LeaderboardPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-[#262626] text-white min-h-screen p-8">
-        <div className="max-w-2xl mx-auto">
-          <div className="mb-8">
-            <div className="h-8 w-48 bg-neutral-800 rounded mb-2"></div>
-            <div className="h-4 w-64 bg-neutral-800 rounded"></div>
-          </div>
-          <LoadingSkeleton />
-        </div>
+      <div className="flex justify-center items-center min-h-screen bg-[#262626]">
+        <Loader2 className="w-10 h-10 animate-spin text-white" />
       </div>
     );
   }
