@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   Code,
   FileText,
+  Users, // Import the Users icon
 } from "lucide-react";
 
 type Project = {
@@ -38,11 +39,12 @@ type ProjectStatus =
   | "Submitted"
   | "Expired";
 
-// New type for the combined API response
+// Updated type for the combined API response
 type ProjectDataResponse = {
   project: Project;
   status: ProjectStatus;
   startedAt?: string;
+  completionCount: number; // Add completionCount
 };
 
 const formatTimeLeft = (milliseconds: number) => {
@@ -75,6 +77,7 @@ export default function IndividualProjectPage() {
   const [timeLeft, setTimeLeft] = useState("");
   const [isStarting, setIsStarting] = useState(false);
   const [endTime, setEndTime] = useState<number | null>(null);
+  const [completionCount, setCompletionCount] = useState<number>(0); // State for completion count
 
   useEffect(() => {
     if (!projectId) return;
@@ -92,6 +95,7 @@ export default function IndividualProjectPage() {
 
         setProject(data.project);
         setProjectStatus(data.status);
+        setCompletionCount(data.completionCount); // Set the completion count state
 
         if (data.status === "InProgress" && data.startedAt) {
           const maxTimeInMs =
@@ -295,6 +299,7 @@ export default function IndividualProjectPage() {
           </div>
           <div className="bg-[#333] rounded-lg p-6 border border-neutral-700">
             <h1 className="text-4xl font-bold mb-2">{project.name}</h1>
+            {/* --- MODIFIED: Added completion count display --- */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-400 mb-4">
               <span className="border border-gray-600 text-green-400 text-xs font-semibold px-2.5 py-0.5 rounded-full">
                 {project.domain}
@@ -302,6 +307,12 @@ export default function IndividualProjectPage() {
               <div className="flex items-center gap-1.5 text-sm">
                 <Clock className="w-4 h-4" />
                 <span>{project.maxTime} days to complete</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-sm">
+                <Users className="w-4 h-4" />
+                <span>
+                  {completionCount} student{completionCount !== 1 ? 's' : ''} completed
+                </span>
               </div>
             </div>
             <p className="text-neutral-300 leading-relaxed whitespace-pre-wrap">
@@ -377,7 +388,7 @@ export default function IndividualProjectPage() {
                     </label>
                     <div className="relative">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <Github className="h-5 w-5 text-gray-400" />
+                        <Github className="w-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type="url"

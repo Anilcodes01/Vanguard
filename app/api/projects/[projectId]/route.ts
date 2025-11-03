@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise< { projectId: string } >}
+  { params }: { params: Promise<{ projectId: string } >}
 ) {
   const { projectId } =await params;
 
@@ -28,6 +28,12 @@ export async function GET(
         { status: 404 }
       );
     }
+
+    const completionCount = await prisma.submittedProjects.count({
+      where: {
+        projectId: projectId,
+      },
+    });
 
     const supabase = await createClient();
     const {
@@ -65,8 +71,9 @@ export async function GET(
       project,
       status,
       startedAt,
+      completionCount,
     });
-    
+
   } catch (error) {
     console.error("Failed to fetch project data:", error);
     return NextResponse.json(
@@ -74,4 +81,4 @@ export async function GET(
       { status: 500 }
     );
   }
-} 
+}

@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 
-  const { submittedProjectId, text } = await req.json();
+  const { submittedProjectId, text, parentId } = await req.json();
 
   if (!submittedProjectId || !text) {
     return NextResponse.json(
@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
         text,
         userId: user.id,
         submittedProjectId,
+        parentId, 
       },
       include: {
         user: {

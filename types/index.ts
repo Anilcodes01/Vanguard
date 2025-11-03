@@ -194,6 +194,9 @@ export type Comment = {
   text: string;
   createdAt: string;
   user: User;
+
+   parentId: string | null; 
+  replies?: Comment[]; 
 };
 
  export type ProjectSubmission = {
@@ -208,4 +211,5 @@ export type Comment = {
   comments: Comment[];
   upvotesCount: number;
   hasUpvoted: boolean;
+    commentsCount: number;
 };
