@@ -8,9 +8,9 @@ export default function NavbarSignedOut() {
   
   const links = [
     {
-      key: 'explore',
-      name: 'Explore',
-      path: '/explore'
+      key: 'discover',
+      name: 'Discover',
+      path: '/discover'
     },
     {
       key: 'problems',

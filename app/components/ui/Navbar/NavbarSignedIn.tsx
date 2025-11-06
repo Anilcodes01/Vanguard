@@ -30,7 +30,7 @@ export default function NavbarSignedIn() {
     : null;
 
   const links = [
-    { key: "explore", name: "Explore", path: "/explore" },
+    { key: "discover", name: "Discover", path: "/discover" },
     { key: "problems", name: "Problems", path: "/problems" },
     { key: "discussions", name: "Discussions", path: "/discussions" },
     { key: "leaderboard", name: "Leaderboard", path: "/leaderboard" },
