@@ -1,9 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Difficulty } from "@prisma/client";
 
 interface Problem {
   id: string;
   title: string;
-  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  difficulty: Difficulty;
+  maxTime: number; 
+  xp: number;
+   topic: string[];
   solved?: boolean;
 }
 

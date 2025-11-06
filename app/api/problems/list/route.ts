@@ -1,15 +1,26 @@
+
+
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/app/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { Difficulty } from "@prisma/client"; 
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 12;
 
-type Difficulty = "Beginner" | "Intermediate" | "Advanced";
 const VALID_DIFFICULTIES: Difficulty[] = [
   "Beginner",
   "Intermediate",
   "Advanced",
 ];
+
+const getXpForDifficulty = (difficulty: Difficulty): number => {
+  switch (difficulty) {
+    case "Beginner": return 100;
+    case "Intermediate": return 250;
+    case "Advanced": return 500;
+    default: return 0;
+  }
+};
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
@@ -30,9 +41,9 @@ export async function GET(request: NextRequest) {
 
   const skip = (page - 1) * PAGE_SIZE;
 
-  const whereCondition: {difficulty?: Difficulty} = {};
-  if( difficulty && VALID_DIFFICULTIES.includes(difficulty as Difficulty)) {
-    whereCondition.difficulty = difficulty as Difficulty
+  const whereCondition: { difficulty?: Difficulty } = {};
+  if (difficulty && VALID_DIFFICULTIES.includes(difficulty as Difficulty)) {
+    whereCondition.difficulty = difficulty as Difficulty;
   }
 
   try {
@@ -45,6 +56,8 @@ export async function GET(request: NextRequest) {
           id: true,
           title: true,
           difficulty: true,
+          maxTime: true, 
+          topic: true,
           _count: {
             select: {
               solutions: {
@@ -61,15 +74,17 @@ export async function GET(request: NextRequest) {
         },
       }),
       prisma.problem.count({
-        where: whereCondition
+        where: whereCondition,
       }),
-
     ]);
 
     const problems = problemsData.map((p) => ({
       id: p.id,
       title: p.title,
       difficulty: p.difficulty,
+      maxTime: p.maxTime, 
+      xp: getXpForDifficulty(p.difficulty),
+       topic: p.topic,
       solved: p._count.solutions > 0,
     }));
 
