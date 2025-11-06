@@ -113,7 +113,7 @@ export default function SectionOne() {
           </button>
 
           <button 
-            onClick={() => router.push('/explore')}
+            onClick={() => router.push('/discover')}
             className="cursor-pointer rounded-xl px-8 py-4 bg-gray-800 text-white font-semibold border border-gray-700 hover:border-green-500 transition-all duration-300 hover:bg-gray-700 w-full sm:w-auto"
           >
             Explore Challenges
