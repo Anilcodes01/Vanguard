@@ -6,6 +6,7 @@ import {
   fetchDashboardData,
   fetchInProgressProjects,
   fetchLeaderboardData,
+  fetchUserProfileForNavbar // <-- IMPORT THE PROFILE FETCHER
 } from '../lib/data';
 import { Suspense } from 'react';
 
@@ -17,7 +18,14 @@ export default async function UserDashboard() {
     return <UsernotLoggedInLanding />;
   }
 
-  const [dashboardResult, projectsResult, leaderboardResult] = await Promise.all([
+  // Fetch all data in parallel, including the user's profile
+  const [
+    profileResult, // <-- FETCH THE PROFILE HERE
+    dashboardResult, 
+    projectsResult, 
+    leaderboardResult
+  ] = await Promise.all([
+    fetchUserProfileForNavbar(), // <-- ADD IT TO PROMISE.ALL
     fetchDashboardData(),
     fetchInProgressProjects(),
     fetchLeaderboardData(),
@@ -26,6 +34,7 @@ export default async function UserDashboard() {
   return (
     <Suspense fallback={<FullProjectCardSkeleton />}>
       <UserLoggedInLanding
+        initialProfileData={profileResult} // <-- PASS THE PROFILE AS A PROP
         initialDashboardData={dashboardResult}
         initialInProgressProjects={projectsResult}
         initialLeaderboardData={leaderboardResult}

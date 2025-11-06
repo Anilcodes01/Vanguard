@@ -6,12 +6,14 @@ import { AppDispatch, RootState } from "@/app/store/store";
 import { hydrateDashboard } from "@/app/store/features/dashboard/dashboardSlice";
 import { hydrateInProgressProjects } from "@/app/store/features/projects/inProgressSlice";
 import { hydrateLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
+import { hydrateProfile } from "@/app/store/features/profile/profileSlice"; // <-- IMPORT PROFILE HYDRATOR
 import LeaderboardWidget from "./LeaderWidget";
 import { DailyProblemCard, AllProblemsSolvedCard } from "./DailyProblemsCard";
 import InProgressProjectCard from "./Projects/InProgressProjectCard";
-import { DailyProblem, InProgressProject, LeaderboardEntry } from '@/types';
+import { DailyProblem, InProgressProject, LeaderboardEntry, UserProfile } from '@/types'; // <-- IMPORT USERPROFILE
 
 interface UserLoggedInLandingProps {
+  initialProfileData: UserProfile | null; // <-- ADD NEW PROP INTERFACE
   initialDashboardData: { dailyProblem: DailyProblem | null };
   initialInProgressProjects: InProgressProject[];
   initialLeaderboardData: {
@@ -22,6 +24,7 @@ interface UserLoggedInLandingProps {
 }
 
 export default function UserLoggedInLanding({
+  initialProfileData, // <-- ACCEPT THE NEW PROP
   initialDashboardData,
   initialInProgressProjects,
   initialLeaderboardData,
@@ -29,16 +32,18 @@ export default function UserLoggedInLanding({
   const dispatch: AppDispatch = useDispatch();
 
   useLayoutEffect(() => {
-    if (initialDashboardData) {
-      dispatch(hydrateDashboard(initialDashboardData));
-    }
-    if (initialInProgressProjects) {
-      dispatch(hydrateInProgressProjects(initialInProgressProjects));
-    }
-    if (initialLeaderboardData) {
-      dispatch(hydrateLeaderboard(initialLeaderboardData));
-    }
-  }, [dispatch, initialDashboardData, initialInProgressProjects, initialLeaderboardData]);
+    // Hydrate all slices with the data passed from the server parent
+    dispatch(hydrateProfile(initialProfileData)); // <-- HYDRATE THE PROFILE
+    dispatch(hydrateDashboard(initialDashboardData));
+    dispatch(hydrateInProgressProjects(initialInProgressProjects));
+    dispatch(hydrateLeaderboard(initialLeaderboardData));
+  }, [
+    dispatch, 
+    initialProfileData, 
+    initialDashboardData, 
+    initialInProgressProjects, 
+    initialLeaderboardData
+  ]);
 
   const { profile } = useSelector((state: RootState) => state.profile);
   const { dailyProblem } = useSelector((state: RootState) => state.dashboard);

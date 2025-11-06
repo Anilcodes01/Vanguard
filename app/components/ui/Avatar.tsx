@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/store/store";
 import { logout } from "@/app/store/features/auth/authSlice";
 import { clearProfile } from "@/app/store/features/profile/profileSlice";
-import { UserProfile } from "@/app/store/features/profile/profileSlice";
+import { UserProfile } from "@/types";
 
 interface UserAvatarProps {
   user: UserProfile;

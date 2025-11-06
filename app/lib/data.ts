@@ -1,6 +1,7 @@
 import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { unstable_noStore as noStore } from "next/cache";
+import { UserProfile } from "@/types";
 
 /**
  * Fetches the daily problem for the currently authenticated user.
@@ -145,5 +146,49 @@ export async function fetchLeaderboardData() {
   } catch (error) {
     console.error("Database Error (fetchLeaderboardData):", error);
     return { league: null, leaderboard: [], currentUserId: null, message: "Error fetching leaderboard." };
+  }
+}
+
+
+export async function fetchUserProfileForNavbar(): Promise<UserProfile | null> {
+  noStore();
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return null;
+    }
+
+    const userProfile = await prisma.profiles.findUnique({
+      where: { id: user.id },
+      select: {
+        id: true,
+        name: true,
+        avatar_url: true,
+        xp: true,
+        stars: true,
+        username: true,
+        league: true,
+      },
+    });
+
+    if (!userProfile) return null;
+
+    // Map nullable DB fields to non-nullable UserProfile fields
+    const mappedProfile: UserProfile = {
+      id: userProfile.id,
+      name: userProfile.name ?? "",
+      avatar_url: userProfile.avatar_url ?? "",
+      xp: userProfile.xp,
+      stars: userProfile.stars,
+      username: userProfile.username ?? "",
+      league: userProfile.league,
+    };
+
+    return mappedProfile;
+  } catch (error) {
+    console.error("Database Error (fetchUserProfileForNavbar):", error);
+    return null;
   }
 }

@@ -11,6 +11,16 @@ export type SubmissionResult = {
   starsEarned?: number;     
 };
 
+export interface UserProfile {
+  id: string;
+  name: string | null;
+  username: string;
+  avatar_url: string | null;
+  xp: number;
+  league: string;
+  stars: number;
+}
+
 export type TestCase = {
   id: number;
   input: string | null;
