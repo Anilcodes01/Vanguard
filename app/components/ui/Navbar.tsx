@@ -1,19 +1,13 @@
 import NavbarSignedIn from './Navbar/NavbarSignedIn';
 import NavbarSignedOut from './Navbar/NavbarSignedOut';
 import { createClient } from '@/app/utils/supabase/server';
-import { fetchUserProfileForNavbar } from '@/app/lib/data'; // Import the new function
 
 export default async function Navbar() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const supabase = await createClient(); 
 
-  if (!user) {
-    return <NavbarSignedOut />;
-  }
-  
-  // Fetch the profile data on the server
-  const profile = await fetchUserProfileForNavbar();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // Pass the server-fetched data as a prop
-  return <NavbarSignedIn initialProfile={profile} />;
+  return user ? <NavbarSignedIn /> : <NavbarSignedOut />;
 }

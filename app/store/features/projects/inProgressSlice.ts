@@ -51,14 +51,7 @@ const initialState: InProgressProjectsState = {
 const inProgressProjectsSlice = createSlice({
   name: "inProgressProjects",
   initialState,
-  reducers: {
-     hydrateInProgressProjects: (state, action: PayloadAction<InProgressProject[]>) => {
-        state.status = 'succeeded';
-        state.projects = action.payload;
-        state.error = null;
-    }
-
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchInProgressProjects.pending, (state) => {
@@ -78,5 +71,4 @@ const inProgressProjectsSlice = createSlice({
   },
 });
 
-export const { hydrateInProgressProjects } = inProgressProjectsSlice.actions;
 export default inProgressProjectsSlice.reducer;

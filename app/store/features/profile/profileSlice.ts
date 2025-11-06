@@ -1,14 +1,27 @@
+
+
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { problemSolved } from '@/app/store/actions';
-import { UserProfile } from '@/types';
+
+export interface UserProfile {
+  id: string;
+  name: string | null;
+  username: string;
+  avatar_url: string | null;
+  xp: number;
+  league: string;
+  stars: number;
+  
+}
 
 export const fetchUserProfile = createAsyncThunk('profile/fetchUserProfile', async () => {
-    // This thunk can still be used for client-side re-fetching if needed
-    const response = await fetch('/api/user/profile');
-    if (!response.ok) {
-        throw new Error('Failed to fetch profile');
-    }
-    return (await response.json()) as UserProfile;
+  const response = await fetch('/api/user/profile');
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to fetch profile');
+  }
+  const data: UserProfile = await response.json();
+  return data;
 });
 
 interface ProfileState {
@@ -27,12 +40,6 @@ const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
-    // ADD THIS NEW REDUCER
-    hydrateProfile: (state, action: PayloadAction<UserProfile | null>) => {
-        state.profile = action.payload;
-        state.status = action.payload ? 'succeeded' : 'idle';
-        state.error = null;
-    },
     clearProfile: (state) => {
         state.profile = null;
         state.status = 'idle';
@@ -70,5 +77,5 @@ const profileSlice = createSlice({
   },
 });
 
-export const { hydrateProfile, clearProfile, addXp, addStars } = profileSlice.actions;
+export const { clearProfile, addXp, addStars } = profileSlice.actions;
 export default profileSlice.reducer;
