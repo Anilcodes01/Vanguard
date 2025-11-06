@@ -1,71 +1,49 @@
 "use client";
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
-import { fetchDashboardData } from "@/app/store/features/dashboard/dashboardSlice";
-import { fetchInProgressProjects } from "@/app/store/features/projects/inProgressSlice";
-import FullProjectCardSkeleton from "./Projects/ProjectCardSkeleton";
+import { hydrateDashboard } from "@/app/store/features/dashboard/dashboardSlice";
+import { hydrateInProgressProjects } from "@/app/store/features/projects/inProgressSlice";
+import { hydrateLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
 import LeaderboardWidget from "./LeaderWidget";
-import { fetchLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
 import { DailyProblemCard, AllProblemsSolvedCard } from "./DailyProblemsCard";
-import InProgressProjectCard from "./Projects/InProgressProjectCard"; 
+import InProgressProjectCard from "./Projects/InProgressProjectCard";
+import { DailyProblem, InProgressProject, LeaderboardEntry } from '@/types';
 
-export default function UserLoggedInLanding() {
+interface UserLoggedInLandingProps {
+  initialDashboardData: { dailyProblem: DailyProblem | null };
+  initialInProgressProjects: InProgressProject[];
+  initialLeaderboardData: {
+    leaderboard: LeaderboardEntry[];
+    league: string | null;
+    currentUserId: string | null;
+  };
+}
+
+export default function UserLoggedInLanding({
+  initialDashboardData,
+  initialInProgressProjects,
+  initialLeaderboardData,
+}: UserLoggedInLandingProps) {
   const dispatch: AppDispatch = useDispatch();
 
+  useLayoutEffect(() => {
+    if (initialDashboardData) {
+      dispatch(hydrateDashboard(initialDashboardData));
+    }
+    if (initialInProgressProjects) {
+      dispatch(hydrateInProgressProjects(initialInProgressProjects));
+    }
+    if (initialLeaderboardData) {
+      dispatch(hydrateLeaderboard(initialLeaderboardData));
+    }
+  }, [dispatch, initialDashboardData, initialInProgressProjects, initialLeaderboardData]);
+
   const { profile } = useSelector((state: RootState) => state.profile);
-  const {
-    dailyProblem,
-    status: dashboardStatus,
-    error: dashboardError,
-  } = useSelector((state: RootState) => state.dashboard);
-
-  const {
-    projects: inProgressProjects,
-    status: inProgressStatus,
-    error: inProgressError,
-  } = useSelector((state: RootState) => state.inProgressProjects);
-
-  const {
-    leaderboard,
-    league,
-    currentUserId,
-    status: leaderboardStatus,
-    error: leaderboardError,
-  } = useSelector((state: RootState) => state.leaderboard);
-
-  useEffect(() => {
-    if (dashboardStatus === "idle") {
-      dispatch(fetchDashboardData());
-    }
-    if (inProgressStatus === "idle") {
-      dispatch(fetchInProgressProjects());
-    }
-    if (leaderboardStatus === "idle") {
-      dispatch(fetchLeaderboard());
-    }
-  }, [dashboardStatus, inProgressStatus, leaderboardStatus, dispatch]);
-
-  const isPageLoading =
-    dashboardStatus === "loading" ||
-    dashboardStatus === "idle" ||
-    inProgressStatus === "loading" ||
-    inProgressStatus === "idle";
-
-  const combinedError = dashboardError || inProgressError || leaderboardError;
-
-  if (isPageLoading) {
-    return <FullProjectCardSkeleton />;
-  }
-
-  if (combinedError) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-[#262626] text-white">
-        <p className="text-red-400">Error: {combinedError}</p>
-      </div>
-    );
-  }
+  const { dailyProblem } = useSelector((state: RootState) => state.dashboard);
+  const { projects: inProgressProjects } = useSelector((state: RootState) => state.inProgressProjects);
+  const { leaderboard, league, currentUserId, status: leaderboardStatus } = useSelector((state: RootState) => state.leaderboard);
 
   return (
     <div className="min-h-screen bg-[#262626] text-white lg:p-8 p-4">
@@ -114,10 +92,8 @@ export default function UserLoggedInLanding() {
               leaderboard={leaderboard}
               league={league}
               currentUserId={currentUserId}
-              isLoading={
-                leaderboardStatus === "loading" || leaderboardStatus === "idle"
-              }
-              error={leaderboardError}
+              isLoading={leaderboardStatus === "loading"}
+              error={null}
             />
           </div>
         </div>

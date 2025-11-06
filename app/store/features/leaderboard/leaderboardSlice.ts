@@ -50,6 +50,14 @@ const leaderboardSlice = createSlice({
     name: 'leaderboard',
     initialState,
     reducers: {
+        // ADD THIS NEW REDUCER
+        hydrateLeaderboard: (state, action: PayloadAction<Omit<LeaderboardApiResponse, 'message'>>) => {
+            state.status = 'succeeded';
+            state.leaderboard = action.payload.leaderboard;
+            state.league = action.payload.league;
+            state.currentUserId = action.payload.currentUserId;
+            state.error = null;
+        },
         resetLeaderboard : () => initialState
     },
     extraReducers: (builder) => {
@@ -76,5 +84,5 @@ const leaderboardSlice = createSlice({
 
 })
 
-export const {resetLeaderboard} = leaderboardSlice.actions
+export const { hydrateLeaderboard, resetLeaderboard } = leaderboardSlice.actions;
 export default leaderboardSlice.reducer;

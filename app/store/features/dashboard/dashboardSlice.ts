@@ -40,6 +40,11 @@ const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
   reducers: {
+    hydrateDashboard: (state, action: PayloadAction<{ dailyProblem: DailyProblem | null }>) => {
+        state.status = 'succeeded';
+        state.dailyProblem = action.payload.dailyProblem;
+        state.error = null;
+    },
     resetDashboard: (state) => {
       state.dailyProblem = null;
       state.leaderboardData = null;
@@ -69,5 +74,5 @@ const dashboardSlice = createSlice({
   },
 });
 
-export const { resetDashboard } = dashboardSlice.actions;
+export const { hydrateDashboard, resetDashboard } = dashboardSlice.actions;
 export default dashboardSlice.reducer;

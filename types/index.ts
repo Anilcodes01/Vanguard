@@ -175,7 +175,7 @@ export type LeaderboardData = {
 
 export type DailyProblem = {
   id: string;
-   slug: string;
+    slug: string | null; 
     title: string;
     difficulty: "Beginner" | "Intermediate" | "Advanced";
     maxTime: number;
@@ -213,3 +213,26 @@ export type Comment = {
   hasUpvoted: boolean;
     commentsCount: number;
 };
+
+
+import { $Enums } from "@prisma/client";
+
+
+
+export interface InProgressProject {
+  id: string;
+  name: string;
+  description: string;
+  domain: string;
+  maxTime: string;
+  coverImage: string | null;
+  startedAt?: string;
+}
+
+export interface LeaderboardEntry {
+  id: string;
+  name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+  weeklyXP: number;
+}
