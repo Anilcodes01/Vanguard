@@ -84,6 +84,7 @@ export const LeagueStatusBar = ({
             width={16}
             height={16}
             className="w-4 h-4 rounded-full object-cover"
+            priority
           />
         </div>
       </div>

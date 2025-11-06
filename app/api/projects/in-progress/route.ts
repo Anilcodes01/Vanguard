@@ -18,7 +18,16 @@ export async function GET(req: NextRequest) {
         userId: user.id,
       },
       include: {
-        project: true,
+        project: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            domain: true,
+            maxTime: true,
+            coverImage: true,
+          },
+        },
       },
     });
 

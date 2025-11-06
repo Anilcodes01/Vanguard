@@ -144,6 +144,7 @@ export default function LeaderboardWidget({
             width={24} 
             height={24}
             className="w-6 h-6" 
+            priority
           />
         )}
         <h2 className="text-base font-semibold text-white">
