@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { setInitialProfile, UserProfile } from "@/app/store/features/profile/profileSlice";
@@ -19,6 +19,7 @@ export default function NavbarSignedIn({ initialProfile }: NavbarSignedInProps) 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const profile = useSelector((state: RootState) => state.profile.profile);
+  const router = useRouter();
 
   useEffect(() => {
     if (initialProfile && !profile) {
@@ -40,6 +41,11 @@ export default function NavbarSignedIn({ initialProfile }: NavbarSignedInProps) 
     { key: "Projects", name: "Projects", path: "/projects" },
   ];
 
+  const handleNavigation = (path: string) => {
+    router.push(path);
+    setIsMenuOpen(false);
+  };
+
   const handleDropdownItemClick = () => {
     setIsMenuOpen(false);
   };
@@ -54,23 +60,23 @@ export default function NavbarSignedIn({ initialProfile }: NavbarSignedInProps) 
 
   return (
     <nav className="relative flex items-center justify-between bg-[#262626] text-white py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full">
-      <Link className="text-xl sm:text-2xl flex gap-2 font-bold flex-shrink-0 z-30" href={"/"}>
+      <button className="text-xl sm:text-2xl flex gap-2 font-bold flex-shrink-0 z-30" onClick={() => router.push("/")}>
         <Image src={"/adapt.png"} alt="adapt logo" width={200} height={200} className="h-6 w-6 sm:h-8 sm:w-8" />
-      </Link>
+      </button>
 
       <div className="hidden lg:flex gap-4 xl:gap-8 items-center">
         {links.map((link) => (
-          <Link key={link.key} href={link.path} className="cursor-pointer hover:text-gray-400 transition-colors text-sm xl:text-base whitespace-nowrap">
+          <button key={link.key} onClick={() => router.push(link.path)} className="cursor-pointer hover:text-gray-400 transition-colors text-sm xl:text-base whitespace-nowrap">
             {link.name}
-          </Link>
+          </button>
         ))}
       </div>
 
       <div className="hidden lg:flex items-center gap-2 xl:gap-4 flex-shrink-0">
         {leagueImage && (
-          <Link href="/leaderboard" className="flex items-center gap-1 bg-neutral-700/50 border border-neutral-600/60 p-1.5 rounded-full text-sm hover:bg-neutral-700 transition-colors" title={`${leagueImage.name} league`}>
+          <button onClick={() => router.push("/leaderboard")} className="flex items-center gap-1 bg-neutral-700/50 border border-neutral-600/60 p-1.5 rounded-full text-sm hover:bg-neutral-700 transition-colors" title={`${leagueImage.name} league`}>
             <Image src={leagueImage.imagePath} alt={`${leagueImage.name} league`} width={16} height={16} className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
-          </Link>
+          </button>
         )}
         <div className="flex items-center gap-1.5 xl:gap-2 bg-yellow-500/10 border border-yellow-500/20 px-2 xl:px-3 py-1 xl:py-1.5 rounded-full text-xs xl:text-sm">
           <Star size={12} className="text-yellow-400 xl:w-3.5 xl:h-3.5" fill="currentColor" />
@@ -86,9 +92,9 @@ export default function NavbarSignedIn({ initialProfile }: NavbarSignedInProps) 
       
       <div className="hidden md:flex lg:hidden items-center gap-2 flex-shrink-0">
         {leagueImage && (
-            <Link href="/leaderboard" className="flex items-center bg-neutral-700/50 border border-neutral-600/60 p-1.5 rounded-full text-sm hover:bg-neutral-700 transition-colors" title={`${leagueImage.name} league`}>
+            <button onClick={() => router.push("/leaderboard")} className="flex items-center bg-neutral-700/50 border border-neutral-600/60 p-1.5 rounded-full text-sm hover:bg-neutral-700 transition-colors" title={`${leagueImage.name} league`}>
                 <Image src={leagueImage.imagePath} alt={`${leagueImage.name} league`} width={14} height={14} className="w-3.5 h-3.5" />
-            </Link>
+            </button>
         )}
         <div className="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/20 px-2 py-1 rounded-full text-xs">
             <Star size={12} className="text-yellow-400" fill="currentColor" />
@@ -115,17 +121,17 @@ export default function NavbarSignedIn({ initialProfile }: NavbarSignedInProps) 
               <div className="flex flex-col items-center gap-3 py-4 px-4">
                 {links.map((link, index) => (
                   <motion.div key={link.key} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.05, duration: 0.3 }} className="w-full">
-                    <Link href={link.path} className="cursor-pointer hover:text-gray-400 transition-colors text-base w-full text-center py-2 block" onClick={() => setIsMenuOpen(false)}>
+                    <button onClick={() => handleNavigation(link.path)} className="cursor-pointer hover:text-gray-400 transition-colors text-base w-full text-center py-2 block">
                       {link.name}
-                    </Link>
+                    </button>
                   </motion.div>
                 ))}
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.3 }} className="flex flex-col items-center gap-3 mt-2 border-t border-neutral-700 pt-4 w-full">
                     {leagueImage && (
-                        <Link href="/leaderboard" className="flex items-center gap-2 bg-neutral-700/50 border border-neutral-600/60 p-2.5 rounded-full text-sm hover:bg-neutral-700 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                        <button onClick={() => handleNavigation("/leaderboard")} className="flex items-center gap-2 bg-neutral-700/50 border border-neutral-600/60 p-2.5 rounded-full text-sm hover:bg-neutral-700 transition-colors">
                             <Image src={leagueImage.imagePath} alt={`${leagueImage.name} league`} width={20} height={20} className="w-5 h-5" />
                             <span className="text-white font-medium">{displayProfile.league} League</span>
-                        </Link>
+                        </button>
                     )}
                     <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 px-4 py-2 rounded-full text-sm">
                         <Star size={16} className="text-yellow-400" fill="currentColor" />
