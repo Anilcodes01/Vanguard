@@ -12,7 +12,7 @@ type ProjectWithProgress = {
   domain: string;
   maxTime: string;
   coverImage: string | null;
-  startedAt?: string;
+  startedAt?: Date | string | null;
 };
 
 const PlaceholderIcon = () => (
@@ -74,7 +74,7 @@ export default function ProjectCard({
             />
             {project.startedAt ? (
               <ProjectCountdownTimer
-                startedAt={project.startedAt}
+                startedAt={project.startedAt.toString()}
                 maxTime={project.maxTime}
               />
             ) : (

@@ -1,88 +1,64 @@
-"use client"
-import { useEffect, useState } from 'react';
-import ProjectCard from '@/app/components/Landing/Projects/ProjectsCard';
-import { Loader2 } from 'lucide-react';
+import { createClient } from "@/app/utils/supabase/server";
+import { prisma } from "@/lib/prisma";
+import ProjectCard from "@/app/components/Landing/Projects/ProjectsCard";
+import { Project } from "@prisma/client";
 
-type Project = {
-  id: string;
-  name: string;
-  description: string;
-  domain: string;
-  maxTime: string;
-  coverImage: string | null;
-};
+async function getProjectsForUser(): Promise<Project[]> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-type ApiResponse = {
-  projects: Project[];
-};
+    if (!user) {
+      return [];
+    }
 
-export default function ProjectsPage() {
-  const [data, setData] = useState<ApiResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+    const userProfile = await prisma.profiles.findUnique({
+      where: { id: user.id },
+      select: { domain: true },
+    });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/projects/getAllProjects'); 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data: ${response.statusText}`);
-        }
-        const result: ApiResponse = await response.json();
-        setData(result);
-      } catch (error) { 
-        if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError("An unknown error occurred.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!userProfile || !userProfile.domain) {
+      return [];
+    }
 
-    fetchData();
-  }, []);
+    const projects = await prisma.project.findMany({
+      where: {
+        domain: userProfile.domain,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-[#262626]">
-        <Loader2 className="w-10 h-10 animate-spin text-white" />
-      </div>
-    );
+    return projects;
+  } catch (error) {
+    console.error("Failed to fetch projects:", error);
+    return [];
   }
+}
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-[#262626] text-red-400">
-        Error: {error}
-      </div>
-    );
-  }
-  
+export default async function ProjectsPage() {
+  const projects = await getProjectsForUser();
+
   return (
     <main className="min-h-screen bg-[#262626] p-4 sm:p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-white mb-8">Projects</h1>
-        
-    
 
-        {error && (
-           <div className="text-center text-red-400 text-lg">Error: {error}</div>
-        )}
-
-        {!loading && !error && (!data || !data.projects || data.projects.length === 0) && (
-          <div className="text-center text-neutral-400 text-lg">No projects found.</div>
-        )}
-
-        {data?.projects && (
+        {!projects || projects.length === 0 ? (
+          <div className="text-center text-neutral-400 text-lg">
+            No projects found.
+          </div>
+        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-            {data.projects.map((project) => (
-              <ProjectCard  key={project.id} project={project} />
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
             ))}
           </div>
         )}
       </div>
     </main>
   );
-};
+}
