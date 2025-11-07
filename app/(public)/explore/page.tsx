@@ -1,78 +1,26 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import ProjectCard from '@/app/components/explore/ProjectCard';
-import ProblemCard from '@/app/components/explore/ProblemCard';
-import { Difficulty } from '@prisma/client';
-import { LoadingSpinner } from '@/app/components/Profile/ProfilePanel';
-
-type UserProfile = {
-  name: string | null;
-  avatar_url: string | null;
-};
-
-type SubmittedProjectInfo = {
-  user: {
-    profiles: UserProfile[] | null;
-  };
-  _count: {
-    upvotes: number;
-    comments: number;
-  };
-};
-
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  domain: string;
-  coverImage: string | null;
-  SubmittedProjects: SubmittedProjectInfo[];
-}
-
-interface Problem {
-  id: string;
-  title: string;
-  difficulty: Difficulty;
-  topic: string[];
-  _count: {
-    solutions: number;
-  };
-}
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "@/app/store/store";
+import { fetchExploreData } from "@/app/store/features/explore/exploreSlice";
+import ProjectCard from "@/app/components/explore/ProjectCard";
+import ProblemCard from "@/app/components/explore/ProblemCard";
+import { LoadingSpinner } from "@/app/components/Profile/ProfilePanel";
 
 export default function ExplorePage() {
-  const [topProjects, setTopProjects] = useState<Project[]>([]);
-  const [topProblems, setTopProblems] = useState<Problem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch: AppDispatch = useDispatch();
+  const { topProjects, topProblems, status, error } = useSelector(
+    (state: RootState) => state.explore
+  );
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [projectsResponse, problemsResponse] = await Promise.all([
-          fetch('/api/projects/topProjects'),
-          fetch('/api/problems/topProblems'),
-        ]);
+    if (status === "idle") {
+      dispatch(fetchExploreData());
+    }
+  }, [status, dispatch]);
 
-        if (!projectsResponse.ok || !problemsResponse.ok) {
-          throw new Error('Failed to fetch data');
-        }
-
-        const projectsData = await projectsResponse.json();
-        const problemsData = await problemsResponse.json();
-
-        setTopProjects(projectsData);
-        setTopProblems(problemsData);
-      } catch (error) {
-        console.error('Error fetching explore page data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (isLoading) {
+  if (status === "loading") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#262626]">
         <LoadingSpinner />
@@ -80,24 +28,33 @@ export default function ExplorePage() {
     );
   }
 
+  if (status === "failed") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#262626]">
+        <p className="text-red-500">Error: {error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#262626] text-white p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-100">
+    <div className="min-h-screen bg-[#262626] p-4 text-white sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-100 md:text-5xl">
             Explore Community Highlights
           </h1>
-          <p className="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
-            Discover the most popular projects and challenging problems tackled by our community.
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-400">
+            Discover the most popular projects and challenging problems tackled
+            by our community.
           </p>
         </div>
 
         <>
           <section id="top-projects" className="mb-20">
-            <h2 className="text-3xl font-bold text-gray-200 mb-8 text-center sm:text-left">
+            <h2 className="mb-8 text-center text-3xl font-bold text-gray-200 sm:text-left">
               Most Popular Projects
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {topProjects.map((project) => (
                 <ProjectCard key={project.id} project={project} />
               ))}
@@ -105,10 +62,10 @@ export default function ExplorePage() {
           </section>
 
           <section id="top-problems">
-            <h2 className="text-3xl font-bold text-gray-200 mb-8 text-center sm:text-left">
+            <h2 className="mb-8 text-center text-3xl font-bold text-gray-200 sm:text-left">
               Most Solved Problems
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {topProblems.map((problem) => (
                 <ProblemCard key={problem.id} problem={problem} />
               ))}
