@@ -1,40 +1,66 @@
-"use client";
-
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "@/app/store/store";
-import { fetchExploreData } from "@/app/store/features/explore/exploreSlice";
+import { prisma } from "@/lib/prisma";
 import ProjectCard from "@/app/components/explore/ProjectCard";
 import ProblemCard from "@/app/components/explore/ProblemCard";
-import { LoadingSpinner } from "@/app/components/Profile/ProfilePanel";
+import { Prisma } from "@prisma/client";
 
-export default function ExplorePage() {
-  const dispatch: AppDispatch = useDispatch();
-  const { topProjects, topProblems, status, error } = useSelector(
-    (state: RootState) => state.explore
-  );
+type TopProject = Prisma.PromiseReturnType<typeof getTopProjects>[0];
 
-  useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchExploreData());
-    }
-  }, [status, dispatch]);
+type TopProblem = Prisma.PromiseReturnType<typeof getTopProblems>[0];
 
-  if (status === "loading") {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#262626]">
-        <LoadingSpinner />
-      </div>
-    );
-  }
+async function getTopProjects() {
+  const projects = await prisma.project.findMany({
+    take: 3,
+    include: {
+      SubmittedProjects: {
+        include: {
+          user: {
+            select: {
+              profiles: { select: { name: true, avatar_url: true } },
+            },
+          },
+          _count: {
+            select: { upvotes: true, comments: true },
+          },
+        },
+      },
+    },
+  });
 
-  if (status === "failed") {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#262626]">
-        <p className="text-red-500">Error: {error}</p>
-      </div>
-    );
-  }
+  return projects
+    .map((project) => ({
+      ...project,
+      totalUpvotes: project.SubmittedProjects.reduce(
+        (acc, sub) => acc + sub._count.upvotes,
+        0
+      ),
+    }))
+    .sort((a, b) => b.totalUpvotes - a.totalUpvotes);
+}
+
+async function getTopProblems() {
+  return prisma.problem.findMany({
+    take: 3,
+    orderBy: {
+      solutions: {
+        _count: "desc",
+      },
+    },
+    include: {
+      _count: {
+        select: {
+          solutions: true,
+        },
+      },
+    },
+  });
+}
+
+
+export default async function ExplorePage() {
+  const [topProjects, topProblems] = await Promise.all([
+    getTopProjects(),
+    getTopProblems(),
+  ]);
 
   return (
     <div className="min-h-screen bg-[#262626] p-4 text-white sm:p-6 lg:p-8">
@@ -56,7 +82,7 @@ export default function ExplorePage() {
             </h2>
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {topProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
+                <ProjectCard key={project.id} project={project as TopProject} />
               ))}
             </div>
           </section>
@@ -67,7 +93,7 @@ export default function ExplorePage() {
             </h2>
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {topProblems.map((problem) => (
-                <ProblemCard key={problem.id} problem={problem} />
+                <ProblemCard key={problem.id} problem={problem as TopProblem} />
               ))}
             </div>
           </section>
