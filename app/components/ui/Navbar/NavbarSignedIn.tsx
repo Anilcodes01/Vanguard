@@ -59,7 +59,7 @@ export default function NavbarSignedIn({ initialProfile }: NavbarSignedInProps) 
   return (
     <nav className="relative flex items-center justify-between bg-[#262626] text-white py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full">
       <Link href="/" className="text-xl sm:text-2xl flex gap-2 font-bold flex-shrink-0 z-30">
-        <Image src={"/adapt.png"} alt="adapt logo" width={200} height={200} className="h-6 w-6 sm:h-8 sm:w-8" />
+        <Image src={"/ant-intern.png"} alt="adapt logo" width={200} height={200} className="h-12 w-12 sm:h-12 sm:w-12" />
       </Link>
 
       {/* Desktop Navigation using <Link> */}

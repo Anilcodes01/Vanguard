@@ -1,139 +1,118 @@
-"use client";
+import { createClient } from "@/app/utils/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
+import { ProjectSubmission, Comment as CommentType } from "@/types";
+import DiscussionsClientPage from "./discussionsClientPage";
 
-import React, { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
-import { ProjectSubmission, Comment } from "@/types";
-import ProjectCard from "@/app/components/discussions/DiscussionsProjectCard";
+const projectWithDetails = Prisma.validator<Prisma.SubmittedProjectsDefaultArgs>()({
+  include: {
+    user: {
+      include: {
+        profiles: { select: { avatar_url: true, name: true, username: true } },
+      },
+    },
+    project: {
+      select: { name: true },
+    },
+    _count: {
+      select: {
+        upvotes: true,
+        comments: true,
+      },
+    },
+    comments: {
+      include: {
+        user: {
+          include: {
+            profiles: { select: { avatar_url: true, name: true, username: true } },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    },
+  },
+});
 
-export default function DiscussionsPage() {
-  const [projects, setProjects] = useState<ProjectSubmission[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+type ProjectWithDetails = Prisma.SubmittedProjectsGetPayload<typeof projectWithDetails>;
+type CommentFromPrisma = ProjectWithDetails["comments"][number];
+type NestedComment = CommentFromPrisma & { replies: NestedComment[] };
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch("/api/discussions/projects");
-        if (!response.ok) throw new Error("Failed to fetch projects.");
-        const data = await response.json();
-        setProjects(data);
-      } catch (err) {
-        if (err instanceof Error) setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProjects();
-  }, []);
+async function getProjects(): Promise<ProjectSubmission[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const handleUpvote = async (projectId: string) => {
-    setProjects((prevProjects) =>
-      prevProjects.map((p) => {
-        if (p.id === projectId) {
-          const newUpvoteCount = p.hasUpvoted
-            ? p.upvotesCount - 1
-            : p.upvotesCount + 1;
-          return {
-            ...p,
-            hasUpvoted: !p.hasUpvoted,
-            upvotesCount: newUpvoteCount,
-          };
-        }
-        return p;
-      })
-    );
+  try {
+    const submittedProjects: ProjectWithDetails[] =
+      await prisma.submittedProjects.findMany(projectWithDetails);
 
-    try {
-      await fetch("/api/discussions/upvote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ submittedProjectId: projectId }),
+    const projectsWithNestedComments = submittedProjects.map((project) => {
+      const comments = project.comments;
+      const commentMap = new Map<string, NestedComment>();
+      const rootComments: NestedComment[] = [];
+
+      comments.forEach((comment) => {
+        commentMap.set(comment.id, { ...comment, replies: [] });
       });
-    } catch (error) {
-      console.error("Failed to upvote:", error);
-    }
-  };
 
-  const handleNewComment = (projectId: string, newComment: Comment) => {
-    const addCommentRecursively = (comments: Comment[]): Comment[] => {
-      for (let i = 0; i < comments.length; i++) {
-        const comment = comments[i];
-        if (comment.id === newComment.parentId) {
-          const updatedComment = {
-            ...comment,
-            replies: [...(comment.replies || []), newComment],
-          };
-          return [
-            ...comments.slice(0, i),
-            updatedComment,
-            ...comments.slice(i + 1),
-          ];
-        }
-
-        if (comment.replies && comment.replies.length > 0) {
-          const updatedReplies = addCommentRecursively(comment.replies);
-
-          if (updatedReplies !== comment.replies) {
-            const updatedComment = { ...comment, replies: updatedReplies };
-            return [
-              ...comments.slice(0, i),
-              updatedComment,
-              ...comments.slice(i + 1),
-            ];
+      comments.forEach((comment) => {
+        if (comment.parentId && commentMap.has(comment.parentId)) {
+          const parentComment = commentMap.get(comment.parentId);
+          const childComment = commentMap.get(comment.id);
+          if (parentComment && childComment) {
+            parentComment.replies.push(childComment);
+          }
+        } else {
+          const rootComment = commentMap.get(comment.id);
+          if (rootComment) {
+            rootComments.push(rootComment);
           }
         }
-      }
+      });
 
-      return comments;
-    };
+      return {
+        ...project,
+        comments: rootComments,
+        commentsCount: project._count.comments,
+      };
+    });
 
-    setProjects((prevProjects) =>
-      prevProjects.map((p) => {
-        if (p.id === projectId) {
-          if (!newComment.parentId) {
-            return { ...p, comments: [...p.comments, newComment] };
-          }
-          const updatedComments = addCommentRecursively(p.comments);
-          return { ...p, comments: updatedComments };
+    const projectsWithUpvoteStatus = await Promise.all(
+      projectsWithNestedComments.map(async (p) => {
+        let hasUpvoted = false;
+        if (user) {
+          const upvote = await prisma.upvote.findUnique({
+            where: {
+              userId_submittedProjectId: {
+                userId: user.id,
+                submittedProjectId: p.id,
+              },
+            },
+          });
+          hasUpvoted = !!upvote;
         }
-        return p;
+        return {
+          ...p,
+          upvotesCount: p._count.upvotes,
+          hasUpvoted,
+        };
       })
     );
-  };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-[#262626]">
-        <Loader2 className="w-10 h-10 animate-spin text-white" />
-      </div>
-    );
+    projectsWithUpvoteStatus.sort((a, b) => b.upvotesCount - a.upvotesCount);
+
+    return projectsWithUpvoteStatus as unknown as ProjectSubmission[];
+  } catch (error) {
+    console.error("Failed to fetch discussion projects:", error);
+    throw new Error("An internal server error occurred.");
   }
+}
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-[#262626] text-red-400">
-        Error: {error}
-      </div>
-    );
-  }
+export default async function DiscussionsPage() {
+  const initialProjects = await getProjects();
 
-  return (
-    <main className="min-h-screen bg-[#262626] p-4 sm:p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-white mb-8 tracking-wider">
-          Community Projects
-        </h1>
-        <div className="space-y-6">
-          {projects.map((p) => (
-            <ProjectCard
-              key={p.id}
-              project={p}
-              onUpvote={() => handleUpvote(p.id)}
-              onNewComment={handleNewComment}
-            />
-          ))}
-        </div>
-      </div>
-    </main>
-  );
+  return <DiscussionsClientPage initialProjects={initialProjects} />;
 }
