@@ -1,24 +1,33 @@
-
-
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import ProjectCard from '@/app/components/explore/ProjectCard';
 import ProblemCard from '@/app/components/explore/ProblemCard';
-import { Difficulty } from '@prisma/client'; 
+import { Difficulty } from '@prisma/client';
 import { LoadingSpinner } from '@/app/components/Profile/ProfilePanel';
+
+type UserProfile = {
+  name: string | null;
+  avatar_url: string | null;
+};
+
+type SubmittedProjectInfo = {
+  user: {
+    profiles: UserProfile[] | null;
+  };
+  _count: {
+    upvotes: number;
+    comments: number;
+  };
+};
 
 interface Project {
   id: string;
   name: string;
   description: string;
   domain: string;
-  maxTime: string;
   coverImage: string | null;
-  _count: {
-    SubmittedProjects: number;
-  };
+  SubmittedProjects: SubmittedProjectInfo[];
 }
 
 interface Problem {

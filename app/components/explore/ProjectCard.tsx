@@ -1,19 +1,32 @@
 "use client";
 
 import Image from "next/image";
-import { Layers, Users } from "lucide-react";
+import { Layers, ThumbsUp, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+
+type UserProfile = {
+  name: string | null;
+  avatar_url: string | null;
+};
+
+type SubmittedProjectInfo = {
+  user: {
+    profiles: UserProfile[] | null;
+  };
+  _count: {
+    upvotes: number;
+    comments: number;
+  };
+};
 
 type Project = {
   id: string;
   name: string;
   description: string;
   domain: string;
-  maxTime: string;
   coverImage: string | null;
-  _count: {
-    SubmittedProjects: number;
-  };
+  SubmittedProjects: SubmittedProjectInfo[];
 };
 
 const PlaceholderIcon = () => (
@@ -24,6 +37,17 @@ const PlaceholderIcon = () => (
 
 export default function ProjectCard({ project }: { project: Project }) {
   const router = useRouter();
+
+  const topSubmission = useMemo(() => {
+    if (!project.SubmittedProjects || project.SubmittedProjects.length === 0) {
+      return null;
+    }
+    return [...project.SubmittedProjects].sort(
+      (a, b) => b._count.upvotes - a._count.upvotes
+    )[0];
+  }, [project.SubmittedProjects]);
+
+  const userProfile = topSubmission?.user?.profiles?.[0];
 
   return (
     <div
@@ -51,21 +75,56 @@ export default function ProjectCard({ project }: { project: Project }) {
         <h3 className="text-lg font-bold text-gray-100 truncate mb-2">
           {project.name}
         </h3>
-
         <p className="text-sm text-gray-400 line-clamp-3 mb-4">
           {project.description}
         </p>
 
-        <div className="mt-auto pt-4 border-t border-neutral-700/50 flex justify-between items-center gap-4 text-xs text-gray-400">
-          <span className="inline-flex items-center gap-2">
-            <Layers size={16} className="text-blue-400" />
-            <span className="font-medium">{project.domain}</span>
-          </span>
+        {userProfile ? (
+          <div className="flex items-center gap-3 mb-4">
+            <Image
+              src={userProfile.avatar_url || "/user.png"}
+              alt={userProfile.name || "User"}
+              width={32}
+              height={32}
+              className="rounded-full bg-neutral-700"
+            />
+            <div>
+              <p className="text-xs text-gray-400">Top submission by</p>
+              <p className="text-sm font-semibold text-gray-200">
+                {userProfile.name || "Anonymous User"}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 rounded-full bg-neutral-700"></div>
+            <div>
+              <p className="text-xs text-gray-400">Top submission by</p>
+              <p className="text-sm font-semibold text-gray-200">
+                Anonymous User
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
 
-          <span className="inline-flex items-center gap-2">
-            <Users size={16} className="text-green-400" />
+      <div className="mt-auto pt-4 p-5 border-t border-neutral-700/50 flex justify-between items-center gap-4 text-xs text-gray-400">
+        <span className="inline-flex items-center gap-2">
+          <Layers size={16} className="text-blue-400" />
+          <span className="font-medium">{project.domain}</span>
+        </span>
+
+        <div className="flex items-center gap-4">
+          <span className="inline-flex items-center gap-2" title="Upvotes">
+            <ThumbsUp size={16} className="text-orange-400" />
             <span className="font-medium">
-              {project._count.SubmittedProjects} completions
+              {topSubmission?._count.upvotes ?? 0}
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-2" title="Comments">
+            <MessageCircle size={16} className="text-purple-400" />
+            <span className="font-medium">
+              {topSubmission?._count.comments ?? 0}
             </span>
           </span>
         </div>
