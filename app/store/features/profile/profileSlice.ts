@@ -1,5 +1,3 @@
-
-
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { problemSolved } from '@/app/store/actions';
 
@@ -11,7 +9,6 @@ export interface UserProfile {
   xp: number;
   league: string;
   stars: number;
-  
 }
 
 export const fetchUserProfile = createAsyncThunk('profile/fetchUserProfile', async () => {
@@ -40,6 +37,10 @@ const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
+    setInitialProfile: (state, action: PayloadAction<UserProfile>) => {
+        state.profile = action.payload;
+        state.status = 'succeeded';
+    },
     clearProfile: (state) => {
         state.profile = null;
         state.status = 'idle';
@@ -77,5 +78,5 @@ const profileSlice = createSlice({
   },
 });
 
-export const { clearProfile, addXp, addStars } = profileSlice.actions;
+export const { setInitialProfile, clearProfile, addXp, addStars } = profileSlice.actions;
 export default profileSlice.reducer;

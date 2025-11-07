@@ -1,28 +1,40 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { DailyProblem, LeaderboardData } from "@/types";
+import { DailyProblem, LeaderboardEntry, InProgressProject } from "@/types";
 
-interface DashboardData {
-  userId: string;
+interface ConsolidatedDashboardData {
   dailyProblem: DailyProblem | null;
-  leaderboard: LeaderboardData;
+  projects: InProgressProject[];
+  leaderboard: LeaderboardEntry[];
+  league: string | null;
+  currentUserId: string;
 }
 
-export const fetchDashboardData = createAsyncThunk(
-  "dashboard/fetchData",
-  async () => {
-    const response = await fetch("/api/dashboardData");
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to fetch dashboard data");
+export const fetchDashboard = createAsyncThunk(
+  "dashboard/fetch",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("/api/dashboard");
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue(
+          errorData.message || "Failed to fetch dashboard data"
+        );
+      }
+      return (await response.json()) as ConsolidatedDashboardData;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
     }
-    const data: DashboardData = await response.json();
-    return data;
   }
 );
 
 interface DashboardState {
   dailyProblem: DailyProblem | null;
-  leaderboardData: LeaderboardData | null;
+  inProgressProjects: InProgressProject[];
+  leaderboard: LeaderboardEntry[];
+  league: string | null;
   currentUserId: string | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
@@ -30,7 +42,9 @@ interface DashboardState {
 
 const initialState: DashboardState = {
   dailyProblem: null,
-  leaderboardData: null,
+  inProgressProjects: [],
+  leaderboard: [],
+  league: null,
   currentUserId: null,
   status: "idle",
   error: null,
@@ -40,34 +54,31 @@ const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
   reducers: {
-    resetDashboard: (state) => {
-      state.dailyProblem = null;
-      state.leaderboardData = null;
-      state.currentUserId = null;
-      state.status = "idle";
-      state.error = null;
-    },
+     resetDashboardState: () => initialState,
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchDashboardData.pending, (state) => {
+      .addCase(fetchDashboard.pending, (state) => {
         state.status = "loading";
+        state.error = null;
       })
       .addCase(
-        fetchDashboardData.fulfilled,
-        (state, action: PayloadAction<DashboardData>) => {
+        fetchDashboard.fulfilled,
+        (state, action: PayloadAction<ConsolidatedDashboardData>) => {
           state.status = "succeeded";
           state.dailyProblem = action.payload.dailyProblem;
-          state.leaderboardData = action.payload.leaderboard;
-          state.currentUserId = action.payload.userId;
+          state.inProgressProjects = action.payload.projects;
+          state.leaderboard = action.payload.leaderboard;
+          state.league = action.payload.league;
+          state.currentUserId = action.payload.currentUserId;
         }
       )
-      .addCase(fetchDashboardData.rejected, (state, action) => {
+      .addCase(fetchDashboard.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message || "An unknown error occurred";
+        state.error = action.payload as string;
       });
   },
 });
 
-export const { resetDashboard } = dashboardSlice.actions;
+export const { resetDashboardState } = dashboardSlice.actions;
 export default dashboardSlice.reducer;

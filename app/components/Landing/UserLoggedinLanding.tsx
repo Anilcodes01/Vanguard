@@ -3,66 +3,52 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
-import { fetchDashboardData } from "@/app/store/features/dashboard/dashboardSlice";
-import { fetchInProgressProjects } from "@/app/store/features/projects/inProgressSlice";
+import { fetchDashboard } from "@/app/store/features/dashboard/dashboardSlice";
 import FullProjectCardSkeleton from "./Projects/ProjectCardSkeleton";
 import LeaderboardWidget from "./LeaderWidget";
-import { fetchLeaderboard } from "@/app/store/features/leaderboard/leaderboardSlice";
 import { DailyProblemCard, AllProblemsSolvedCard } from "./DailyProblemsCard";
-import InProgressProjectCard from "./Projects/InProgressProjectCard"; 
+import InProgressProjectCard from "./Projects/InProgressProjectCard";
 
 export default function UserLoggedInLanding() {
   const dispatch: AppDispatch = useDispatch();
 
-  const { profile } = useSelector((state: RootState) => state.profile);
   const {
+    profile,
     dailyProblem,
-    status: dashboardStatus,
-    error: dashboardError,
-  } = useSelector((state: RootState) => state.dashboard);
-
-  const {
-    projects: inProgressProjects,
-    status: inProgressStatus,
-    error: inProgressError,
-  } = useSelector((state: RootState) => state.inProgressProjects);
-
-  const {
+    inProgressProjects,
     leaderboard,
     league,
     currentUserId,
-    status: leaderboardStatus,
-    error: leaderboardError,
-  } = useSelector((state: RootState) => state.leaderboard);
+    dashboardStatus,
+    dashboardError,
+  } = useSelector((state: RootState) => ({
+    profile: state.profile.profile,
+    dailyProblem: state.dashboard.dailyProblem,
+    inProgressProjects: state.dashboard.inProgressProjects,
+    leaderboard: state.dashboard.leaderboard,
+    league: state.dashboard.league,
+    currentUserId: state.dashboard.currentUserId,
+    dashboardStatus: state.dashboard.status,
+    dashboardError: state.dashboard.error,
+  }));
 
   useEffect(() => {
     if (dashboardStatus === "idle") {
-      dispatch(fetchDashboardData());
+      dispatch(fetchDashboard());
     }
-    if (inProgressStatus === "idle") {
-      dispatch(fetchInProgressProjects());
-    }
-    if (leaderboardStatus === "idle") {
-      dispatch(fetchLeaderboard());
-    }
-  }, [dashboardStatus, inProgressStatus, leaderboardStatus, dispatch]);
+  }, [dashboardStatus, dispatch]);
 
   const isPageLoading =
-    dashboardStatus === "loading" ||
-    dashboardStatus === "idle" ||
-    inProgressStatus === "loading" ||
-    inProgressStatus === "idle";
-
-  const combinedError = dashboardError || inProgressError || leaderboardError;
+    dashboardStatus === "loading" || dashboardStatus === "idle";
 
   if (isPageLoading) {
     return <FullProjectCardSkeleton />;
   }
 
-  if (combinedError) {
+  if (dashboardError) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#262626] text-white">
-        <p className="text-red-400">Error: {combinedError}</p>
+        <p className="text-red-400">Error: {dashboardError}</p>
       </div>
     );
   }
@@ -94,7 +80,10 @@ export default function UserLoggedInLanding() {
                 {inProgressProjects.length > 0 ? (
                   <div className="space-y-4">
                     {inProgressProjects.map((project) => (
-                      <InProgressProjectCard key={project.id} project={project} />
+                      <InProgressProjectCard
+                        key={project.id}
+                        project={project}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -114,10 +103,8 @@ export default function UserLoggedInLanding() {
               leaderboard={leaderboard}
               league={league}
               currentUserId={currentUserId}
-              isLoading={
-                leaderboardStatus === "loading" || leaderboardStatus === "idle"
-              }
-              error={leaderboardError}
+              isLoading={false}
+              error={null}
             />
           </div>
         </div>
