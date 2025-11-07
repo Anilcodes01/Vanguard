@@ -2,8 +2,43 @@ import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getWeekStartDateUTC } from "@/lib/dateUtils";
+import NodeCache from "node-cache";
+import { League } from "@prisma/client";
+
+const cache = new NodeCache();
+
+type InProgressProject = {
+  id: string;
+  name: string;
+  description: string;
+  domain: string;
+  maxTime: string;
+  coverImage: string | null;
+  startedAt: string;
+};
+
+type LeaderboardMember = {
+  id: string;
+  name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+  weeklyXP: number;
+};
+
+type LeaderboardData = {
+  league: League | null;
+  leaderboard: LeaderboardMember[];
+};
 
 async function getDailyProblem(userId: string) {
+  const today = new Date().toISOString().split("T")[0];
+  const cacheKey = `daily-problem-${userId}-${today}`;
+
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) {
+    return cachedData;
+  }
+
   const solvedProblems = await prisma.problemSolution.findMany({
     where: { userId, status: "Solved" },
     select: { problemId: true },
@@ -13,9 +48,10 @@ async function getDailyProblem(userId: string) {
     where: { id: { notIn: solvedProblemIds } },
   });
 
+  let problem = null;
   if (unsolvedProblemsCount > 0) {
     const randomSkip = Math.floor(Math.random() * unsolvedProblemsCount);
-    return prisma.problem.findFirst({
+    problem = await prisma.problem.findFirst({
       where: { id: { notIn: solvedProblemIds } },
       skip: randomSkip,
       select: {
@@ -28,10 +64,25 @@ async function getDailyProblem(userId: string) {
       },
     });
   }
-  return null;
+
+  if (problem) {
+    const now = new Date();
+    const endOfDay = new Date(now);
+    endOfDay.setUTCHours(24, 0, 0, 0);
+    const ttl = Math.floor((endOfDay.getTime() - now.getTime()) / 1000);
+    cache.set(cacheKey, problem, ttl);
+  }
+
+  return problem;
 }
 
-async function getInProgressProjects(userId: string) {
+async function getInProgressProjects(userId: string): Promise<InProgressProject[]> {
+  const cacheKey = `in-progress-projects-${userId}`;
+  const cachedData = cache.get<InProgressProject[]>(cacheKey);
+  if (cachedData) {
+    return cachedData;
+  }
+
   const startedProjectsProgress = await prisma.projectProgress.findMany({
     where: { userId },
     include: {
@@ -57,15 +108,18 @@ async function getInProgressProjects(userId: string) {
     ).map((p) => p.projectId)
   );
 
-  return startedProjectsProgress
+  const projects = startedProjectsProgress
     .filter((progress) => !submittedProjectIds.has(progress.projectId))
     .map((progress) => ({
       ...progress.project,
       startedAt: progress.startedAt.toISOString(),
     }));
+
+  cache.set(cacheKey, projects, 120);
+  return projects;
 }
 
-async function getLeaderboardData(userId: string) {
+async function getLeaderboardData(userId: string): Promise<LeaderboardData> {
   const weekStartDate = getWeekStartDateUTC();
 
   const userProfileWithGroup = await prisma.profiles.findUnique({
@@ -88,6 +142,12 @@ async function getLeaderboardData(userId: string) {
 
   if (!group || group.weekStartDate.getTime() !== weekStartDate.getTime()) {
     return { league: null, leaderboard: [] };
+  }
+
+  const cacheKey = `leaderboard-${group.id}`;
+  const cachedData = cache.get<LeaderboardData>(cacheKey);
+  if (cachedData) {
+    return cachedData;
   }
 
   const members = group.members;
@@ -120,10 +180,13 @@ async function getLeaderboardData(userId: string) {
     (a, b) => b.weeklyXP - a.weeklyXP
   );
 
-  return {
+  const leaderboardData = {
     league: group.league,
     leaderboard: sortedLeaderboard,
   };
+
+  cache.set(cacheKey, leaderboardData, 300);
+  return leaderboardData;
 }
 
 export async function GET() {
