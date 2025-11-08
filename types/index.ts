@@ -1,3 +1,5 @@
+import { FormEvent, ChangeEvent } from "react";
+
 export type SubmissionResult = {
   status: string;
   message?: string;
@@ -235,3 +237,55 @@ export interface LeaderboardEntry {
   avatar_url: string | null;
   weeklyXP: number;
 }
+
+
+export type SubmissionModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  handleSubmit: (e: FormEvent) => void;
+  description: string;
+  setDescription: (value: string) => void;
+  builtWith: string;
+  setBuiltWith: (value: string) => void;
+  githubUrl: string;
+  setGithubUrl: (value: string) => void;
+  liveUrl: string;
+  setLiveUrl: (value: string) => void;
+  handleCoverImageChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleScreenshotsChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  isSubmitting: boolean;
+  isUploading: boolean;
+  submissionStatus: {
+    message: string | null;
+    type: "success" | "error" | null;
+  };
+   onRemoveCoverImage: () => void;
+  onRemoveScreenshot: (index: number) => void;
+  coverImageFile: File | null;
+  screenshotFiles: File[];
+};
+
+export type SubmissionFormProps = {
+  handleSubmit: (e: FormEvent) => void;
+  description: string;
+  setDescription: (value: string) => void;
+  builtWith: string;
+  setBuiltWith: (value: string) => void;
+  githubUrl: string;
+  setGithubUrl: (value: string) => void;
+  liveUrl: string;
+  setLiveUrl: (value: string) => void;
+  handleCoverImageChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleScreenshotsChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onRemoveCoverImage: () => void;
+  onRemoveScreenshot: (index: number) => void;
+  isSubmitting: boolean;
+  isUploading: boolean;
+  submissionStatus: {
+    message: string | null;
+    type: "success" | "error" | null;
+  };
+  // Pass the actual files from the parent to keep previews in sync
+  coverImageFile: File | null;
+  screenshotFiles: File[];
+};

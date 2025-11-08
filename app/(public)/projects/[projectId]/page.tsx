@@ -7,6 +7,7 @@ import ProjectDetails from "@/app/components/Projects/ProjectDetails";
 import ProjectSidebar from "@/app/components/Projects/ProjectSidebar";
 import LoadingSpinner from "@/app/components/Projects/LoadingSpinner";
 import ErrorMessage from "@/app/components/Projects/ErrorMessage";
+import SubmissionModal from "@/app/components/Projects/SubmissionModel";
 
 type Project = {
   id: string;
@@ -47,6 +48,7 @@ const formatTimeLeft = (milliseconds: number) => {
   return `${days}d ${hours}h ${minutes}m ${seconds}s`;
 };
 
+
 export default function IndividualProjectPage() {
   const params = useParams();
   const projectId = params.projectId as string;
@@ -70,6 +72,7 @@ export default function IndividualProjectPage() {
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const supabase = createClient();
 
@@ -102,6 +105,17 @@ export default function IndividualProjectPage() {
 
     fetchInitialData();
   }, [projectId]);
+
+
+const onRemoveCoverImage = () => {
+  setCoverImageFile(null);
+};
+
+const onRemoveScreenshot = (indexToRemove: number) => {
+  setScreenshotFiles(prevFiles => 
+    prevFiles.filter((_, index) => index !== indexToRemove)
+  );
+};
 
   useEffect(() => {
     if (projectStatus !== "InProgress" || !endTime) {
@@ -180,7 +194,6 @@ export default function IndividualProjectPage() {
     setSubmissionStatus({ message: null, type: null });
 
      const { data: { user } } = await supabase.auth.getUser();
-    console.log("Current user:", user);
 
     try {
       setIsUploading(true);
@@ -242,6 +255,7 @@ export default function IndividualProjectPage() {
       setCoverImageFile(null);
       setScreenshotFiles([]);
       setProjectStatus("Submitted");
+      setIsModalOpen(false); 
     } catch (err) {
       if (err instanceof Error)
         setSubmissionStatus({ message: err.message, type: "error" });
@@ -255,38 +269,56 @@ export default function IndividualProjectPage() {
   if (error) return <ErrorMessage message={error} />;
   if (!project) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-[#262626] text-neutral-400">
+      <div className="flex justify-center items-center min-h-screen bg-gray-900 text-gray-400">
         <p>Project not found.</p>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#262626] text-white p-4 sm:p-8">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8">
-        <ProjectDetails project={{ ...project, completionCount }} />
-        <ProjectSidebar
-          project={project}
-          projectStatus={projectStatus}
-          timeLeft={timeLeft}
-          isStarting={isStarting}
-          handleStartProject={handleStartProject}
-          handleSubmit={handleSubmit}
-          description={description}
-          setDescription={setDescription}
-          builtWith={builtWith}
-          setBuiltWith={setBuiltWith}
-          githubUrl={githubUrl}
-          setGithubUrl={setGithubUrl}
-          liveUrl={liveUrl}
-          setLiveUrl={setLiveUrl}
-          handleCoverImageChange={handleCoverImageChange}
-          handleScreenshotsChange={handleScreenshotsChange}
-          isSubmitting={isSubmitting}
-          isUploading={isUploading}
-          submissionStatus={submissionStatus}
-        />
-      </div>
-    </main>
+    <>
+      <main className="min-h-screen bg-[#262626] text-gray-100">
+        <div className="max-w-7xl mx-auto p-4 sm:p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            <div className="lg:col-span-7">
+              <ProjectDetails project={{ ...project, completionCount }} />
+            </div>
+            <div className="lg:col-span-5">
+              <ProjectSidebar
+                project={project}
+                projectStatus={projectStatus}
+                timeLeft={timeLeft}
+                isStarting={isStarting}
+                handleStartProject={handleStartProject}
+                handleOpenSubmitModal={() => setIsModalOpen(true)} 
+              />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <SubmissionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        handleSubmit={handleSubmit}
+        description={description}
+        setDescription={setDescription}
+        builtWith={builtWith}
+        setBuiltWith={setBuiltWith}
+        githubUrl={githubUrl}
+        setGithubUrl={setGithubUrl}
+        liveUrl={liveUrl}
+        setLiveUrl={setLiveUrl}
+        handleCoverImageChange={handleCoverImageChange}
+        handleScreenshotsChange={handleScreenshotsChange}
+        isSubmitting={isSubmitting}
+        isUploading={isUploading}
+        submissionStatus={submissionStatus}
+         onRemoveCoverImage={onRemoveCoverImage}
+  onRemoveScreenshot={onRemoveScreenshot}
+  coverImageFile={coverImageFile}
+  screenshotFiles={screenshotFiles}
+      />
+    </>
   );
 }

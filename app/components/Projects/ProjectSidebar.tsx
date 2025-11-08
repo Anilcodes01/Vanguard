@@ -1,6 +1,6 @@
-import { FormEvent, ChangeEvent } from "react";
-import SubmissionForm from "./SubmissionForm";
+import { FormEvent } from "react";
 import ProjectStatus from "./ProjectStatus";
+import { Send } from "lucide-react";
 
 type Project = {
   id: string;
@@ -11,58 +11,47 @@ type Project = {
   coverImage: string | null;
 };
 
-type SubmissionStatus = {
-  message: string | null;
-  type: "success" | "error" | null;
-};
-
 type ProjectSidebarProps = {
   project: Project;
-  projectStatus: "Loading" | "NotStarted" | "InProgress" | "Submitted" | "Expired";
+  projectStatus:
+    | "Loading"
+    | "NotStarted"
+    | "InProgress"
+    | "Submitted"
+    | "Expired";
   timeLeft: string;
   isStarting: boolean;
   handleStartProject: () => void;
-  handleSubmit: (e: FormEvent) => void;
-  description: string;
-  setDescription: (value: string) => void;
-  builtWith: string;
-  setBuiltWith: (value: string) => void;
-  githubUrl: string;
-  setGithubUrl: (value: string) => void;
-  liveUrl: string;
-  setLiveUrl: (value: string) => void;
-  handleCoverImageChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  handleScreenshotsChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  isSubmitting: boolean;
-  isUploading: boolean;
-  submissionStatus: SubmissionStatus;
+  handleOpenSubmitModal: () => void;
 };
 
-const renderContent = (
-  { projectStatus, timeLeft, ...props }: ProjectSidebarProps
-) => {
+const renderContent = (props: ProjectSidebarProps) => {
+  const { projectStatus, timeLeft, handleOpenSubmitModal } = props;
+
+  if (projectStatus === "Loading") {
+    return <div className="h-48 bg-gray-800 rounded-lg animate-pulse"></div>;
+  }
+
   if (projectStatus === "InProgress") {
     return (
-      <>
-        <div className="text-center bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
-          <h3 className="font-bold text-yellow-300 text-lg">Time Left</h3>
-          <p className="text-3xl font-mono tracking-wider text-white">
+      <div className="space-y-8 text-center">
+        <div>
+          <p className="text-sm text-gray-400 mb-1">Time Remaining</p>
+          <p className="text-4xl font-mono tracking-wider text-white">
             {timeLeft}
           </p>
         </div>
-        <h2 className="text-2xl font-semibold mb-6">Submit Your Work</h2>
-        <SubmissionForm {...props} />
-      </>
+        <button
+          onClick={handleOpenSubmitModal}
+          className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-500 disabled:opacity-50 transition-colors duration-200"
+        >
+          <Send className="h-5 w-5" />
+          <span>Submit Your Project</span>
+        </button>
+      </div>
     );
   }
 
-  if (projectStatus === "Loading") {
-    return (
-      <div className="h-40 bg-neutral-800 rounded-lg animate-pulse"></div>
-    );
-  }
-
-  // At this point, projectStatus can only be "NotStarted", "Submitted", or "Expired"
   return (
     <ProjectStatus
       status={projectStatus}
@@ -75,8 +64,8 @@ const renderContent = (
 
 export default function ProjectSidebar(props: ProjectSidebarProps) {
   return (
-    <div className="lg:col-span-2">
-      <div className="bg-[#333] rounded-lg p-6 border border-neutral-700 lg:sticky lg:top-8">
+    <div className="lg:sticky lg:top-8">
+      <div className="bg-gray-800/50 rounded-xl p-6 ring-1 ring-white/10">
         {renderContent(props)}
       </div>
     </div>
