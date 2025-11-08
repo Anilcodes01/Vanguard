@@ -628,6 +628,9 @@ model SubmittedProjects {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+   coverImage         String?
+  screenshots        String[]
+
   upvotes     Upvote[]
   comments    Comment[]
 

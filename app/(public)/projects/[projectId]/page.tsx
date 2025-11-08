@@ -1,22 +1,12 @@
 "use client";
 
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
-import {
-  Github,
-  Link as LinkIcon,
-  Loader2,
-  Send,
-  Clock,
-  ImageIcon,
-  PlayCircle,
-  CheckCircle,
-  AlertTriangle,
-  Code,
-  FileText,
-  Users, // Import the Users icon
-} from "lucide-react";
+import { createClient } from "@/app/utils/supabase/client";
+import ProjectDetails from "@/app/components/Projects/ProjectDetails";
+import ProjectSidebar from "@/app/components/Projects/ProjectSidebar";
+import LoadingSpinner from "@/app/components/Projects/LoadingSpinner";
+import ErrorMessage from "@/app/components/Projects/ErrorMessage";
 
 type Project = {
   id: string;
@@ -39,12 +29,11 @@ type ProjectStatus =
   | "Submitted"
   | "Expired";
 
-// Updated type for the combined API response
 type ProjectDataResponse = {
   project: Project;
   status: ProjectStatus;
   startedAt?: string;
-  completionCount: number; // Add completionCount
+  completionCount: number;
 };
 
 const formatTimeLeft = (milliseconds: number) => {
@@ -77,7 +66,12 @@ export default function IndividualProjectPage() {
   const [timeLeft, setTimeLeft] = useState("");
   const [isStarting, setIsStarting] = useState(false);
   const [endTime, setEndTime] = useState<number | null>(null);
-  const [completionCount, setCompletionCount] = useState<number>(0); // State for completion count
+  const [completionCount, setCompletionCount] = useState<number>(0);
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const supabase = createClient();
 
   useEffect(() => {
     if (!projectId) return;
@@ -85,18 +79,14 @@ export default function IndividualProjectPage() {
     const fetchInitialData = async () => {
       try {
         const response = await fetch(`/api/projects/${projectId}`);
-
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Failed to load project data.");
         }
-
         const data: ProjectDataResponse = await response.json();
-
         setProject(data.project);
         setProjectStatus(data.status);
-        setCompletionCount(data.completionCount); // Set the completion count state
-
+        setCompletionCount(data.completionCount);
         if (data.status === "InProgress" && data.startedAt) {
           const maxTimeInMs =
             parseInt(data.project.maxTime) * 24 * 60 * 60 * 1000;
@@ -121,7 +111,6 @@ export default function IndividualProjectPage() {
     const intervalId = setInterval(() => {
       const now = Date.now();
       const remaining = endTime - now;
-
       if (remaining <= 0) {
         setTimeLeft("Time's up!");
         setProjectStatus("Expired");
@@ -151,7 +140,6 @@ export default function IndividualProjectPage() {
 
       const maxTimeInMs = parseInt(project.maxTime) * 24 * 60 * 60 * 1000;
       const startTime = new Date(result.progress.startedAt).getTime();
-
       setEndTime(startTime + maxTimeInMs);
       setProjectStatus("InProgress");
     } catch (err) {
@@ -161,12 +149,67 @@ export default function IndividualProjectPage() {
     }
   };
 
+  const handleCoverImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setCoverImageFile(e.target.files[0]);
+    }
+  };
+
+  const handleScreenshotsChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setScreenshotFiles(Array.from(e.target.files));
+    }
+  };
+
+  const uploadFile = async (file: File, bucket: string, path: string) => {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(path, file);
+    if (error) {
+      throw new Error(`Failed to upload ${file.name}: ${error.message}`);
+    }
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(data.path);
+    return publicUrl;
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmissionStatus({ message: null, type: null });
 
+     const { data: { user } } = await supabase.auth.getUser();
+    console.log("Current user:", user);
+
     try {
+      setIsUploading(true);
+      let coverImageUrl: string | undefined = undefined;
+      if (coverImageFile) {
+        const coverImagePath = `public/${projectId}/${Date.now()}-${
+          coverImageFile.name
+        }`;
+        coverImageUrl = await uploadFile(
+          coverImageFile,
+          "SubmittedProjects",
+          coverImagePath
+        );
+      }
+
+      const screenshotUrls: string[] = [];
+      for (const file of screenshotFiles) {
+        const screenshotPath = `public/${projectId}/screenshots/${Date.now()}-${
+          file.name
+        }`;
+        const url = await uploadFile(
+          file,
+          "SubmittedProjects",
+          screenshotPath
+        );
+        screenshotUrls.push(url);
+      }
+      setIsUploading(false);
+
       const builtWithArray = builtWith
         .split(",")
         .map((item) => item.trim())
@@ -181,8 +224,12 @@ export default function IndividualProjectPage() {
           liveUrl,
           description,
           builtWith: builtWithArray,
+          coverImage: coverImageUrl,
+          screenshots: screenshotUrls,
+          name: project?.name,
         }),
       });
+
       const result = await response.json();
       if (!response.ok)
         throw new Error(result.message || "Failed to submit project.");
@@ -192,273 +239,53 @@ export default function IndividualProjectPage() {
       setLiveUrl("");
       setDescription("");
       setBuiltWith("");
+      setCoverImageFile(null);
+      setScreenshotFiles([]);
       setProjectStatus("Submitted");
     } catch (err) {
       if (err instanceof Error)
         setSubmissionStatus({ message: err.message, type: "error" });
     } finally {
+      setIsUploading(false);
       setIsSubmitting(false);
     }
   };
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-[#262626] text-white">
-        <Loader2 className="w-10 h-10 animate-spin" />
-      </div>
-    );
-  if (error)
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-[#262626] text-red-400">
-        <p>Error: {error}</p>
-      </div>
-    );
-  if (!project)
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
+  if (!project) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-[#262626] text-neutral-400">
         <p>Project not found.</p>
       </div>
     );
-
-  const renderStatusAndForm = () => {
-    switch (projectStatus) {
-      case "NotStarted":
-        return (
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold mb-2">Ready to begin?</h2>
-            <p className="text-neutral-400 text-sm mb-6">
-              Once you start, the {project.maxTime}-day timer will begin. Good
-              luck!
-            </p>
-            <button
-              onClick={handleStartProject}
-              disabled={isStarting}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-500 disabled:opacity-50"
-            >
-              {isStarting ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" /> Starting...
-                </>
-              ) : (
-                <>
-                  <PlayCircle className="h-5 w-5" />
-                  Start Project
-                </>
-              )}
-            </button>
-          </div>
-        );
-      case "Submitted":
-        return (
-          <div className="text-center bg-green-500/10 border border-green-500/30 rounded-lg p-6">
-            <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-green-300">
-              Project Submitted!
-            </h2>
-            <p className="text-neutral-400 text-sm mt-2">
-              Great job! Your submission has been recorded.
-            </p>
-          </div>
-        );
-      case "Expired":
-        return (
-          <div className="text-center bg-red-500/10 border border-red-500/30 rounded-lg p-6">
-            <AlertTriangle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-red-300">
-              Time&apos;s Up!
-            </h2>
-            <p className="text-neutral-400 text-sm mt-2">
-              The deadline for this project has passed.
-            </p>
-          </div>
-        );
-      default:
-        return (
-          <div className="h-40 bg-neutral-800 rounded-lg animate-pulse"></div>
-        );
-    }
-  };
+  }
 
   return (
     <main className="min-h-screen bg-[#262626] text-white p-4 sm:p-8">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8">
-        <div className="lg:col-span-3">
-          <div className="relative aspect-video w-full bg-[#333] rounded-lg overflow-hidden mb-6 border border-neutral-700">
-            {project.coverImage ? (
-              <Image
-                src={project.coverImage}
-                alt={project.name}
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full bg-neutral-800">
-                <ImageIcon className="w-16 h-16 text-neutral-600" />
-              </div>
-            )}
-          </div>
-          <div className="bg-[#333] rounded-lg p-6 border border-neutral-700">
-            <h1 className="text-4xl font-bold mb-2">{project.name}</h1>
-            {/* --- MODIFIED: Added completion count display --- */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-400 mb-4">
-              <span className="border border-gray-600 text-green-400 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                {project.domain}
-              </span>
-              <div className="flex items-center gap-1.5 text-sm">
-                <Clock className="w-4 h-4" />
-                <span>{project.maxTime} days to complete</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-sm">
-                <Users className="w-4 h-4" />
-                <span>
-                  {completionCount} student{completionCount !== 1 ? 's' : ''} completed
-                </span>
-              </div>
-            </div>
-            <p className="text-neutral-300 leading-relaxed whitespace-pre-wrap">
-              {project.description}
-            </p>
-          </div>
-        </div>
-        <div className="lg:col-span-2">
-          <div className="bg-[#333] rounded-lg p-6 border border-neutral-700 lg:sticky lg:top-8">
-            {projectStatus === "InProgress" ? (
-              <>
-                <div className="text-center bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
-                  <h3 className="font-bold text-yellow-300 text-lg">
-                    Time Left
-                  </h3>
-                  <p className="text-3xl font-mono tracking-wider text-white">
-                    {timeLeft}
-                  </p>
-                </div>
-                <h2 className="text-2xl font-semibold mb-6">
-                  Submit Your Work
-                </h2>
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div>
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium text-neutral-300 mb-1"
-                    >
-                      Short Description (Optional)
-                    </label>
-                    <div className="relative">
-                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <FileText className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <textarea
-                        id="description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        rows={3}
-                        className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white"
-                        placeholder="A brief summary of your project..."
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="builtWith"
-                      className="block text-sm font-medium text-neutral-300 mb-1"
-                    >
-                      Technologies Used*
-                    </label>
-                    <div className="relative">
-                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <Code className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="text"
-                        id="builtWith"
-                        value={builtWith}
-                        onChange={(e) => setBuiltWith(e.target.value)}
-                        className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white"
-                        placeholder="Next.js, Tailwind CSS, Prisma"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="githubUrl"
-                      className="block text-sm font-medium text-neutral-300 mb-1"
-                    >
-                      GitHub Repository URL*
-                    </label>
-                    <div className="relative">
-                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <Github className="w-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="url"
-                        id="githubUrl"
-                        value={githubUrl}
-                        onChange={(e) => setGithubUrl(e.target.value)}
-                        className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white"
-                        placeholder="https://github.com/user/repo"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="liveUrl"
-                      className="block text-sm font-medium text-neutral-300 mb-1"
-                    >
-                      Live Deployed URL (Optional)
-                    </label>
-                    <div className="relative">
-                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <LinkIcon className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="url"
-                        id="liveUrl"
-                        value={liveUrl}
-                        onChange={(e) => setLiveUrl(e.target.value)}
-                        className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white"
-                        placeholder="https://my-project.vercel.app"
-                      />
-                    </div>
-                  </div>
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting || !githubUrl || !builtWith}
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 disabled:opacity-50"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Submitting...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="h-4 w-4" />
-                          Submit Project
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  {submissionStatus.message && (
-                    <p
-                      className={`text-sm text-center ${
-                        submissionStatus.type === "success"
-                          ? "text-green-400"
-                          : "text-red-400"
-                      }`}
-                    >
-                      {submissionStatus.message}
-                    </p>
-                  )}
-                </form>
-              </>
-            ) : (
-              renderStatusAndForm()
-            )}
-          </div>
-        </div>
+        <ProjectDetails project={{ ...project, completionCount }} />
+        <ProjectSidebar
+          project={project}
+          projectStatus={projectStatus}
+          timeLeft={timeLeft}
+          isStarting={isStarting}
+          handleStartProject={handleStartProject}
+          handleSubmit={handleSubmit}
+          description={description}
+          setDescription={setDescription}
+          builtWith={builtWith}
+          setBuiltWith={setBuiltWith}
+          githubUrl={githubUrl}
+          setGithubUrl={setGithubUrl}
+          liveUrl={liveUrl}
+          setLiveUrl={setLiveUrl}
+          handleCoverImageChange={handleCoverImageChange}
+          handleScreenshotsChange={handleScreenshotsChange}
+          isSubmitting={isSubmitting}
+          isUploading={isUploading}
+          submissionStatus={submissionStatus}
+        />
       </div>
     </main>
   );

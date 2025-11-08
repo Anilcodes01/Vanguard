@@ -21,7 +21,7 @@ export default function ProjectCard({
   const userProfile = project.user.profiles?.[0];
 
   const handleUpvoteClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     onUpvote();
   };
 
@@ -33,7 +33,7 @@ export default function ProjectCard({
       <div className="text-lg font-medium text-neutral-400">#{rank}</div>
 
       <Image
-        src={project.project.coverImage || userProfile?.avatar_url || "/user.png"}
+        src={project.coverImage || userProfile?.avatar_url || "/user.png"}
         alt={project.project.name}
         width={64}
         height={64}

@@ -213,6 +213,7 @@ export type ProjectSubmission = {
   upvotesCount: number;
   hasUpvoted: boolean;
   commentsCount: number;
+  screenshots: string[]
 };
 
 import { $Enums } from "@prisma/client";

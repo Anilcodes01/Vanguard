@@ -12,8 +12,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 
-  const {name,  projectId, githubUrl, liveUrl, description, builtWith } =
-    await req.json();
+  const {
+    name,
+    projectId,
+    githubUrl,
+    liveUrl,
+    description,
+    builtWith,
+    coverImage, 
+    screenshots,
+  } = await req.json();
 
   if (
     !projectId ||
@@ -54,6 +62,8 @@ export async function POST(req: NextRequest) {
         description: description,
         builtWith: builtWith,
         userId: user.id,
+        coverImage: coverImage, 
+        screenshots: screenshots, 
       },
     });
 
