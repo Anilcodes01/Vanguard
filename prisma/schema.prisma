@@ -615,6 +615,8 @@ enum League {
 
 model SubmittedProjects {
   id          String   @id @default(uuid())
+  name String
+  short_description String?
   description String?
   builtWith   String[]
   githubUrl   String?

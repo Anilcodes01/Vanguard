@@ -1,4 +1,3 @@
-import { LoadingSpinner } from "@/app/components/Profile/ProfilePanel";
 import FullProjectCardSkeleton from '@/app/components/Landing/Projects/ProjectCardSkeleton'
 
 export default function Loading() {

@@ -14,19 +14,6 @@ import { LeaderboardImagesData } from "@/lib/data/leaderboardImagesData";
 const PROMOTION_ZONE = 3;
 const DEMOTION_ZONE = 5;
 
-const LoadingSkeleton = () => (
-  <div className="space-y-2 animate-pulse">
-    {[...Array(10)].map((_, i) => (
-      <div key={i} className="flex items-center gap-3 py-3">
-        <div className="w-4 h-4 bg-neutral-800 rounded"></div>
-        <div className="w-8 h-8 bg-neutral-800 rounded-full"></div>
-        <div className="flex-1 h-4 bg-neutral-800 rounded"></div>
-        <div className="w-12 h-4 bg-neutral-800 rounded"></div>
-      </div>
-    ))}
-  </div>
-);
-
 const LeaderboardRow = ({
   entry,
   rank,

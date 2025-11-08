@@ -4,21 +4,30 @@ import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { ProjectSubmission, Comment } from "@/types";
 import ProjectCard from "@/app/components/discussions/DiscussionsProjectCard";
+import ProjectModal from "@/app/components/discussions/ProjectModal";
 
 export default function DiscussionsPage() {
   const [projects, setProjects] = useState<ProjectSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] =
+    useState<ProjectSubmission | null>(null);
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await fetch("/api/discussions/projects");
-        if (!response.ok) throw new Error("Failed to fetch projects.");
+        if (!response.ok) {
+          throw new Error("Failed to fetch projects.");
+        }
         const data = await response.json();
         setProjects(data);
       } catch (err) {
-        if (err instanceof Error) setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred.");
+        }
       } finally {
         setLoading(false);
       }
@@ -27,7 +36,7 @@ export default function DiscussionsPage() {
   }, []);
 
   const handleUpvote = async (projectId: string) => {
-    setProjects((prevProjects) =>
+    const updater = (prevProjects: ProjectSubmission[]) =>
       prevProjects.map((p) => {
         if (p.id === projectId) {
           const newUpvoteCount = p.hasUpvoted
@@ -40,8 +49,23 @@ export default function DiscussionsPage() {
           };
         }
         return p;
-      })
-    );
+      });
+
+    setProjects(updater);
+
+    if (selectedProject?.id === projectId) {
+      setSelectedProject((prev) => {
+        if (!prev) return null;
+        const newUpvoteCount = prev.hasUpvoted
+          ? prev.upvotesCount - 1
+          : prev.upvotesCount + 1;
+        return {
+          ...prev,
+          hasUpvoted: !prev.hasUpvoted,
+          upvotesCount: newUpvoteCount,
+        };
+      });
+    }
 
     try {
       await fetch("/api/discussions/upvote", {
@@ -55,13 +79,16 @@ export default function DiscussionsPage() {
   };
 
   const handleNewComment = (projectId: string, newComment: Comment) => {
-    const addCommentRecursively = (comments: Comment[]): Comment[] => {
+    const addCommentRecursively = (
+      comments: Comment[],
+      commentToAdd: Comment
+    ): Comment[] => {
       for (let i = 0; i < comments.length; i++) {
         const comment = comments[i];
-        if (comment.id === newComment.parentId) {
+        if (comment.id === commentToAdd.parentId) {
           const updatedComment = {
             ...comment,
-            replies: [...(comment.replies || []), newComment],
+            replies: [...(comment.replies || []), commentToAdd],
           };
           return [
             ...comments.slice(0, i),
@@ -69,10 +96,11 @@ export default function DiscussionsPage() {
             ...comments.slice(i + 1),
           ];
         }
-
-        if (comment.replies && comment.replies.length > 0) {
-          const updatedReplies = addCommentRecursively(comment.replies);
-
+        if (comment.replies?.length) {
+          const updatedReplies = addCommentRecursively(
+            comment.replies,
+            commentToAdd
+          );
           if (updatedReplies !== comment.replies) {
             const updatedComment = { ...comment, replies: updatedReplies };
             return [
@@ -83,22 +111,47 @@ export default function DiscussionsPage() {
           }
         }
       }
-
       return comments;
     };
 
-    setProjects((prevProjects) =>
+    const projectUpdater = (prevProjects: ProjectSubmission[]) =>
       prevProjects.map((p) => {
         if (p.id === projectId) {
-          if (!newComment.parentId) {
-            return { ...p, comments: [...p.comments, newComment] };
-          }
-          const updatedComments = addCommentRecursively(p.comments);
-          return { ...p, comments: updatedComments };
+          const updatedComments = newComment.parentId
+            ? addCommentRecursively(p.comments, newComment)
+            : [...p.comments, newComment];
+          return {
+            ...p,
+            comments: updatedComments,
+            commentsCount: p.commentsCount + 1,
+          };
         }
         return p;
-      })
-    );
+      });
+
+    setProjects(projectUpdater);
+
+    if (selectedProject?.id === projectId) {
+      setSelectedProject((prev) => {
+        if (!prev) return null;
+        const updatedComments = newComment.parentId
+          ? addCommentRecursively(prev.comments, newComment)
+          : [...prev.comments, newComment];
+        return {
+          ...prev,
+          comments: updatedComments,
+          commentsCount: prev.commentsCount + 1,
+        };
+      });
+    }
+  };
+
+  const openModal = (project: ProjectSubmission) => {
+    setSelectedProject(project);
+  };
+
+  const closeModal = () => {
+    setSelectedProject(null);
   };
 
   if (loading) {
@@ -123,17 +176,29 @@ export default function DiscussionsPage() {
         <h1 className="text-4xl font-bold text-white mb-8 tracking-wider">
           Community Projects
         </h1>
-        <div className="space-y-6">
-          {projects.map((p) => (
-            <ProjectCard
-              key={p.id}
-              project={p}
-              onUpvote={() => handleUpvote(p.id)}
-              onNewComment={handleNewComment}
-            />
-          ))}
+         <div className="space-y-3"> 
+          {projects
+            .sort((a, b) => b.upvotesCount - a.upvotesCount)
+            .map((p, index) => (
+              <ProjectCard
+                key={p.id}
+                project={p}
+                rank={index + 1} 
+                onClick={() => openModal(p)}
+                onUpvote={() => handleUpvote(p.id)}
+              />
+            ))}
         </div>
       </div>
+    {selectedProject && (
+        <ProjectModal
+          project={selectedProject}
+          onClose={closeModal}
+          onUpvote={handleUpvote}
+          onNewComment={handleNewComment}
+        />
+      )}
     </main>
   );
 }
+

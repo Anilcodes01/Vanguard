@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProblemCard, {
-  ProblemCardSkeleton,
 } from "@/app/components/Problems/ProblemCard";
 import { fetchMoreProblems } from "@/app/(public)/problems/action";
 

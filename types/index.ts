@@ -5,10 +5,10 @@ export type SubmissionResult = {
   input?: string;
   userOutput?: string;
   expectedOutput?: string;
-  executionTime?: number;   
-  executionMemory?: number;  
-  xpEarned?: number;         
-  starsEarned?: number;     
+  executionTime?: number;
+  executionMemory?: number;
+  xpEarned?: number;
+  starsEarned?: number;
 };
 
 export interface UserProfile {
@@ -38,51 +38,40 @@ export interface CodeEditorPanelProps {
   testCases: TestCase[];
 }
 
-
 export interface ProblemLanguageDetail {
   id: string;
   problemId: string;
-  language: string;       
-  languageId: number;   
+  language: string;
+  languageId: number;
   starterCode: string;
   driverCodeTemplate?: string | null;
 }
-
 
 export type Example = {
   id: number;
   input: string;
   output: string;
-  
 };
-
 
 export type ProblemDetails = {
   id: string;
   slug: string;
   title: string;
-   maxTime: number; 
+  maxTime: number;
   description: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
-   starterCode: string;
-  examples: Example[]; 
+  starterCode: string;
+  examples: Example[];
   testCases: TestCase[];
   topic: string[];
-  solutionStatus?: 'Solved' | 'Attempted' | null;
-   problemLanguageDetails: ProblemLanguageDetail[];
+  solutionStatus?: "Solved" | "Attempted" | null;
+  problemLanguageDetails: ProblemLanguageDetail[];
 };
-
-
-
 
 export type RewardData = {
   xpEarned: number;
   starsEarned: number;
 };
-
-
-
-
 
 export type ProfileData = {
   name: string | null;
@@ -102,7 +91,6 @@ export type Submission = {
   problem: { title: string };
 };
 
-
 export type ProblemSolution = {
   status: "Solved" | "Attempted";
 };
@@ -118,7 +106,6 @@ export type League =
   | "Pearl"
   | "Obsidian"
   | "Diamond";
-
 
 export interface Profile {
   id: string;
@@ -157,20 +144,18 @@ export interface SubmittedProject {
   };
 }
 export interface UserData {
-  profiles: Profile[]; 
+  profiles: Profile[];
   submissions: Submission[];
-  problemSolutions: ProblemSolution[]; 
+  problemSolutions: ProblemSolution[];
   submittedProjects: SubmittedProject[];
 }
-
-
 
 export type LeaderboardMember = {
   id: string;
   name: string | null;
   username: string | null;
   avatar_url: string | null;
-  weeklyXP: number; 
+  weeklyXP: number;
   league: string;
 };
 
@@ -185,15 +170,12 @@ export type LeaderboardData = {
 
 export type DailyProblem = {
   id: string;
-    slug: string | null; 
-    title: string;
-    difficulty: "Beginner" | "Intermediate" | "Advanced";
-    maxTime: number;
-    topic: string[];
+  slug: string | null;
+  title: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  maxTime: number;
+  topic: string[];
 };
-
-
-
 
 export type User = {
   profiles: Profile[];
@@ -205,29 +187,35 @@ export type Comment = {
   createdAt: string;
   user: User;
 
-   parentId: string | null; 
-  replies?: Comment[]; 
+  parentId: string | null;
+  replies?: Comment[];
 };
 
- export type ProjectSubmission = {
+export interface Project {
   id: string;
+  name: string;
+  coverImage?: string | null;
+}
+
+export type ProjectSubmission = {
+  id: string;
+  name: string;
+  short_description: string | null;
+  coverImage: string | null;
   description: string | null;
   builtWith: string[];
   githubUrl: string | null;
   liveUrl: string | null;
   createdAt: string;
   user: User;
-  project: { name: string };
+  project: Project;
   comments: Comment[];
   upvotesCount: number;
   hasUpvoted: boolean;
-    commentsCount: number;
+  commentsCount: number;
 };
 
-
 import { $Enums } from "@prisma/client";
-
-
 
 export interface InProgressProject {
   id: string;

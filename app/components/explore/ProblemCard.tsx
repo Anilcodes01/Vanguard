@@ -35,7 +35,7 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
       onClick={() => {
         router.push(`/problems/${problem.id}`);
       }}
-      className="group flex flex-col cursor-pointer h-full bg-[#2a2a2a] rounded-2xl p-5 border border-neutral-700/50 shadow-lg shadow-black/20 hover:border-blue-400/50 hover:shadow-xl hover:shadow-black/30 transition-all duration-300"
+      className="group flex flex-col cursor-pointer h-full bg-[#2a2a2a] rounded-2xl p-5 border border-neutral-700/50 shadow-lg shadow-black/20 hover:border-green-400/50 hover:shadow-xl hover:shadow-black/30 transition-all duration-300"
     >
       <div className="flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-3">

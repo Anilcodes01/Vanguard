@@ -72,7 +72,7 @@ export default function CodeEditorPanel({
     if (containerRef.current && editorHeight === null) {
       setEditorHeight(containerRef.current.offsetHeight * 0.8);
     }
-  }, []);
+  }, [editorHeight]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();

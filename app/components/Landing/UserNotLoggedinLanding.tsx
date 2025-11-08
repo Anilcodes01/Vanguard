@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import SectionOne from "./sections/SectionOne";
 import SectionTwo from "./sections/SectionTwo";
 import SectionThree from "./sections/SectionThree";
@@ -9,7 +8,6 @@ import SectionFive from "./sections/SectionFive";
 import Footer from "./sections/Footer";
 
 export default  function UsernotLoggedInLanding() {
-  const router = useRouter();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#262626] text-white gap-5">

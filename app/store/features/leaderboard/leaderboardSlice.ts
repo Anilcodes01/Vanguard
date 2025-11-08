@@ -1,4 +1,4 @@
-import { createAsyncThunk, createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk,  createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { problemSolved } from "@/app/store/actions";
 
 export interface LeaderboardEntry {
@@ -59,7 +59,7 @@ const leaderboardSlice = createSlice({
         })
          .addCase(fetchLeaderboard.fulfilled, (state, action: PayloadAction<LeaderboardApiResponse>) => {
                state.status = 'succeeded';
-               const {leaderboard, league, currentUserId, message} = action.payload;
+               const {leaderboard, league, currentUserId} = action.payload;
 
                state.leaderboard = leaderboard;
                state.league = league;

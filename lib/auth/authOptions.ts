@@ -57,7 +57,7 @@ const authHandlers = {
     return data.user;
   },
 
-  async handleResetPassword(email: string) {
+  async handleResetPassword() {
   },
 };
 
@@ -94,7 +94,7 @@ export const authOptions: NextAuthOptions = {
 
           if (credentials.mode === "resetpassword") {
       try {
-        const { data, error } = await supabase.auth.resetPasswordForEmail(
+        const {  error } = await supabase.auth.resetPasswordForEmail(
           credentials.email,
           {
             redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/update-password`,

@@ -54,7 +54,7 @@ export default function ProjectCard({ project }: { project: Project }) {
       onClick={() => {
         router.push(`/projects/${project.id}`);
       }}
-      className="group flex h-full flex-col cursor-pointer overflow-hidden rounded-2xl border border-neutral-700/50 bg-[#2a2a2a] shadow-lg shadow-black/20 transition-all duration-300 hover:border-neutral-600 hover:shadow-xl hover:shadow-black/30"
+      className="group flex h-full flex-col cursor-pointer overflow-hidden rounded-2xl border border-neutral-700/50 bg-[#2a2a2a] shadow-lg shadow-black/20 transition-all duration-300 hover:border-green-600 hover:shadow-xl hover:shadow-black/30"
     >
       <div className="relative h-48 w-full overflow-hidden">
         {project.coverImage ? (

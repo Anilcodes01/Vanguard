@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 
-  const { projectId, githubUrl, liveUrl, description, builtWith } =
+  const {name,  projectId, githubUrl, liveUrl, description, builtWith } =
     await req.json();
 
   if (
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
     const newSubmission = await prisma.submittedProjects.create({
       data: {
         projectId: projectId,
+        name: name,
         githubUrl: githubUrl,
         liveUrl: liveUrl,
         description: description,
