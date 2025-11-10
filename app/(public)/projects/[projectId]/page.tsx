@@ -8,46 +8,13 @@ import ProjectSidebar from "@/app/components/Projects/ProjectSidebar";
 import LoadingSpinner from "@/app/components/Projects/LoadingSpinner";
 import ErrorMessage from "@/app/components/Projects/ErrorMessage";
 import SubmissionModal from "@/app/components/Projects/SubmissionModel";
-
-type Project = {
-  id: string;
-  name: string;
-  description: string;
-  domain: string;
-  maxTime: string;
-  coverImage: string | null;
-};
-
-type SubmissionStatus = {
-  message: string | null;
-  type: "success" | "error" | null;
-};
-
-type ProjectStatus =
-  | "Loading"
-  | "NotStarted"
-  | "InProgress"
-  | "Submitted"
-  | "Expired";
-
-type ProjectDataResponse = {
-  project: Project;
-  status: ProjectStatus;
-  startedAt?: string;
-  completionCount: number;
-};
-
-const formatTimeLeft = (milliseconds: number) => {
-  if (milliseconds <= 0) return "0d 0h 0m 0s";
-  const days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
-  const hours = Math.floor(
-    (milliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-  );
-  const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
-  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-};
-
+import { formatTimeLeft } from "@/app/lib/utils";
+import {
+  SubmissionStatus,
+  ProjectStatus,
+  ProjectDataResponse,
+  Project,
+} from "@/types";
 
 export default function IndividualProjectPage() {
   const params = useParams();
@@ -73,6 +40,8 @@ export default function IndividualProjectPage() {
   const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
 
   const supabase = createClient();
 
@@ -106,16 +75,15 @@ export default function IndividualProjectPage() {
     fetchInitialData();
   }, [projectId]);
 
+  const onRemoveCoverImage = () => {
+    setCoverImageFile(null);
+  };
 
-const onRemoveCoverImage = () => {
-  setCoverImageFile(null);
-};
-
-const onRemoveScreenshot = (indexToRemove: number) => {
-  setScreenshotFiles(prevFiles => 
-    prevFiles.filter((_, index) => index !== indexToRemove)
-  );
-};
+  const onRemoveScreenshot = (indexToRemove: number) => {
+    setScreenshotFiles((prevFiles) =>
+      prevFiles.filter((_, index) => index !== indexToRemove)
+    );
+  };
 
   useEffect(() => {
     if (projectStatus !== "InProgress" || !endTime) {
@@ -193,15 +161,15 @@ const onRemoveScreenshot = (indexToRemove: number) => {
     setIsSubmitting(true);
     setSubmissionStatus({ message: null, type: null });
 
-     const { data: { user } } = await supabase.auth.getUser();
-
     try {
       setIsUploading(true);
       let coverImageUrl: string | undefined = undefined;
       if (coverImageFile) {
-        const coverImagePath = `public/${projectId}/${Date.now()}-${
-          coverImageFile.name
-        }`;
+        const sanitizedCoverImageName = coverImageFile.name.replace(
+          /[^a-zA-Z0-9.-]/g,
+          "-"
+        );
+        const coverImagePath = `public/${projectId}/${Date.now()}-${sanitizedCoverImageName}`;
         coverImageUrl = await uploadFile(
           coverImageFile,
           "SubmittedProjects",
@@ -211,14 +179,12 @@ const onRemoveScreenshot = (indexToRemove: number) => {
 
       const screenshotUrls: string[] = [];
       for (const file of screenshotFiles) {
-        const screenshotPath = `public/${projectId}/screenshots/${Date.now()}-${
-          file.name
-        }`;
-        const url = await uploadFile(
-          file,
-          "SubmittedProjects",
-          screenshotPath
+        const sanitizedScreenshotName = file.name.replace(
+          /[^a-zA-Z0-9.-]/g,
+          "-"
         );
+        const screenshotPath = `public/${projectId}/screenshots/${Date.now()}-${sanitizedScreenshotName}`;
+        const url = await uploadFile(file, "SubmittedProjects", screenshotPath);
         screenshotUrls.push(url);
       }
       setIsUploading(false);
@@ -233,13 +199,14 @@ const onRemoveScreenshot = (indexToRemove: number) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           projectId,
+          name,
+          short_description: shortDescription,
+          description,
           githubUrl,
           liveUrl,
-          description,
           builtWith: builtWithArray,
           coverImage: coverImageUrl,
           screenshots: screenshotUrls,
-          name: project?.name,
         }),
       });
 
@@ -255,7 +222,7 @@ const onRemoveScreenshot = (indexToRemove: number) => {
       setCoverImageFile(null);
       setScreenshotFiles([]);
       setProjectStatus("Submitted");
-      setIsModalOpen(false); 
+      setIsModalOpen(false);
     } catch (err) {
       if (err instanceof Error)
         setSubmissionStatus({ message: err.message, type: "error" });
@@ -290,7 +257,7 @@ const onRemoveScreenshot = (indexToRemove: number) => {
                 timeLeft={timeLeft}
                 isStarting={isStarting}
                 handleStartProject={handleStartProject}
-                handleOpenSubmitModal={() => setIsModalOpen(true)} 
+                handleOpenSubmitModal={() => setIsModalOpen(true)}
               />
             </div>
           </div>
@@ -301,6 +268,10 @@ const onRemoveScreenshot = (indexToRemove: number) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         handleSubmit={handleSubmit}
+        name={name}
+        setName={setName}
+        shortDescription={shortDescription}
+        setShortDescription={setShortDescription}
         description={description}
         setDescription={setDescription}
         builtWith={builtWith}
@@ -314,10 +285,10 @@ const onRemoveScreenshot = (indexToRemove: number) => {
         isSubmitting={isSubmitting}
         isUploading={isUploading}
         submissionStatus={submissionStatus}
-         onRemoveCoverImage={onRemoveCoverImage}
-  onRemoveScreenshot={onRemoveScreenshot}
-  coverImageFile={coverImageFile}
-  screenshotFiles={screenshotFiles}
+        onRemoveCoverImage={onRemoveCoverImage}
+        onRemoveScreenshot={onRemoveScreenshot}
+        coverImageFile={coverImageFile}
+        screenshotFiles={screenshotFiles}
       />
     </>
   );

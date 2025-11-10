@@ -193,11 +193,14 @@ export type Comment = {
   replies?: Comment[];
 };
 
-export interface Project {
+export type Project = {
   id: string;
   name: string;
-  coverImage?: string | null;
-}
+  description: string;
+  domain: string;
+  maxTime: string;
+  coverImage: string | null;
+};
 
 export type ProjectSubmission = {
   id: string;
@@ -215,7 +218,7 @@ export type ProjectSubmission = {
   upvotesCount: number;
   hasUpvoted: boolean;
   commentsCount: number;
-  screenshots: string[]
+  screenshots: string[];
 };
 
 import { $Enums } from "@prisma/client";
@@ -238,12 +241,15 @@ export interface LeaderboardEntry {
   weeklyXP: number;
 }
 
-
 export type SubmissionModalProps = {
   isOpen: boolean;
   onClose: () => void;
   handleSubmit: (e: FormEvent) => void;
   description: string;
+  name: string
+  setName: (value: string) => void;
+  shortDescription: string;
+  setShortDescription: (value: string) => void
   setDescription: (value: string) => void;
   builtWith: string;
   setBuiltWith: (value: string) => void;
@@ -259,7 +265,7 @@ export type SubmissionModalProps = {
     message: string | null;
     type: "success" | "error" | null;
   };
-   onRemoveCoverImage: () => void;
+  onRemoveCoverImage: () => void;
   onRemoveScreenshot: (index: number) => void;
   coverImageFile: File | null;
   screenshotFiles: File[];
@@ -285,7 +291,29 @@ export type SubmissionFormProps = {
     message: string | null;
     type: "success" | "error" | null;
   };
-  // Pass the actual files from the parent to keep previews in sync
   coverImageFile: File | null;
   screenshotFiles: File[];
+  name: string;
+  setName: (value: string) => void,
+  shortDescription: string,
+  setShortDescription: (value: string) => void,
+};
+
+export type SubmissionStatus = {
+  message: string | null;
+  type: "success" | "error" | null;
+};
+
+export type ProjectStatus =
+  | "Loading"
+  | "NotStarted"
+  | "InProgress"
+  | "Submitted"
+  | "Expired";
+
+export type ProjectDataResponse = {
+  project: Project;
+  status: ProjectStatus;
+  startedAt?: string;
+  completionCount: number;
 };

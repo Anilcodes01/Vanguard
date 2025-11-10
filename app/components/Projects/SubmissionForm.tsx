@@ -1,4 +1,4 @@
-import { FormEvent, ChangeEvent, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Github,
   Link as LinkIcon,
@@ -8,11 +8,16 @@ import {
   FileText,
   ImageUp,
   X,
+  Type,
 } from "lucide-react";
 import { SubmissionFormProps } from "@/types";
 
 export default function SubmissionForm({
   handleSubmit,
+  name,
+  setName,
+  shortDescription,
+  setShortDescription,
   description,
   setDescription,
   builtWith,
@@ -88,6 +93,50 @@ export default function SubmissionForm({
           <div className="space-y-6">
             <div>
               <label
+                htmlFor="name"
+                className="block text-sm font-medium text-neutral-300 mb-1"
+              >
+                Project Name (Optional)
+              </label>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <Type className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                  placeholder="Leave blank to use the default name"
+                />
+              </div>
+            </div>
+          
+            <div>
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-neutral-300 mb-1"
+              >
+                Description (Optional)
+              </label>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 pt-2.5">
+                  <FileText className="h-5 w-5 text-gray-400" />
+                </div>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={4}
+                  className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                  placeholder="A detailed description of your project..."
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label
                 htmlFor="githubUrl"
                 className="block text-sm font-medium text-neutral-300 mb-1"
               >
@@ -151,9 +200,13 @@ export default function SubmissionForm({
                 />
               </div>
             </div>
-            <div>
+           
+          </div>
+
+          <div className="space-y-6">
+               <div>
               <label
-                htmlFor="description"
+                htmlFor="shortDescription"
                 className="block text-sm font-medium text-neutral-300 mb-1"
               >
                 Short Description (Optional)
@@ -163,18 +216,15 @@ export default function SubmissionForm({
                   <FileText className="h-5 w-5 text-gray-400" />
                 </div>
                 <textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
+                  id="shortDescription"
+                  value={shortDescription}
+                  onChange={(e) => setShortDescription(e.target.value)}
+                  rows={2}
                   className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500"
                   placeholder="A brief summary of your project..."
                 />
               </div>
             </div>
-          </div>
-
-          <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-neutral-300 mb-1">
                 Cover Image (Optional)

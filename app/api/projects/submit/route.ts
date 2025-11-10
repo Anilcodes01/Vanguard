@@ -14,12 +14,13 @@ export async function POST(req: NextRequest) {
 
   const {
     name,
+    short_description,
+    description,
     projectId,
     githubUrl,
     liveUrl,
-    description,
     builtWith,
-    coverImage, 
+    coverImage,
     screenshots,
   } = await req.json();
 
@@ -39,6 +40,17 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    if (!project) {
+      return NextResponse.json(
+        { message: "Project not found." },
+        { status: 404 }
+      );
+    }
+
     const existingSubmission = await prisma.submittedProjects.findFirst({
       where: {
         userId: user.id,
@@ -53,17 +65,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const submissionName = name || project.name;
+    const submissionShortDesc = short_description || project.description.substring(0, 150); 
+    const submissionDesc = description || project.description;
+
+
     const newSubmission = await prisma.submittedProjects.create({
       data: {
         projectId: projectId,
-        name: name,
+        name: submissionName,
+        short_description: submissionShortDesc,
+        description: submissionDesc,
         githubUrl: githubUrl,
         liveUrl: liveUrl,
-        description: description,
         builtWith: builtWith,
         userId: user.id,
-        coverImage: coverImage, 
-        screenshots: screenshots, 
+        coverImage: coverImage,
+        screenshots: screenshots,
       },
     });
 
