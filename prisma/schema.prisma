@@ -49,15 +49,18 @@ model users {
   mfa_factors                 mfa_factors[]
   one_time_tokens             one_time_tokens[]
   sessions                    sessions[]
+
+
+
   profiles                    Profiles[]
   submissions                 Submission[]
   problemSolutions            ProblemSolution[]
   SubmittedProjects           SubmittedProjects[]
   ProjectProgress             ProjectProgress[]
   discussions Discussions[]
-    // Add these new relations
   upvotes Upvote[]
   comments Comment[]
+  bookmarks Bookmark[] 
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -633,6 +636,7 @@ model SubmittedProjects {
 
   upvotes     Upvote[]
   comments    Comment[]
+   bookmarks Bookmark[]
 
   @@schema("public")
 }
@@ -679,6 +683,16 @@ model ProjectProgress {
   @@schema("public")
 }
 
+model Bookmark {
+  userId             String    @db.Uuid
+  submittedProjectId String    @db.Uuid 
+
+  user             users             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submittedProject SubmittedProjects @relation(fields: [submittedProjectId], references: [id], onDelete: Cascade)
+
+  @@id([userId, submittedProjectId])
+  @@schema("public")
+}
 
 model Discussions {
   id String @id @default(uuid())

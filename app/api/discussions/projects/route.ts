@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 
-// Define the exact shape of our query for strong typing
 const projectWithDetails = Prisma.validator<Prisma.SubmittedProjectsDefaultArgs>()({
   include: {
     user: {
@@ -18,6 +17,7 @@ const projectWithDetails = Prisma.validator<Prisma.SubmittedProjectsDefaultArgs>
       select: {
         upvotes: true,
         comments: true,
+        bookmarks: true, 
       },
     },
     comments: {
@@ -35,7 +35,6 @@ const projectWithDetails = Prisma.validator<Prisma.SubmittedProjectsDefaultArgs>
   },
 });
 
-// Infer the types from our query definition
 type ProjectWithDetails = Prisma.SubmittedProjectsGetPayload<typeof projectWithDetails>;
 type CommentFromPrisma = ProjectWithDetails["comments"][number];
 type NestedComment = CommentFromPrisma & { replies: NestedComment[] };
@@ -81,31 +80,48 @@ export async function GET() {
       };
     });
 
-    const projectsWithUpvoteStatus = await Promise.all(
+    const finalProjects = await Promise.all(
       projectsWithNestedComments.map(async (p) => {
         let hasUpvoted = false;
+        let hasBookmarked = false;
+
         if (user) {
-          const upvote = await prisma.upvote.findUnique({
-            where: {
-              userId_submittedProjectId: {
-                userId: user.id,
-                submittedProjectId: p.id,
+          const [upvote, bookmark] = await Promise.all([
+            prisma.upvote.findUnique({
+              where: {
+                userId_submittedProjectId: {
+                  userId: user.id,
+                  submittedProjectId: p.id,
+                },
               },
-            },
-          });
+            }),
+            prisma.bookmark.findUnique({
+              where: {
+                userId_submittedProjectId: {
+                  userId: user.id,
+                  submittedProjectId: p.id,
+                },
+              },
+            }),
+          ]);
+
           hasUpvoted = !!upvote;
+          hasBookmarked = !!bookmark; 
         }
+
         return {
           ...p,
           upvotesCount: p._count.upvotes,
+          bookmarksCount: p._count.bookmarks, 
           hasUpvoted,
+          hasBookmarked, 
         };
       })
     );
 
-    projectsWithUpvoteStatus.sort((a, b) => b.upvotesCount - a.upvotesCount);
+    finalProjects.sort((a, b) => b.upvotesCount - a.upvotesCount);
 
-    return NextResponse.json(projectsWithUpvoteStatus);
+    return NextResponse.json(finalProjects);
   } catch (error) {
     console.error("Failed to fetch discussion projects:", error);
     return NextResponse.json(

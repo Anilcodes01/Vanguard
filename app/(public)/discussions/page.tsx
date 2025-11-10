@@ -114,6 +114,8 @@ export default function DiscussionsPage() {
       return comments;
     };
 
+ 
+
     const projectUpdater = (prevProjects: ProjectSubmission[]) =>
       prevProjects.map((p) => {
         if (p.id === projectId) {
@@ -154,6 +156,51 @@ export default function DiscussionsPage() {
     setSelectedProject(null);
   };
 
+    const handleBookmark = async (projectId: string) => {
+    const updater = (prevProjects: ProjectSubmission[]) =>
+      prevProjects.map((p) => {
+        if (p.id === projectId) {
+          const currentBookmarks = p.bookmarksCount ?? 0;
+          const newBookmarksCount = p.hasBookmarked
+            ? currentBookmarks - 1
+            : currentBookmarks + 1;
+          return {
+            ...p,
+            hasBookmarked: !p.hasBookmarked,
+            bookmarksCount: newBookmarksCount,
+          };
+        }
+        return p;
+      });
+
+    setProjects(updater);
+
+    if (selectedProject?.id === projectId) {
+      setSelectedProject((prev) => {
+        if (!prev) return null;
+        const currentBookmarks = prev.bookmarksCount ?? 0;
+        const newBookmarksCount = prev.hasBookmarked
+          ? currentBookmarks - 1
+          : currentBookmarks + 1;
+        return {
+          ...prev,
+          hasBookmarked: !prev.hasBookmarked,
+          bookmarksCount: newBookmarksCount,
+        };
+      });
+    }
+
+    try {
+      await fetch("/api/discussions/bookmark", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ submittedProjectId: projectId }),
+      });
+    } catch (error) {
+      console.error("Failed to update bookmark:", error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-[#262626]">
@@ -186,6 +233,7 @@ export default function DiscussionsPage() {
                 rank={index + 1} 
                 onClick={() => openModal(p)}
                 onUpvote={() => handleUpvote(p.id)}
+                onBookmark={() => handleBookmark(p.id)} 
               />
             ))}
         </div>
@@ -196,6 +244,7 @@ export default function DiscussionsPage() {
           onClose={closeModal}
           onUpvote={handleUpvote}
           onNewComment={handleNewComment}
+          onBookmark={handleBookmark}
         />
       )}
     </main>

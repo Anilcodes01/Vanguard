@@ -219,9 +219,10 @@ export type ProjectSubmission = {
   hasUpvoted: boolean;
   commentsCount: number;
   screenshots: string[];
+  hasBookmarked: boolean;
+  bookmarksCount: number;
 };
 
-import { $Enums } from "@prisma/client";
 
 export interface InProgressProject {
   id: string;

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ProjectSubmission } from "@/types";
-import { ArrowBigUp, MessageCircle, Tag } from "lucide-react";
+import { ArrowBigUp, MessageCircle, Tag, Bookmark } from "lucide-react";
 import Image from "next/image";
 
 interface ProjectCardProps {
@@ -10,6 +10,7 @@ interface ProjectCardProps {
   rank: number;
   onClick: () => void;
   onUpvote: () => void;
+  onBookmark: () => void;
 }
 
 export default function ProjectCard({
@@ -17,12 +18,18 @@ export default function ProjectCard({
   rank,
   onClick,
   onUpvote,
+  onBookmark,
 }: ProjectCardProps) {
   const userProfile = project.user.profiles?.[0];
 
   const handleUpvoteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onUpvote();
+  };
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onBookmark();
   };
 
   return (
@@ -40,39 +47,66 @@ export default function ProjectCard({
         className="rounded-xl h-16 w-16 object-cover flex-shrink-0"
       />
 
-      <div className="flex-grow">
-        <h3 className="font-bold text-white text-lg">{project.project.name}</h3>
+      <div className="flex-grow min-w-0">
+        <h3 className="font-bold text-white text-lg truncate">
+          {project.project.name}
+        </h3>
         <p className="text-neutral-300 text-sm truncate">
           {project.short_description || "No description available."}
         </p>
         <div className="flex items-center gap-4 mt-2 text-xs text-neutral-400">
           <div className="flex items-center gap-1.5">
             <MessageCircle className="w-3.5 h-3.5" />
-            <span>{project.commentsCount}</span>
+            <span>{project.commentsCount ?? 0}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Tag className="w-3.5 h-3.5" />
-            <span className="truncate">{project.builtWith.join(", ")}</span>
-          </div>
+          {project.builtWith && project.builtWith.length > 0 && (
+            <div className="flex items-center gap-1.5 min-w-0">
+              <Tag className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="truncate">{project.builtWith.join(", ")}</span>
+            </div>
+          )}
         </div>
       </div>
 
-      <button
-        onClick={handleUpvoteClick}
-        className={`flex flex-col items-center justify-center p-2 border rounded-md w-16 h-16 flex-shrink-0 transition-colors
-          ${
-            project.hasUpvoted
-              ? "border-green-500 bg-green-500/10 text-green-400"
-              : "border-neutral-600 bg-neutral-700/50 hover:bg-neutral-600 text-neutral-300"
-          }`}
-      >
-        <ArrowBigUp
-          className={`w-6 h-6 ${
-            project.hasUpvoted ? "fill-current text-green-500" : ""
-          }`}
-        />
-        <span className="text-sm font-semibold">{project.upvotesCount}</span>
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleBookmarkClick}
+          className={`flex flex-col items-center justify-center p-2 border rounded-md w-16 h-16 flex-shrink-0 transition-colors
+            ${
+              project.hasBookmarked
+                ? "border-blue-500 bg-blue-500/10 text-blue-400"
+                : "border-neutral-600 bg-neutral-700/50 hover:bg-neutral-600 text-neutral-300"
+            }`}
+        >
+          <Bookmark
+            className={`w-5 h-5 ${
+              project.hasBookmarked ? "fill-current text-blue-500" : ""
+            }`}
+          />
+          <span className="text-sm font-semibold mt-1">
+            {project.bookmarksCount ?? 0}
+          </span>
+        </button>
+
+        <button
+          onClick={handleUpvoteClick}
+          className={`flex flex-col items-center justify-center p-2 border rounded-md w-16 h-16 flex-shrink-0 transition-colors
+            ${
+              project.hasUpvoted
+                ? "border-green-500 bg-green-500/10 text-green-400"
+                : "border-neutral-600 bg-neutral-700/50 hover:bg-neutral-600 text-neutral-300"
+            }`}
+        >
+          <ArrowBigUp
+            className={`w-6 h-6 ${
+              project.hasUpvoted ? "fill-current text-green-500" : ""
+            }`}
+          />
+          <span className="text-sm font-semibold">
+            {project.upvotesCount ?? 0}
+          </span>
+        </button>
+      </div>
     </div>
   );
 }

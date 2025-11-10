@@ -7,6 +7,7 @@ import {
   Link as LinkIcon,
   ArrowBigUp,
   MessageCircle,
+  Bookmark,
 } from "lucide-react";
 import Image from "next/image";
 import CommentSection from "./CommentSection";
@@ -17,6 +18,7 @@ interface ProjectModalProps {
   onClose: () => void;
   onUpvote: (projectId: string) => void;
   onNewComment: (projectId: string, newComment: Comment) => void;
+  onBookmark: (projectId: string) => void;
 }
 
 export default function ProjectModal({
@@ -24,30 +26,30 @@ export default function ProjectModal({
   onClose,
   onUpvote,
   onNewComment,
+  onBookmark,
 }: ProjectModalProps) {
   const [isClosing, setIsClosing] = useState(false);
   const userProfile = project.user.profiles?.[0];
 
-  // --- State for the interactive image gallery ---
   const allImages = [project.coverImage, ...(project.screenshots || [])].filter(
     Boolean
   ) as string[];
-  const [selectedImage, setSelectedImage] = useState<string>(allImages[0] || "");
+  const [selectedImage, setSelectedImage] = useState<string>(
+    allImages[0] || ""
+  );
 
   useEffect(() => {
-    // Set the cover image as the default selected image when the project changes
     setSelectedImage(allImages[0] || "");
   }, [project.id]);
 
-  // Handle closing animation
   const handleClose = () => {
     setIsClosing(true);
-    setTimeout(onClose, 200); // Duration of the fade-out animation
+    setTimeout(onClose, 200);
   };
 
   return (
     <div
-      className={`fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex justify-center items-center p-4 transition-opacity duration-200 ${
+      className={`fixed inset-0 bg-black/20 backdrop-blur-md z-50 flex justify-center items-center p-4 transition-opacity duration-200 ${
         isClosing ? "opacity-0" : "opacity-100"
       }`}
       onClick={handleClose}
@@ -58,7 +60,6 @@ export default function ProjectModal({
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* --- MODAL HEADER --- */}
         <div className="p-5 border-b border-[#404040] flex-shrink-0">
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-4 flex-1">
@@ -87,9 +88,7 @@ export default function ProjectModal({
           </div>
         </div>
 
-        {/* --- MODAL BODY (SCROLLABLE) --- */}
         <div className="flex-1 overflow-y-auto p-5 grid grid-cols-1 lg:grid-cols-3 gap-6 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#2d2d2d] [&::-webkit-scrollbar-thumb]:bg-[#555] [&::-webkit-scrollbar-thumb]:rounded-full">
-          {/* Left Column: Image Gallery */}
           <div className="lg:col-span-2 flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative aspect-video rounded-lg overflow-hidden bg-[#222]">
               {selectedImage ? (
@@ -129,7 +128,6 @@ export default function ProjectModal({
             )}
           </div>
 
-          {/* Right Column: Project Details */}
           <div className="lg:col-span-1 space-y-5">
             <div className="flex items-center gap-2 flex-wrap">
               <button
@@ -140,20 +138,48 @@ export default function ProjectModal({
                     : "bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a]"
                 }`}
               >
-                <ArrowBigUp className={`w-5 h-5 ${project.hasUpvoted && "fill-current"}`} />
+                <ArrowBigUp
+                  className={`w-5 h-5 ${project.hasUpvoted && "fill-current"}`}
+                />
                 <span>{project.upvotesCount}</span>
               </button>
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#333] text-neutral-300 border border-[#444] font-medium text-sm">
                 <MessageCircle className="w-4 h-4" />
                 <span>{project.commentsCount}</span>
               </div>
+              <button
+                onClick={() => onBookmark(project.id)}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-medium text-sm transition-all ${
+                  project.hasBookmarked
+                    ? "bg-blue-500/10 text-blue-400 border border-blue-500/30"
+                    : "bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a]"
+                }`}
+              >
+                <Bookmark
+                  className={`w-4 h-4 ${
+                    project.hasBookmarked && "fill-current"
+                  }`}
+                />
+                <span>{project.bookmarksCount}</span>
+              </button>
+
               {project.githubUrl && (
-                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a] hover:text-white transition-colors text-sm font-medium">
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a] hover:text-white transition-colors text-sm font-medium"
+                >
                   <Github className="w-4 h-4" /> Code
                 </a>
               )}
               {project.liveUrl && (
-                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a] hover:text-white transition-colors text-sm font-medium">
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a] hover:text-white transition-colors text-sm font-medium"
+                >
                   <LinkIcon className="w-4 h-4" /> Demo
                 </a>
               )}
@@ -161,24 +187,34 @@ export default function ProjectModal({
 
             {project.short_description && (
               <div>
-                {/* <h3 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-2">Description</h3> */}
-                <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap">{project.short_description}</p>
+                <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap">
+                  {project.short_description}
+                </p>
               </div>
             )}
 
             {project.description && (
               <div>
-                <h3 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-2">Description</h3>
-                <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap">{project.description}</p>
+                <h3 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+                  Description
+                </h3>
+                <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap">
+                  {project.description}
+                </p>
               </div>
             )}
 
             {project.builtWith?.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-2">Built With</h3>
+                <h3 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+                  Built With
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {project.builtWith.map((tech) => (
-                    <span key={tech} className="bg-[#333] text-neutral-300 text-xs font-medium px-2.5 py-1 rounded-md border border-[#444]">
+                    <span
+                      key={tech}
+                      className="bg-[#333] text-neutral-300 text-xs font-medium px-2.5 py-1 rounded-md border border-[#444]"
+                    >
                       {tech}
                     </span>
                   ))}
@@ -187,7 +223,6 @@ export default function ProjectModal({
             )}
           </div>
 
-          {/* Comment Section below the columns */}
           <div className="lg:col-span-3 pt-4 border-t border-[#404040]">
             <CommentSection project={project} onNewComment={onNewComment} />
           </div>

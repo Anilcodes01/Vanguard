@@ -16,9 +16,9 @@ export default function ProjectStatus({
   switch (status) {
     case "NotStarted":
       return (
-        <div className="text-center">
+        <div className="text-center p-6">
           <h2 className="text-2xl font-semibold mb-2">Ready to begin?</h2>
-          <p className="text-neutral-400 text-sm mb-6">
+          <p className="text-neutral-400 text-sm mb-">
             Once you start, the {maxTime}-day timer will begin. Good luck!
           </p>
           <button
