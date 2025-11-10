@@ -2,14 +2,22 @@
 
 import Link from "next/link";
 import React from "react";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import dynamic from 'next/dynamic';
+
+const DynamicDotLottieReact = dynamic(
+  () => import("@lottiefiles/dotlottie-react").then((mod) => ({ default: mod.DotLottieReact })),
+  {
+    ssr: false,
+    loading: () => <div className="w-72 h-72 md:w-96 md:h-96 animate-pulse bg-neutral-700 rounded-full" />,
+  }
+);
 
 export default function NotFound() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#262626] p-4 text-center">
       <div className="flex flex-col items-center gap-4">
         <div className="w-72 h-72 md:w-96 md:h-96">
-          <DotLottieReact
+          <DynamicDotLottieReact
             src="https://lottie.host/6b16a9e4-3fa2-4fb0-a346-4bd4c7bdb35e/bReA7EVgDB.lottie"
             loop
             autoplay

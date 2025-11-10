@@ -2,8 +2,19 @@
 
 import { useState, FormEvent, useRef, useEffect } from "react";
 import { Loader2, Send, Smile } from "lucide-react";
-import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
+import { EmojiClickData, Theme } from "emoji-picker-react";
 import { Comment } from "@/types";
+import dynamic from 'next/dynamic';
+
+const DynamicEmojiPicker = dynamic(
+  () => import("emoji-picker-react").then((mod) => ({ default: mod.default })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-[300px] h-[350px] animate-pulse bg-neutral-800 rounded-lg" />
+    ),
+  }
+);
 
 interface CommentFormProps {
   projectId: string;
@@ -96,7 +107,7 @@ export default function CommentForm({
             ref={pickerRef}
             className="absolute bottom-full right-0 z-20 mb-2"
           >
-            <EmojiPicker
+            <DynamicEmojiPicker
               onEmojiClick={handleEmojiClick}
               theme={Theme.DARK}
               height={350}
