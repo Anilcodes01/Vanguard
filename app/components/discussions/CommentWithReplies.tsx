@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { CornerDownRight } from "lucide-react";
+import { CornerDownRight, ThumbsUp } from "lucide-react";
 import { Comment } from "@/types";
 import CommentForm from "./CommentForm";
 
@@ -10,28 +10,17 @@ interface CommentWithRepliesProps {
   comment: Comment;
   projectId: string;
   onNewComment: (projectId: string, newComment: Comment) => void;
+    onToggleCommentLike: (commentId: string, hasLiked: boolean) => void;
 }
 
 export default function CommentWithReplies({
   comment,
   projectId,
   onNewComment,
+  onToggleCommentLike,
 }: CommentWithRepliesProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const userProfile = comment.user.profiles?.[0];
-
-  const COMMENT_LENGTH_LIMIT = 200;
-  const isLongComment = comment.text.length > COMMENT_LENGTH_LIMIT;
-
-  const displayText =
-    isLongComment && !isExpanded
-      ? `${comment.text.substring(0, COMMENT_LENGTH_LIMIT)}...`
-      : comment.text;
-
-  const toggleExpanded = () => {
-    setIsExpanded(!isExpanded);
-  };
 
   return (
     <div className="flex items-start gap-3">
@@ -48,24 +37,29 @@ export default function CommentWithReplies({
             {userProfile?.name || userProfile?.username || "Anonymous"}
           </p>
           <p className="text-sm text-neutral-300 mt-0.5 whitespace-pre-wrap">
-            {displayText}
+            {comment.text}
           </p>
-          {isLongComment && (
-            <button
-              onClick={toggleExpanded}
-              className="text-xs font-semibold text-sky-400 hover:underline mt-1.5"
-            >
-              {isExpanded ? "Show less" : "Read more"}
-            </button>
-          )}
         </div>
-        <button
-          onClick={() => setShowReplyForm(!showReplyForm)}
-          className="text-xs text-neutral-400 hover:text-white mt-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded"
-        >
-          <CornerDownRight className="w-3 h-3" />
-          <span>Reply</span>
-        </button>
+        <div className="flex items-center gap-3 mt-1.5">
+           <button
+            onClick={() => onToggleCommentLike(comment.id, comment.hasLiked)}
+            className={`text-xs flex items-center gap-1 px-1.5 py-0.5 rounded transition-colors ${
+              comment.hasLiked
+                ? "text-green-400 hover:text-green-300"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            <ThumbsUp className={`w-3 h-3 ${comment.hasLiked && "fill-current"}`} />
+            <span>{comment.likesCount}</span>
+          </button>
+          <button
+            onClick={() => setShowReplyForm(!showReplyForm)}
+            className="text-xs text-neutral-400 hover:text-white flex items-center gap-1 px-1.5 py-0.5 rounded"
+          >
+            <CornerDownRight className="w-3 h-3" />
+            <span>Reply</span>
+          </button>
+        </div>
 
         <div className="mt-3 space-y-3">
           {showReplyForm && (
@@ -85,6 +79,7 @@ export default function CommentWithReplies({
               comment={reply}
               projectId={projectId}
               onNewComment={onNewComment}
+               onToggleCommentLike={onToggleCommentLike}
             />
           ))}
         </div>

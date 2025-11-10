@@ -191,6 +191,8 @@ export type Comment = {
 
   parentId: string | null;
   replies?: Comment[];
+    likesCount: number; 
+  hasLiked: boolean; 
 };
 
 export type Project = {

@@ -24,6 +24,15 @@ const projectWithDetails =
               },
             },
           },
+          _count: {
+            select: { likes: true },
+          },
+          likes: {
+            select: {
+              userId: true,
+            },
+          },
+          replies: true,
         },
         orderBy: { createdAt: "asc" },
       },
@@ -34,7 +43,15 @@ type ProjectWithDetails = Prisma.SubmittedProjectsGetPayload<
   typeof projectWithDetails
 >;
 type CommentFromPrisma = ProjectWithDetails["comments"][number];
-type NestedComment = CommentFromPrisma & { replies: NestedComment[] };
+
+type ProcessedComment = Omit<
+  CommentFromPrisma,
+  "_count" | "likes" | "replies"
+> & {
+  replies: ProcessedComment[];
+  likesCount: number;
+  hasLiked: boolean;
+};
 
 export async function GET(
   request: Request,
@@ -46,6 +63,7 @@ export async function GET(
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const currentUserId = user?.id;
 
   if (!projectId) {
     return NextResponse.json(
@@ -67,11 +85,35 @@ export async function GET(
       );
     }
 
+    const processComments = (
+      comments: CommentFromPrisma[]
+    ): ProcessedComment[] => {
+      return comments.map((comment) => {
+        const processedReplies = comment.replies
+          ? processComments(comment.replies as CommentFromPrisma[])
+          : [];
+
+        const { _count, likes, replies, ...restOfComment } = comment;
+
+        return {
+          ...restOfComment,
+          replies: processedReplies,
+          likesCount: _count.likes,
+          hasLiked: currentUserId
+            ? likes.some((like) => like.userId === currentUserId)
+            : false,
+        };
+      });
+    };
+
+    type NestedComment = CommentFromPrisma & { replies: NestedComment[] };
     const commentMap = new Map<string, NestedComment>();
     const rootComments: NestedComment[] = [];
+
     project.comments.forEach((comment) => {
       commentMap.set(comment.id, { ...comment, replies: [] });
     });
+
     project.comments.forEach((comment) => {
       if (comment.parentId && commentMap.has(comment.parentId)) {
         commentMap
@@ -82,15 +124,17 @@ export async function GET(
       }
     });
 
+    const processedRootComments = processComments(rootComments);
+
     let hasUpvoted = false;
     let hasBookmarked = false;
 
-    if (user) {
+    if (currentUserId) {
       const [upvote, bookmark] = await Promise.all([
         prisma.upvote.findUnique({
           where: {
             userId_submittedProjectId: {
-              userId: user.id,
+              userId: currentUserId,
               submittedProjectId: project.id,
             },
           },
@@ -98,7 +142,7 @@ export async function GET(
         prisma.bookmark.findUnique({
           where: {
             userId_submittedProjectId: {
-              userId: user.id,
+              userId: currentUserId,
               submittedProjectId: project.id,
             },
           },
@@ -108,12 +152,14 @@ export async function GET(
       hasBookmarked = !!bookmark;
     }
 
+    const { comments, _count, ...restOfProject } = project;
+
     const finalProjectData = {
-      ...project,
-      comments: rootComments,
-      upvotesCount: project._count.upvotes,
-      commentsCount: project._count.comments,
-      bookmarksCount: project._count.bookmarks,
+      ...restOfProject,
+      comments: processedRootComments,
+      upvotesCount: _count.upvotes,
+      commentsCount: _count.comments,
+      bookmarksCount: _count.bookmarks,
       hasUpvoted,
       hasBookmarked,
     };

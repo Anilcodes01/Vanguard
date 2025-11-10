@@ -147,6 +147,62 @@ export default function DiscussionsPage() {
     }
   };
 
+
+    const handleToggleCommentLike = async (commentId: string, hasLiked: boolean) => {
+    
+    const toggleLikeRecursively = (
+      comments: Comment[] | undefined
+    ): Comment[] => {
+      if (!Array.isArray(comments)) {
+        return [];
+      }
+
+      return comments.map((comment) => {
+        if (comment.id === commentId) {
+          const newLikesCount = hasLiked
+            ? comment.likesCount - 1
+            : comment.likesCount + 1;
+            
+          return {
+            ...comment,
+            likesCount: newLikesCount,
+            hasLiked: !hasLiked, 
+          };
+        }
+        return {
+          ...comment,
+          replies: toggleLikeRecursively(comment.replies),
+        };
+      });
+    };
+
+    setProjects((prevProjects) =>
+      prevProjects.map((p) => {
+        if (p.id === selectedProject?.id) {
+          return { ...p, comments: toggleLikeRecursively(p.comments) };
+        }
+        return p;
+      })
+    );
+
+    if (selectedProject) {
+      setSelectedProject((prev) => {
+        if (!prev) return null;
+        return { ...prev, comments: toggleLikeRecursively(prev.comments) };
+      });
+    }
+    try {
+      await fetch("/api/discussions/comments/like", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ commentId }),
+      });
+    } catch (error) {
+      console.error("Failed to toggle comment like:", error);
+    }
+  };
+
+
   const openModal = async (project: ProjectSubmission) => {
     setSelectedProject(project);
     setIsModalLoading(true);
@@ -260,6 +316,7 @@ export default function DiscussionsPage() {
           onUpvote={handleUpvote}
           onNewComment={handleNewComment}
           onBookmark={handleBookmark}
+          onToggleCommentLike={handleToggleCommentLike} 
         />
       )}
     </main>

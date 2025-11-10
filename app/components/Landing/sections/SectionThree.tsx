@@ -16,7 +16,7 @@ function TrustCard({ review, avatarUrl, name, designation, index }: TrustCardPro
         animationDelay: `${index * 150}ms`,
         animation: 'fadeInUp 0.6s ease-out forwards',
         opacity: 0,
-        maxWidth: '380px' // Added max-width for consistency in wrap layout
+        maxWidth: '380px' 
       }}
     >
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>

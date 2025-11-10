@@ -21,6 +21,7 @@ interface ProjectModalProps {
   onUpvote: (projectId: string) => void;
   onNewComment: (projectId: string, newComment: Comment) => void;
   onBookmark: (projectId: string) => void;
+   onToggleCommentLike: (commentId: string, hasLiked: boolean) => void;
 }
 
 export default function ProjectModal({
@@ -30,6 +31,7 @@ export default function ProjectModal({
   onUpvote,
   onNewComment,
   onBookmark,
+  onToggleCommentLike,
 }: ProjectModalProps) {
   const [isClosing, setIsClosing] = useState(false);
   const userProfile = project.user.profiles?.[0];
@@ -234,7 +236,7 @@ export default function ProjectModal({
             </div>
 
             <div className="lg:col-span-3 pt-4 border-t border-[#404040]">
-              <CommentSection project={project} onNewComment={onNewComment} />
+              <CommentSection project={project} onNewComment={onNewComment}  onToggleCommentLike={onToggleCommentLike}/>
             </div>
           </div>
         )}

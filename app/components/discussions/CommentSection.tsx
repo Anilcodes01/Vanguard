@@ -7,11 +7,13 @@ import CommentWithReplies from "./CommentWithReplies";
 interface CommentSectionProps {
   project: ProjectSubmission;
   onNewComment: (projectId: string, newComment: Comment) => void;
+  onToggleCommentLike: (commentId: string, hasLiked: boolean) => void;
 }
 
 export default function CommentSection({
   project,
   onNewComment,
+  onToggleCommentLike,
 }: CommentSectionProps) {
   return (
     <div className="mt-8">
@@ -37,6 +39,7 @@ export default function CommentSection({
               comment={comment}
               projectId={project.id}
               onNewComment={onNewComment}
+               onToggleCommentLike={onToggleCommentLike}
             />
         ))}
       </div>
