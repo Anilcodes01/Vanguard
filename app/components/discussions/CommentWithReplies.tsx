@@ -18,12 +18,25 @@ export default function CommentWithReplies({
   onNewComment,
 }: CommentWithRepliesProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const userProfile = comment.user.profiles?.[0];
+
+  const COMMENT_LENGTH_LIMIT = 200;
+  const isLongComment = comment.text.length > COMMENT_LENGTH_LIMIT;
+
+  const displayText =
+    isLongComment && !isExpanded
+      ? `${comment.text.substring(0, COMMENT_LENGTH_LIMIT)}...`
+      : comment.text;
+
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   return (
     <div className="flex items-start gap-3">
       <Image
-        src={userProfile?.avatar_url || "/default-avatar.png"}
+        src={userProfile?.avatar_url || "/user.png"}
         alt={userProfile?.name || "User avatar"}
         width={32}
         height={32}
@@ -34,7 +47,17 @@ export default function CommentWithReplies({
           <p className="text-sm font-semibold text-white">
             {userProfile?.name || userProfile?.username || "Anonymous"}
           </p>
-          <p className="text-sm text-neutral-300 mt-0.5 whitespace-pre-wrap">{comment.text}</p>
+          <p className="text-sm text-neutral-300 mt-0.5 whitespace-pre-wrap">
+            {displayText}
+          </p>
+          {isLongComment && (
+            <button
+              onClick={toggleExpanded}
+              className="text-xs font-semibold text-sky-400 hover:underline mt-1.5"
+            >
+              {isExpanded ? "Show less" : "Read more"}
+            </button>
+          )}
         </div>
         <button
           onClick={() => setShowReplyForm(!showReplyForm)}

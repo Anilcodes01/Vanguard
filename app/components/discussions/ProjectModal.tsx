@@ -72,7 +72,7 @@ export default function ProjectModal({
               />
               <div>
                 <h2 className="text-xl font-bold text-white">
-                  {project.project.name}
+                  {project.name || project.project.name}
                 </h2>
                 <p className="text-sm text-neutral-400">
                   by {userProfile?.name || userProfile?.username || "Anonymous"}
@@ -88,7 +88,7 @@ export default function ProjectModal({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5 grid grid-cols-1 lg:grid-cols-3 gap-6 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#2d2d2d] [&::-webkit-scrollbar-thumb]:bg-[#555] [&::-webkit-scrollbar-thumb]:rounded-full">
+        <div className="flex-1 overflow-y-auto p-5 grid grid-cols-1 lg:grid-cols-3 gap-6 scrollbar-none">
           <div className="lg:col-span-2 flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative aspect-video rounded-lg overflow-hidden bg-[#222]">
               {selectedImage ? (
@@ -105,7 +105,7 @@ export default function ProjectModal({
               )}
             </div>
             {allImages.length > 1 && (
-              <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto md:h-[250px] lg:h-[350px] pb-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#555] [&::-webkit-scrollbar-thumb]:rounded-full">
+              <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto md:h-[250px] lg:h-[350px] pb-2 scrollbar-none">
                 {allImages.map((url, index) => (
                   <button
                     key={index}
