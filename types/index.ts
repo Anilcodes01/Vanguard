@@ -344,3 +344,17 @@ export type ExploreProject = {
   coverImage: string | null;
   SubmittedProjects: SubmittedProjectInfo[];
 };
+
+export type ProjectSidebarProps = {
+  project: Project;
+  projectStatus:
+    | "Loading"
+    | "NotStarted"
+    | "InProgress"
+    | "Submitted"
+    | "Expired";
+  timeLeft: string;
+  isStarting: boolean;
+  handleStartProject: () => void;
+  handleOpenSubmitModal: () => void;
+};

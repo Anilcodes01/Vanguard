@@ -4,7 +4,6 @@ import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import { useParams } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/client";
 import ProjectDetails from "@/app/components/Projects/ProjectDetails";
-import ProjectSidebar from "@/app/components/Projects/ProjectSidebar";
 import LoadingSpinner from "@/app/components/Projects/LoadingSpinner";
 import ErrorMessage from "@/app/components/Projects/ErrorMessage";
 import SubmissionModal from "@/app/components/Projects/SubmissionModel";
@@ -246,20 +245,15 @@ export default function IndividualProjectPage() {
     <>
       <main className="min-h-screen bg-[#262626] text-gray-100">
         <div className="max-w-7xl mx-auto p-4 sm:p-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-            <div className="lg:col-span-7">
-              <ProjectDetails project={{ ...project, completionCount }} />
-            </div>
-            <div className="lg:col-span-5">
-              <ProjectSidebar
-                project={project}
-                projectStatus={projectStatus}
-                timeLeft={timeLeft}
-                isStarting={isStarting}
-                handleStartProject={handleStartProject}
-                handleOpenSubmitModal={() => setIsModalOpen(true)}
-              />
-            </div>
+          <div className="w-full">
+            <ProjectDetails
+              project={{ ...project, completionCount }}
+              projectStatus={projectStatus}
+              timeLeft={timeLeft}
+              isStarting={isStarting}
+              handleStartProject={handleStartProject}
+              handleOpenSubmitModal={() => setIsModalOpen(true)}
+            />
           </div>
         </div>
       </main>
