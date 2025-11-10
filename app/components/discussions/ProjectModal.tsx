@@ -11,8 +11,12 @@ import {
   Loader2,
 } from "lucide-react";
 import Image from "next/image";
-import CommentSection from "./CommentSection";
+import dynamic from 'next/dynamic';
 import { ProjectSubmission, Comment } from "@/types";
+
+const DynamicCommentSection = dynamic(() => import('./CommentSection'), {
+  loading: () => <p>Loading comments...</p>, // Add a loading state
+});
 
 interface ProjectModalProps {
   project: ProjectSubmission;
@@ -246,7 +250,7 @@ export default function ProjectModal({
             </div>
 
             <div className="lg:col-span-3 pt-4 border-t border-[#404040]">
-              <CommentSection
+              <DynamicCommentSection
                 project={project}
                 onNewComment={onNewComment}
                 onToggleCommentLike={onToggleCommentLike}

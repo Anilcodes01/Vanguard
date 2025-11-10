@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { ProjectSubmission, Comment } from "@/types";
 import ProjectCard from "@/app/components/discussions/DiscussionsProjectCard";
-import ProjectModal from "@/app/components/discussions/ProjectModal";
+import dynamic from 'next/dynamic';
+const DynamicProjectModal = dynamic(() => import('@/app/components/discussions/ProjectModal'));
 
 export default function DiscussionsPage() {
   const [projects, setProjects] = useState<ProjectSubmission[]>([]);
@@ -321,7 +322,7 @@ export default function DiscussionsPage() {
         </div>
       </div>
       {selectedProject && (
-        <ProjectModal
+        <DynamicProjectModal
           project={selectedProject}
           isLoading={isModalLoading}
           isBookmarking={bookmarkingProjects.has(selectedProject.id)}

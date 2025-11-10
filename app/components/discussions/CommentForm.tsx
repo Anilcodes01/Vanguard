@@ -1,20 +1,8 @@
 "use client";
 
-import { useState, FormEvent, useRef, useEffect } from "react";
-import { Loader2, Send, Smile } from "lucide-react";
-import { EmojiClickData, Theme } from "emoji-picker-react";
+import { useState, FormEvent } from "react";
+import { Loader2, Send } from "lucide-react";
 import { Comment } from "@/types";
-import dynamic from 'next/dynamic';
-
-const DynamicEmojiPicker = dynamic(
-  () => import("emoji-picker-react").then((mod) => ({ default: mod.default })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="w-[300px] h-[350px] animate-pulse bg-neutral-800 rounded-lg" />
-    ),
-  }
-);
 
 interface CommentFormProps {
   projectId: string;
@@ -31,28 +19,6 @@ export default function CommentForm({
 }: CommentFormProps) {
   const [text, setText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const pickerRef = useRef<HTMLDivElement>(null);
-
-  const handleEmojiClick = (emojiData: EmojiClickData) => {
-    setText((prevText) => prevText + emojiData.emoji);
-    setShowEmojiPicker(false);
-  };
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        pickerRef.current &&
-        !pickerRef.current.contains(event.target as Node)
-      ) {
-        setShowEmojiPicker(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [pickerRef]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -91,31 +57,8 @@ export default function CommentForm({
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder={placeholderText || "Add a comment..."}
-          className="block w-full rounded-full border-0 bg-neutral-800 py-2.5 pl-4 pr-12 text-white placeholder:text-neutral-500 focus:ring-2 focus:ring-inset focus:ring-green-500 transition-shadow"
+          className="block w-full rounded-full border-0 bg-neutral-800 py-2.5 pl-4 pr-4 text-white placeholder:text-neutral-500 focus:ring-2 focus:ring-inset focus:ring-green-500 transition-shadow"
         />
-        <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-          <button
-            type="button"
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="p-1 rounded-full hover:bg-neutral-700"
-          >
-            <Smile className="h-5 w-5 text-neutral-400 hover:text-white" />
-          </button>
-        </div>
-        {showEmojiPicker && (
-          <div
-            ref={pickerRef}
-            className="absolute bottom-full right-0 z-20 mb-2"
-          >
-            <DynamicEmojiPicker
-              onEmojiClick={handleEmojiClick}
-              theme={Theme.DARK}
-              height={350}
-              width={300}
-              lazyLoadEmojis
-            />
-          </div>
-        )}
       </div>
 
       <button
