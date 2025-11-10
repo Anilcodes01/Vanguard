@@ -4,7 +4,16 @@ import { useState } from "react";
 import Image from "next/image";
 import { CornerDownRight, ThumbsUp } from "lucide-react";
 import { Comment } from "@/types";
-import CommentForm from "./CommentForm";
+import dynamic from 'next/dynamic';
+
+const DynamicCommentForm = dynamic(
+  () => import('./CommentForm'),
+  {
+    // You can add a loading skeleton for the form itself
+    loading: () => <p>Loading comment form...</p>,
+    ssr: false, // Forms are interactive, often safe to disable SSR
+  }
+);
 
 interface CommentWithRepliesProps {
   comment: Comment;
@@ -63,7 +72,7 @@ export default function CommentWithReplies({
 
         <div className="mt-3 space-y-3">
           {showReplyForm && (
-            <CommentForm
+            <DynamicCommentForm
               projectId={projectId}
               parentId={comment.id}
               placeholderText="Write a reply..."

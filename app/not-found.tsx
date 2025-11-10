@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from 'next/dynamic';
 
 const DynamicDotLottieReact = dynamic(
@@ -13,15 +13,23 @@ const DynamicDotLottieReact = dynamic(
 );
 
 export default function NotFound() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#262626] p-4 text-center">
       <div className="flex flex-col items-center gap-4">
         <div className="w-72 h-72 md:w-96 md:h-96">
-          <DynamicDotLottieReact
-            src="https://lottie.host/6b16a9e4-3fa2-4fb0-a346-4bd4c7bdb35e/bReA7EVgDB.lottie"
-            loop
-            autoplay
-          />
+          {isMounted && (
+            <DynamicDotLottieReact
+              src="https://lottie.host/6b16a9e4-3fa2-4fb0-a346-4bd4c7bdb35e/bReA7EVgDB.lottie"
+              loop
+              autoplay
+            />
+          )}
         </div>
 
         <h1 className="text-3xl font-bold text-white">Page Not Found</h1>

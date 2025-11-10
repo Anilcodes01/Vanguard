@@ -1,8 +1,16 @@
 "use client";
 
 import { ProjectSubmission, Comment } from "@/types";
-import CommentForm from "./CommentForm";
+import dynamic from 'next/dynamic';
 import CommentWithReplies from "./CommentWithReplies";
+const DynamicCommentForm = dynamic(
+  () => import('./CommentForm'),
+  {
+    // You can add a loading skeleton for the form itself
+    loading: () => <p>Loading comment form...</p>,
+    ssr: false, // Forms are interactive, often safe to disable SSR
+  }
+);
 
 interface CommentSectionProps {
   project: ProjectSubmission;
@@ -22,7 +30,7 @@ export default function CommentSection({
       </h3>
 
       <div className="mb-8">
-        <CommentForm
+        <DynamicCommentForm
           projectId={project.id}
           onCommentSubmitted={(newComment) =>
             onNewComment(project.id, newComment)
