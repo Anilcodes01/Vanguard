@@ -16,7 +16,6 @@ async function assignUserToLeaderboardGroup(
   userId: string,
   tx: Prisma.TransactionClient
 ) {
-  // ... (this function is correct, no changes needed)
   const userProfile = await tx.profiles.findUnique({
     where: { id: userId },
     include: { currentGroup: true },
@@ -76,7 +75,6 @@ type Judge0Submission = {
 };
 
 function mapJudge0StatusToEnum(description: string): SubmissionStatus {
-  // ... (this function is correct, no changes needed)
   const mapping: { [key: string]: SubmissionStatus } = {
     Accepted: SubmissionStatus.Accepted,
     "Wrong Answer": SubmissionStatus.WrongAnswer,

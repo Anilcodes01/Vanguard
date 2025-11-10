@@ -12,6 +12,7 @@ export default function DiscussionsPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedProject, setSelectedProject] =
     useState<ProjectSubmission | null>(null);
+  const [isModalLoading, setIsModalLoading] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -114,8 +115,6 @@ export default function DiscussionsPage() {
       return comments;
     };
 
- 
-
     const projectUpdater = (prevProjects: ProjectSubmission[]) =>
       prevProjects.map((p) => {
         if (p.id === projectId) {
@@ -148,15 +147,30 @@ export default function DiscussionsPage() {
     }
   };
 
-  const openModal = (project: ProjectSubmission) => {
+  const openModal = async (project: ProjectSubmission) => {
     setSelectedProject(project);
+    setIsModalLoading(true);
+
+    try {
+      const response = await fetch(`/api/discussions/projects/${project.id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch project details.");
+      }
+      const detailedData = await response.json();
+      setSelectedProject(detailedData);
+    } catch (err) {
+      console.error(err);
+      closeModal();
+    } finally {
+      setIsModalLoading(false);
+    }
   };
 
   const closeModal = () => {
     setSelectedProject(null);
   };
 
-    const handleBookmark = async (projectId: string) => {
+  const handleBookmark = async (projectId: string) => {
     const updater = (prevProjects: ProjectSubmission[]) =>
       prevProjects.map((p) => {
         if (p.id === projectId) {
@@ -223,24 +237,25 @@ export default function DiscussionsPage() {
         <h1 className="text-4xl font-bold text-white mb-8 tracking-wider">
           Community Projects
         </h1>
-         <div className="space-y-3"> 
+        <div className="space-y-3">
           {projects
             .sort((a, b) => b.upvotesCount - a.upvotesCount)
             .map((p, index) => (
               <ProjectCard
                 key={p.id}
                 project={p}
-                rank={index + 1} 
+                rank={index + 1}
                 onClick={() => openModal(p)}
                 onUpvote={() => handleUpvote(p.id)}
-                onBookmark={() => handleBookmark(p.id)} 
+                onBookmark={() => handleBookmark(p.id)}
               />
             ))}
         </div>
       </div>
-    {selectedProject && (
+      {selectedProject && (
         <ProjectModal
           project={selectedProject}
+          isLoading={isModalLoading}
           onClose={closeModal}
           onUpvote={handleUpvote}
           onNewComment={handleNewComment}
@@ -250,4 +265,3 @@ export default function DiscussionsPage() {
     </main>
   );
 }
-

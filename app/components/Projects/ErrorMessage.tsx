@@ -1,4 +1,3 @@
-// components/ErrorMessage.tsx
 type ErrorMessageProps = {
   message: string;
 };

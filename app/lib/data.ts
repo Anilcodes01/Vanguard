@@ -3,11 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { unstable_noStore as noStore } from "next/cache";
 import { UserProfile } from "@/types";
 
-/**
- * Fetches the daily problem for the currently authenticated user.
- */
 export async function fetchDashboardData() {
-  noStore(); // Ensures this function is not cached and runs on every request
+  noStore();
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -46,14 +43,10 @@ export async function fetchDashboardData() {
     return { dailyProblem };
   } catch (error) {
     console.error("Database Error (fetchDashboardData):", error);
-    // In case of error, we return a default state to avoid crashing the page.
     return { dailyProblem: null };
   }
 }
 
-/**
- * Fetches the in-progress projects for the currently authenticated user.
- */
 export async function fetchInProgressProjects() {
   noStore();
   try {
@@ -94,9 +87,6 @@ export async function fetchInProgressProjects() {
   }
 }
 
-/**
- * Fetches the leaderboard data for the currently authenticated user's league.
- */
 export async function fetchLeaderboardData() {
   noStore();
   try {
@@ -107,7 +97,6 @@ export async function fetchLeaderboardData() {
       return { league: null, leaderboard: [], currentUserId: null, message: "Unauthorized" };
     }
 
-    // This is a simplified version of your logic, you can adapt your date logic as needed
     const weekStartDate = new Date();
     weekStartDate.setUTCDate(weekStartDate.getUTCDate() - weekStartDate.getUTCDay());
     weekStartDate.setUTCHours(0, 0, 0, 0);
@@ -175,7 +164,6 @@ export async function fetchUserProfileForNavbar(): Promise<UserProfile | null> {
 
     if (!userProfile) return null;
 
-    // Map nullable DB fields to non-nullable UserProfile fields
     const mappedProfile: UserProfile = {
       id: userProfile.id,
       name: userProfile.name ?? "",

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/client";
-import { LogOut, User as UserIcon } from "lucide-react";
+import { Bookmark, LogOut, User as UserIcon } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/store/store";
 import { logout } from "@/app/store/features/auth/authSlice";
@@ -60,6 +60,8 @@ export default function UserAvatar({ user, onDropdownItemClick }: UserAvatarProp
       onDropdownItemClick?.(); 
     }
   };
+
+
 
   const initial = user.name ? user.name.charAt(0).toUpperCase() : "V";
 
@@ -121,6 +123,12 @@ export default function UserAvatar({ user, onDropdownItemClick }: UserAvatarProp
         <DropdownMenuItem onClick={handleProfileClick}>
           <UserIcon size={14} className="text-neutral-400" />
           <span>My Profile</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => {
+          router.push('/bookmarks')
+        }}>
+          <Bookmark size={14} className="text-neutral-400" />
+          <span>Bookmarks</span>
         </DropdownMenuItem>
 
         <div className="my-1 h-px bg-neutral-800" />

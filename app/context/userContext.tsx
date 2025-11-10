@@ -9,7 +9,7 @@ type UserProfile = {
   avatar_url: string | null;
   username: string
   xp: number;
-  stars: number; // This now comes directly from the API
+  stars: number; 
 };
 
 interface UserContextType {
