@@ -4,15 +4,14 @@ import ProblemCard from "@/app/components/explore/ProblemCard";
 import { Prisma } from "@prisma/client";
 
 type TopProject = Prisma.PromiseReturnType<typeof getTopProjects>[0];
-
 type TopProblem = Prisma.PromiseReturnType<typeof getTopProblems>[0];
 
 async function getTopProjects() {
   const projects = await prisma.project.findMany({
-    take: 3,
     include: {
       SubmittedProjects: {
-        include: {
+        select: {
+          coverImage: true,
           user: {
             select: {
               profiles: { select: { name: true, avatar_url: true } },
@@ -34,7 +33,8 @@ async function getTopProjects() {
         0
       ),
     }))
-    .sort((a, b) => b.totalUpvotes - a.totalUpvotes);
+    .sort((a, b) => b.totalUpvotes - a.totalUpvotes)
+    .slice(0, 3);
 }
 
 async function getTopProblems() {
@@ -54,7 +54,6 @@ async function getTopProblems() {
     },
   });
 }
-
 
 export default async function ExplorePage() {
   const [topProjects, topProblems] = await Promise.all([

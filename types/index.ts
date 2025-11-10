@@ -317,3 +317,30 @@ export type ProjectDataResponse = {
   startedAt?: string;
   completionCount: number;
 };
+
+
+export type ExploreUser = {
+  name: string | null;
+  avatar_url: string | null;
+};
+
+
+type SubmittedProjectInfo = {
+  coverImage: string | null; 
+  user: {
+    profiles: ExploreUser[] | null;
+  };
+  _count: {
+    upvotes: number;
+    comments: number;
+  };
+};
+
+export type ExploreProject = {
+  id: string;
+  name: string;
+  description: string;
+  domain: string;
+  coverImage: string | null;
+  SubmittedProjects: SubmittedProjectInfo[];
+};

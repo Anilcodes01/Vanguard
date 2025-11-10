@@ -4,30 +4,7 @@ import Image from "next/image";
 import { Layers, ThumbsUp, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-
-type UserProfile = {
-  name: string | null;
-  avatar_url: string | null;
-};
-
-type SubmittedProjectInfo = {
-  user: {
-    profiles: UserProfile[] | null;
-  };
-  _count: {
-    upvotes: number;
-    comments: number;
-  };
-};
-
-type Project = {
-  id: string;
-  name: string;
-  description: string;
-  domain: string;
-  coverImage: string | null;
-  SubmittedProjects: SubmittedProjectInfo[];
-};
+import { ExploreProject } from "@/types";
 
 const PlaceholderIcon = () => (
   <div className="w-full h-full bg-neutral-800 flex items-center justify-center">
@@ -35,7 +12,7 @@ const PlaceholderIcon = () => (
   </div>
 );
 
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({ project }: { project: ExploreProject }) {
   const router = useRouter();
 
   const topSubmission = useMemo(() => {
@@ -48,6 +25,7 @@ export default function ProjectCard({ project }: { project: Project }) {
   }, [project.SubmittedProjects]);
 
   const userProfile = topSubmission?.user?.profiles?.[0];
+  const displayImage = topSubmission?.coverImage || project.coverImage;
 
   return (
     <div
@@ -57,9 +35,9 @@ export default function ProjectCard({ project }: { project: Project }) {
       className="group flex h-full flex-col cursor-pointer overflow-hidden rounded-2xl border border-neutral-700/50 bg-[#2a2a2a] shadow-lg shadow-black/20 transition-all duration-300 hover:border-green-600 hover:shadow-xl hover:shadow-black/30"
     >
       <div className="relative h-48 w-full overflow-hidden">
-        {project.coverImage ? (
+        {displayImage ? ( 
           <Image
-            src={project.coverImage}
+            src={displayImage}
             alt={`Cover image for ${project.name}`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
