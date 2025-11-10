@@ -1,49 +1,36 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { prisma } from "@/lib/prisma";
-import NavbarSignedIn from "./Navbar/NavbarSignedIn";
-import NavbarSignedOut from "./Navbar/NavbarSignedOut";
+"use client"; 
 
-async function getUserProfile(userId: string) {
-  try {
-    const userProfile = await prisma.profiles.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        name: true,
-        avatar_url: true,
-        xp: true,
-        stars: true,
-        username: true,
-        league: true,
-      },
-    });
-    return userProfile;
-  } catch (error) {
-    console.error("Failed to fetch user profile in Navbar:", error);
-    return null;
-  }
-}
+import { useState, useEffect } from 'react';
+import { createClient } from '@/app/utils/supabase/client';
+import NavbarSignedIn from './Navbar/NavbarSignedIn';
+import NavbarSignedOut from './Navbar/NavbarSignedOut';
+import { UserProfile } from '@/types';
 
-export default async function Navbar() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default function Navbar() {
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const supabase = createClient();
 
-  if (!user) {
-    return <NavbarSignedOut />;
-  }
-
-  const profile = await getUserProfile(user.id);
-
-  const normalizedProfile = profile
-    ? {
-        ...profile,
-        username: profile.username ?? "",
-        name: profile.name ?? "",
-        avatar_url: profile.avatar_url ?? "",
+  useEffect(() => {
+    const fetchUserAndProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: userProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        setProfile(userProfile);
       }
-    : null;
+      setIsLoading(false);
+    };
 
-  return <NavbarSignedIn initialProfile={normalizedProfile} />;
+    fetchUserAndProfile();
+  }, [supabase]);
+
+  if (isLoading) {
+    return <div className="navbar-skeleton h-16 bg-gray-800" />;
+  }
+
+  return profile ? <NavbarSignedIn initialProfile={profile} /> : <NavbarSignedOut />;
 }

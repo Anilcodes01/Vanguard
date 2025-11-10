@@ -6,12 +6,20 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/store/store";
 import ProblemDetailsPanel from "@/app/components/Problems/ProblemsDetailsPanle";
-import CodeEditorPanel from "@/app/components/Problems/CodeEditorPanle";
 import { problemSolved } from "@/app/store/actions";
 import { SuccessModal } from "@/app/components/Problems/CodeEditor/SuccessModal";
 import { ProblemDetails, SubmissionResult, RewardData, ProblemLanguageDetail } from "@/types";
 import { LoadingSpinner } from "@/app/components/Profile/ProfilePanel";
+import dynamic from 'next/dynamic';
 
+const DynamicCodeEditorPanel = dynamic(
+  () => import('@/app/components/Problems/CodeEditorPanle'),
+  {
+    // You can create a nice loading skeleton for your editor panel
+    loading: () => <div className="editor-skeleton">Loading Editor...</div>,
+    ssr: false, // Code editors are client-side only, so disable SSR for it
+  }
+);
 type TestCaseStatus = "pending" | "running" | "passed" | "failed";
 type TestCaseResultItem = {
   status: string;
@@ -216,7 +224,7 @@ export default function ProblemPage() {
       </div>
       
       <div className="w-full lg:w-1/2  flex-grow">
-        <CodeEditorPanel
+        <DynamicCodeEditorPanel
           problemId={problem.id}
           maxTimeInMinutes={problem.maxTime}
           code={code}
