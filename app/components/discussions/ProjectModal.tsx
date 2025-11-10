@@ -17,17 +17,19 @@ import { ProjectSubmission, Comment } from "@/types";
 interface ProjectModalProps {
   project: ProjectSubmission;
   isLoading: boolean;
+  isBookmarking: boolean;
   onClose: () => void;
   onUpvote: (projectId: string) => void;
   onNewComment: (projectId: string, newComment: Comment) => void;
   onBookmark: (projectId: string) => void;
-   onToggleCommentLike: (commentId: string, hasLiked: boolean) => void;
+  onToggleCommentLike: (commentId: string, hasLiked: boolean) => void;
 }
 
 export default function ProjectModal({
   project,
   onClose,
   isLoading,
+  isBookmarking,
   onUpvote,
   onNewComment,
   onBookmark,
@@ -161,18 +163,26 @@ export default function ProjectModal({
                 </div>
                 <button
                   onClick={() => onBookmark(project.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-medium text-sm transition-all ${
-                    project.hasBookmarked
-                      ? "bg-blue-500/10 text-blue-400 border border-blue-500/30"
-                      : "bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a]"
-                  }`}
+                  disabled={isBookmarking}
+                  className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-md font-medium text-sm transition-all w-24
+                    ${
+                      project.hasBookmarked
+                        ? "bg-blue-500/10 text-blue-400 border border-blue-500/30"
+                        : "bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a]"
+                    } ${isBookmarking ? "cursor-not-allowed" : ""}`}
                 >
-                  <Bookmark
-                    className={`w-4 h-4 ${
-                      project.hasBookmarked && "fill-current"
-                    }`}
-                  />
-                  <span>{project.bookmarksCount}</span>
+                  {isBookmarking ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      <Bookmark
+                        className={`w-4 h-4 ${
+                          project.hasBookmarked && "fill-current"
+                        }`}
+                      />
+                      <span>{project.bookmarksCount}</span>
+                    </>
+                  )}
                 </button>
 
                 {project.githubUrl && (
@@ -236,7 +246,11 @@ export default function ProjectModal({
             </div>
 
             <div className="lg:col-span-3 pt-4 border-t border-[#404040]">
-              <CommentSection project={project} onNewComment={onNewComment}  onToggleCommentLike={onToggleCommentLike}/>
+              <CommentSection
+                project={project}
+                onNewComment={onNewComment}
+                onToggleCommentLike={onToggleCommentLike}
+              />
             </div>
           </div>
         )}

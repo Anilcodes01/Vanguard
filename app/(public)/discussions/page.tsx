@@ -13,6 +13,9 @@ export default function DiscussionsPage() {
   const [selectedProject, setSelectedProject] =
     useState<ProjectSubmission | null>(null);
   const [isModalLoading, setIsModalLoading] = useState(false);
+  const [bookmarkingProjects, setBookmarkingProjects] = useState<Set<string>>(
+    new Set()
+  );
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -227,6 +230,8 @@ export default function DiscussionsPage() {
   };
 
   const handleBookmark = async (projectId: string) => {
+    setBookmarkingProjects((prev) => new Set(prev).add(projectId));
+
     const updater = (prevProjects: ProjectSubmission[]) =>
       prevProjects.map((p) => {
         if (p.id === projectId) {
@@ -268,6 +273,12 @@ export default function DiscussionsPage() {
       });
     } catch (error) {
       console.error("Failed to update bookmark:", error);
+    } finally {
+      setBookmarkingProjects((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(projectId);
+        return newSet;
+      });
     }
   };
 
@@ -301,6 +312,7 @@ export default function DiscussionsPage() {
                 key={p.id}
                 project={p}
                 rank={index + 1}
+                isBookmarking={bookmarkingProjects.has(p.id)}
                 onClick={() => openModal(p)}
                 onUpvote={() => handleUpvote(p.id)}
                 onBookmark={() => handleBookmark(p.id)}
@@ -312,11 +324,12 @@ export default function DiscussionsPage() {
         <ProjectModal
           project={selectedProject}
           isLoading={isModalLoading}
+          isBookmarking={bookmarkingProjects.has(selectedProject.id)}
           onClose={closeModal}
           onUpvote={handleUpvote}
           onNewComment={handleNewComment}
           onBookmark={handleBookmark}
-          onToggleCommentLike={handleToggleCommentLike} 
+          onToggleCommentLike={handleToggleCommentLike}
         />
       )}
     </main>
