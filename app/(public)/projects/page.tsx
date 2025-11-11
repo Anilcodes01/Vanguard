@@ -3,8 +3,17 @@ import { createClient } from '@/app/utils/supabase/server';
 import { prisma } from "@/lib/prisma";
 import { cache } from 'react';
 
- const getProjectsByDomain = cache(async () => {
-  const supabase =await createClient();
+type Project = {
+  id: string;
+  name: string;
+  description: string;
+  domain: string;
+  maxTime: string;
+  coverImage: string | null;
+};
+
+const getProjectsByDomain = cache(async (): Promise<{ projects: Project[] }> => {
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -21,10 +30,18 @@ import { cache } from 'react';
   if (!userProfile || !userProfile.domain) {
     throw new Error("Profile not found or no domain is set for your profile.");
   }
-  
+
   const projects = await prisma.project.findMany({
     where: {
       domain: userProfile.domain,
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      domain: true,
+      maxTime: true,
+      coverImage: true,
     },
     orderBy: {
       createdAt: 'desc',
@@ -34,14 +51,6 @@ import { cache } from 'react';
   return { projects };
 });
 
-type Project = {
-  id: string;
-  name: string;
-  description: string;
-  domain: string;
-  maxTime: string;
-  coverImage: string | null;
-};
 
 export default async function ProjectsPage() {
   try {
@@ -52,7 +61,7 @@ export default async function ProjectsPage() {
         <main className="min-h-screen bg-[#262626] p-4 sm:p-6 md:p-8">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold text-white mb-8">Projects</h1>
-            <div className="text-center text-neutral-400 text-lg">No projects found.</div>
+            <div className="text-center text-neutral-400 text-lg">No projects found for your domain.</div>
           </div>
         </main>
       );
@@ -64,7 +73,7 @@ export default async function ProjectsPage() {
           <h1 className="text-3xl font-bold text-white mb-8">Projects</h1>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-            {data.projects.map((project: Project) => (
+            {data.projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>
