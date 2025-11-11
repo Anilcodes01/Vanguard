@@ -596,6 +596,7 @@ model Project {
   ProjectProgress   ProjectProgress[]
   discussions       Discussions[]
 
+@@index([domain]) 
   @@map("projects")
   @@schema("public")
 }
