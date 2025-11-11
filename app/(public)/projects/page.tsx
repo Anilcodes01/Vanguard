@@ -3,6 +3,8 @@ import { createClient } from '@/app/utils/supabase/server';
 import { prisma } from "@/lib/prisma";
 import { cache } from 'react';
 
+export const revalidate = 600; 
+
 type Project = {
   id: string;
   name: string;
