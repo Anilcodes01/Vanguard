@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import {
@@ -26,7 +26,6 @@ export default function NavbarSignedIn({
   const dispatch: AppDispatch = useDispatch();
   const profile = useSelector((state: RootState) => state.profile.profile);
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     if (initialProfile && !profile) {
@@ -56,44 +55,11 @@ export default function NavbarSignedIn({
   };
 
   if (!displayProfile) {
-    return (
-      <nav className="relative flex items-center justify-between bg-[#262626] text-white py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full">
-        <div className="h-8 w-24 bg-gray-700 rounded-full animate-pulse" />
-      </nav>
-    );
+    return <div className="h-10 w-24 bg-gray-700 rounded-full animate-pulse" />;
   }
 
   return (
-    <nav className="relative flex items-center justify-between bg-[#262626] text-white py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full">
-      <Link
-        href="/"
-        className="text-xl sm:text-2xl flex gap-2 font-bold flex-shrink-0 z-30"
-      >
-        <Image
-          src={"/ant-intern.png"}
-          alt="adapt logo"
-          width={200}
-          height={200}
-          className="h-12 w-12 sm:h-12 sm:w-12"
-        />
-      </Link>
-
-      <div className="hidden lg:flex gap-4 xl:gap-8 items-center">
-        {links.map((link) => (
-          <Link
-            key={link.key}
-            href={link.path}
-            className={`cursor-pointer transition-colors text-sm xl:text-base whitespace-nowrap ${
-              pathname === link.path
-                ? "text-white font-semibold"
-                : "text-gray-400 hover:text-white"
-            }`}
-          >
-            {link.name}
-          </Link>
-        ))}
-      </div>
-
+    <>
       <div className="hidden lg:flex items-center gap-2 xl:gap-4 flex-shrink-0">
         {leagueImage && (
           <Link
@@ -126,34 +92,7 @@ export default function NavbarSignedIn({
         <UserAvatar user={displayProfile} />
       </div>
 
-      <div className="hidden md:flex lg:hidden items-center gap-2 flex-shrink-0">
-        {leagueImage && (
-          <Link
-            href="/leaderboard"
-            className="flex items-center bg-neutral-700/50 border border-neutral-600/60 p-1.5 rounded-full text-sm hover:bg-neutral-700 transition-colors"
-            title={`${leagueImage.name} league`}
-          >
-            <Image
-              src={leagueImage.imagePath}
-              alt={`${leagueImage.name} league`}
-              width={14}
-              height={14}
-              className="w-3.5 h-3.5"
-            />
-          </Link>
-        )}
-        <div className="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/20 px-2 py-1 rounded-full text-xs">
-          <Star size={12} className="text-yellow-400" fill="currentColor" />
-          <span className="font-bold text-white">{displayProfile.stars}</span>
-        </div>
-        <div className="flex items-center gap-1.5 bg-sky-500/10 border border-sky-500/20 px-2 py-1 rounded-full text-xs">
-          <Zap size={11} className="text-sky-400" />
-          <span className="font-bold text-white">{displayProfile.xp}</span>
-        </div>
-        <UserAvatar user={displayProfile} />
-      </div>
-
-      <div className="md:hidden flex items-center z-30">
+      <div className="lg:hidden flex items-center z-30">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="text-white p-1 hover:bg-neutral-700/50 rounded-md transition-colors"
@@ -171,7 +110,7 @@ export default function NavbarSignedIn({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/50 z-10 md:hidden"
+              className="fixed inset-0 bg-black/50 z-10 lg:hidden"
               onClick={() => setIsMenuOpen(false)}
             />
             <motion.div
@@ -179,7 +118,7 @@ export default function NavbarSignedIn({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="absolute top-full left-0 w-full bg-[#262626] md:hidden z-20 shadow-lg border-t border-neutral-700"
+              className="absolute top-full left-0 w-full bg-[#262626] lg:hidden z-20 shadow-lg border-t border-neutral-700"
             >
               <div className="flex flex-col items-center gap-3 py-4 px-4">
                 {links.map((link, index) => (
@@ -249,6 +188,6 @@ export default function NavbarSignedIn({
           </>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   );
 }
