@@ -3,7 +3,7 @@ import { createClient } from '@/app/utils/supabase/server';
 import { prisma } from "@/lib/prisma";
 import { cache } from 'react';
 
-export const getProjectsByDomain = cache(async () => {
+ const getProjectsByDomain = cache(async () => {
   const supabase =await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
