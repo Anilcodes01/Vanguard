@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { ProjectSubmission, Comment } from "@/types";
 import ProjectCard from "@/app/components/discussions/DiscussionsProjectCard";
 import dynamic from 'next/dynamic';
+import { getProjectDetails } from "@/app/actions/getProjectDetails";
 
 const DynamicProjectModal = dynamic(() => import('@/app/components/discussions/ProjectModal'));
 
@@ -183,20 +184,18 @@ export default function DiscussionsList({ initialProjects }: DiscussionsListProp
     }
   };
 
-  const openModal = async (project: ProjectSubmission) => {
+ const openModal = async (project: ProjectSubmission) => {
     setSelectedProject(project);
     setIsModalLoading(true);
 
     try {
-      const response = await fetch(`/api/discussions/projects/${project.id}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch project details.");
-      }
-      const detailedData = await response.json();
-      setSelectedProject(detailedData);
+      const detailedData = await getProjectDetails(project.id);
+      
+      setSelectedProject(detailedData as ProjectSubmission);
+
     } catch (err) {
       console.error(err);
-      closeModal();
+      closeModal(); 
     } finally {
       setIsModalLoading(false);
     }
