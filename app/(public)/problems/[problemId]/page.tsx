@@ -15,9 +15,8 @@ import dynamic from 'next/dynamic';
 const DynamicCodeEditorPanel = dynamic(
   () => import('@/app/components/Problems/CodeEditorPanle'),
   {
-    // You can create a nice loading skeleton for your editor panel
     loading: () => <div className="editor-skeleton">Loading Editor...</div>,
-    ssr: false, // Code editors are client-side only, so disable SSR for it
+    ssr: false, 
   }
 );
 type TestCaseStatus = "pending" | "running" | "passed" | "failed";

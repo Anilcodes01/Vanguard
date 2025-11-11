@@ -1,7 +1,38 @@
-"use client"
-import { useEffect, useState } from 'react';
 import ProjectCard from '@/app/components/Landing/Projects/ProjectsCard';
-import { Loader2 } from 'lucide-react';
+import { createClient } from '@/app/utils/supabase/server';
+import { prisma } from "@/lib/prisma";
+import { cache } from 'react';
+
+export const getProjectsByDomain = cache(async () => {
+  const supabase =await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized: You must be logged in to view projects.");
+  }
+
+  const userProfile = await prisma.profiles.findUnique({
+    where: { id: user.id },
+    select: {
+      domain: true,
+    },
+  });
+
+  if (!userProfile || !userProfile.domain) {
+    throw new Error("Profile not found or no domain is set for your profile.");
+  }
+  
+  const projects = await prisma.project.findMany({
+    where: {
+      domain: userProfile.domain,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return { projects };
+});
 
 type Project = {
   id: string;
@@ -12,77 +43,41 @@ type Project = {
   coverImage: string | null;
 };
 
-type ApiResponse = {
-  projects: Project[];
-};
+export default async function ProjectsPage() {
+  try {
+    const data = await getProjectsByDomain();
 
-export default function ProjectsPage() {
-  const [data, setData] = useState<ApiResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+    if (!data || !data.projects || data.projects.length === 0) {
+      return (
+        <main className="min-h-screen bg-[#262626] p-4 sm:p-6 md:p-8">
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-3xl font-bold text-white mb-8">Projects</h1>
+            <div className="text-center text-neutral-400 text-lg">No projects found.</div>
+          </div>
+        </main>
+      );
+    }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/projects/getAllProjects'); 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data: ${response.statusText}`);
-        }
-        const result: ApiResponse = await response.json();
-        setData(result);
-      } catch (error) { 
-        if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError("An unknown error occurred.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-[#262626]">
-        <Loader2 className="w-10 h-10 animate-spin text-white" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-[#262626] text-red-400">
-        Error: {error}
-      </div>
-    );
-  }
-  
-  return (
-    <main className="min-h-screen bg-[#262626] p-4 sm:p-6 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-8">Projects</h1>
-        
-    
-
-        {error && (
-           <div className="text-center text-red-400 text-lg">Error: {error}</div>
-        )}
-
-        {!loading && !error && (!data || !data.projects || data.projects.length === 0) && (
-          <div className="text-center text-neutral-400 text-lg">No projects found.</div>
-        )}
-
-        {data?.projects && (
+      <main className="min-h-screen bg-[#262626] p-4 sm:p-6 md:p-8">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-white mb-8">Projects</h1>
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-            {data.projects.map((project) => (
-              <ProjectCard  key={project.id} project={project} />
+            {data.projects.map((project: Project) => (
+              <ProjectCard key={project.id} project={project} />
             ))}
           </div>
-        )}
+        </div>
+      </main>
+    );
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-[#262626] text-red-400">
+        Error: {errorMessage}
       </div>
-    </main>
-  );
-};
+    );
+  }
+}

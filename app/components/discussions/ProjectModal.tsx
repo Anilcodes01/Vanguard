@@ -15,7 +15,7 @@ import dynamic from 'next/dynamic';
 import { ProjectSubmission, Comment } from "@/types";
 
 const DynamicCommentSection = dynamic(() => import('./CommentSection'), {
-  loading: () => <p>Loading comments...</p>, // Add a loading state
+  loading: () => <p>Loading comments...</p>,
 });
 
 interface ProjectModalProps {

@@ -9,9 +9,8 @@ import dynamic from 'next/dynamic';
 const DynamicCommentForm = dynamic(
   () => import('./CommentForm'),
   {
-    // You can add a loading skeleton for the form itself
     loading: () => <p>Loading comment form...</p>,
-    ssr: false, // Forms are interactive, often safe to disable SSR
+    ssr: false, 
   }
 );
 
