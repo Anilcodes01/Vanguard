@@ -47,6 +47,7 @@ export default function NavbarSignedIn({
     { key: "discussions", name: "Discussions", path: "/discussions" },
     { key: "leaderboard", name: "Leaderboard", path: "/leaderboard" },
     { key: "projects", name: "Projects", path: "/projects" },
+    {key: 'internship', name: 'Internship', path: '/internship'}
   ];
 
   const handleMobileNavClick = (path: string) => {

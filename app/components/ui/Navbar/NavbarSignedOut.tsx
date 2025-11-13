@@ -26,6 +26,11 @@ export default function NavbarSignedOut() {
       key: 'developer',
       name: 'Developer',
       path: '/developer'
+    },
+    {
+      key: 'internship', 
+      name: 'Internship',
+      path: '/internship'
     }
   ];
 
