@@ -70,6 +70,20 @@ export default function NotEnrolled() {
       setIsLoading(false);
     }
   };
+  
+  const renderProfileField = (label: string, value: string | number | string[] | null | undefined) => {
+    const displayValue = Array.isArray(value) ? value.join(', ') : value;
+    return (
+      <div>
+        <label className="block text-sm font-medium text-gray-400">{label}</label>
+        <input
+          type="text"
+          defaultValue={String(displayValue || "")}
+          className="mt-1 block w-full bg-[#444] border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-green-500 focus:border-green-500"
+        />
+      </div>
+    );
+  };
 
   return (
     <div className="flex min-h-screen justify-center items-center text-white overflow-hidden">
@@ -80,7 +94,7 @@ export default function NotEnrolled() {
           }`}
         >
           <div
-            className={`modal-transition bg-[#333333] shadow-2xl rounded-lg p-8 text-center ${
+            className={`modal-transition rounded-lg p-8 text-center ${
               viewState === "centered" ? "modal-center" : "modal-left"
             }`}
           >
@@ -106,7 +120,7 @@ export default function NotEnrolled() {
           </div>
 
           {viewState === "side-by-side" && (
-            <div className="profile-panel absolute right-0 top-0 h-full w-1/2 flex items-center justify-center bg-[#2a2a2a] opacity-0 animate-fade-in">
+            <div className="profile-panel absolute right-0 top-0 h-full w-1/2 flex items-center justify-center bg-[#2a2a2a] opacity-0 animate-fade-in overflow-y-auto">
               {isLoading ? (
                 <LoadingSpinner />
               ) : (
@@ -114,22 +128,26 @@ export default function NotEnrolled() {
                   <h3 className="text-2xl font-bold mb-6">Your Profile</h3>
                   {profileData ? (
                     <form className="space-y-4 text-left">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400">Name</label>
-                        <input
-                          type="text"
-                          defaultValue={profileData.name || ""}
-                          className="mt-1 block w-full bg-[#444] border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-green-500 focus:border-green-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400">College</label>
-                        <input
-                          type="text"
-                          defaultValue={profileData.college_name || ""}
-                          className="mt-1 block w-full bg-[#444] border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-green-500 focus:border-green-500"
-                        />
-                      </div>
+                      {renderProfileField("Name", profileData.name)}
+                      {renderProfileField("Username", profileData.username)}
+                      {renderProfileField("College", profileData.college_name)}
+                      {renderProfileField("Year of Study", profileData.year_of_study)}
+                      {renderProfileField("Primary Field", profileData.primary_field)}
+                      {renderProfileField("Domain", profileData.domain)}
+                      {renderProfileField("XP", profileData.xp)}
+                      {renderProfileField("Stars", profileData.stars)}
+                      {renderProfileField("League", profileData.league)}
+                      {renderProfileField("Comfort Level", profileData.comfort_level)}
+                      {renderProfileField("Preferred Languages", profileData.preferred_langs)}
+                      {renderProfileField("Platform Experience", profileData.platform_exp)}
+                      {renderProfileField("Main Goal", profileData.main_goal)}
+                      {renderProfileField("Challenge Preference", profileData.challenge_pref)}
+                      {renderProfileField("Motivation", profileData.motivation)}
+                      {renderProfileField("Time Dedication", profileData.time_dedication)}
+                      {renderProfileField("Internship Interest", profileData.internship_interest)}
+                      {renderProfileField("Role Interest", profileData.role_interest)}
+                      {renderProfileField("Project Preference", profileData.project_pref)}
+                      {renderProfileField("Playstyle", profileData.playstyle)}
                       <button type="submit" className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                         Save Changes
                       </button>
