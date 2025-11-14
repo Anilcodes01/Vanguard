@@ -166,7 +166,7 @@
 }
 
 .modal-left {
-  transform: translateX(-50%);
+  transform: translateX(-100%);
   width: 24rem;
 }
 
