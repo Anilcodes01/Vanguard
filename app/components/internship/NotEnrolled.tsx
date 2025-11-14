@@ -76,7 +76,7 @@ export default function NotEnrolled() {
       {isModalOpen && (
         <div
           className={`fixed inset-0 flex justify-center items-center ${
-            viewState === "centered" ? "bg-black bg-opacity-50" : ""
+            viewState === "centered" ? " bg-opacity-50" : ""
           }`}
         >
           <div
