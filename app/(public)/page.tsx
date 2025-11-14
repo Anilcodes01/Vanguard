@@ -7,6 +7,6 @@ export default async function UserDashboard() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-  
+
     return user ? <UserLoggedInLanding /> : <UsernotLoggedInLanding />;
 }

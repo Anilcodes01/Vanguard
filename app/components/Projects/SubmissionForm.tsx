@@ -11,6 +11,7 @@ import {
   Type,
 } from "lucide-react";
 import { SubmissionFormProps } from "@/types";
+import Image from "next/image";
 
 export default function SubmissionForm({
   handleSubmit,
@@ -232,7 +233,7 @@ export default function SubmissionForm({
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-neutral-600 px-6 py-10">
                 {coverImagePreview ? (
                   <div className="relative">
-                    <img
+                    <Image
                       src={coverImagePreview}
                       alt="Cover preview"
                       className="max-h-40 rounded-lg"
@@ -285,7 +286,7 @@ export default function SubmissionForm({
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {screenshotsPreview.map((src, index) => (
                       <div key={src} className="relative">
-                        <img
+                        <Image
                           src={src}
                           alt={`Screenshot preview ${index + 1}`}
                           className="rounded-lg object-cover w-full h-full"

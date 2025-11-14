@@ -427,6 +427,7 @@ model Profiles {
   project_pref        String?
   playstyle           String?
   first_badge         String?
+  internship_enrolled  Boolean
 
   league         League            @default(Bronze)
   currentGroupId String?           @map("current_group_id") @db.Uuid
@@ -596,7 +597,7 @@ model Project {
   ProjectProgress   ProjectProgress[]
   discussions       Discussions[]
 
-@@index([domain]) 
+  @@index([domain])
   @@map("projects")
   @@schema("public")
 }
