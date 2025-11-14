@@ -56,7 +56,7 @@ export default function NotEnrolled() {
     setViewState("side-by-side");
 
     try {
-      const response = await fetch("/api/greet", { method: "POST" });
+      const response = await fetch("/api/internship/greet", { method: "POST" });
       if (!response.ok) {
         throw new Error("Failed to fetch greeting");
       }
