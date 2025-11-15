@@ -1,13 +1,23 @@
 import { Check } from "lucide-react";
 
-export const ProgressBar = ({ currentStep }: { currentStep: number }) => {
-  const steps = [
-    { num: 1, title: "Identity" },
-    { num: 2, title: "Arsenal" },
-    { num: 3, title: "Quest" },
-    { num: 4, title: "Style" },
-  ];
+interface Step {
+  num: number;
+  title: string;
+}
 
+const defaultSteps: Step[] = [
+  { num: 1, title: "Identity" },
+  { num: 2, title: "Arsenal" },
+  { num: 3, title: "Quest" },
+  { num: 4, title: "Style" },
+];
+
+interface ProgressBarProps {
+  currentStep: number;
+  steps?: Step[]; 
+}
+
+export const ProgressBar = ({ currentStep, steps = defaultSteps }: ProgressBarProps) => {
   return (
     <div className="flex w-full max-w-lg mx-auto items-start justify-between relative">
       <div className="absolute top-5 left-5 right-5 h-0.5 bg-slate-700"></div>
