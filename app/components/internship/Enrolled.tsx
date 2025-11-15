@@ -1,7 +1,19 @@
+import { createClient } from "@/app/utils/supabase/server";
+import NotEnrolled from "./NotEnrolled";
+import EnrolledUI from "./EnrolledUI";
 
+export default async function Enrolled() {
+  const supabase = await createClient();
 
-export default function Enrolled() {
-    return <div className="flex items-center text-white justify-center min-h-screen bg-[#262626]">
-        <p>This component will be rendered if student is enrolled for internship.</p>
-    </div>
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return <NotEnrolled />;
+  }
+
+  const userName = user.user_metadata.name || "Student";
+
+  return <EnrolledUI userName={userName} />;
 }
