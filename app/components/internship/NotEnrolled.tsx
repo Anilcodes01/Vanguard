@@ -215,8 +215,7 @@ export default function NotEnrolled() {
         throw new Error(data.error || "Failed to update profile.");
       }
       toast.success("Profile updated successfully!", { id: toastId });
-      router.push("/");
-      router.refresh();
+       router.refresh();
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "An unexpected error occurred.";
