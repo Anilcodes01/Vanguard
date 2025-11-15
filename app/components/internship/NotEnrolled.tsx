@@ -132,7 +132,7 @@ export default function NotEnrolled() {
     if (avatarFile) formPayload.append("avatar", avatarFile);
 
     try {
-      const response = await fetch("/api/onboarding", {
+      const response = await fetch("/api/internship/onboarding", {
         method: "POST",
         body: formPayload,
       });
@@ -209,7 +209,7 @@ export default function NotEnrolled() {
                 onClick={handleGetStarted}
                 className="bg-green-500 hover:bg-green-600"
               >
-                Get Started
+                Get Started now
               </Button>
             </>
           ) : (
