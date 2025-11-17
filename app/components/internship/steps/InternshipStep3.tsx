@@ -45,7 +45,7 @@ export const InternshipStep3: React.FC<StepProps> = ({ formData, setFormData }) 
     />
     {(formData.internship_interest === "Yes" ||
       formData.internship_interest === "Maybe later") && (
-      <div className="space-y-8 border-l-2 border-green-500 pl-6 animate-fade-in">
+      <div className="space-y-8 border-l-2 border-orange-500 pl-6 animate-fade-in">
         <MultiChoiceGrid
           label="What kind of roles interest you the most?"
           options={[

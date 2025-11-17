@@ -11,7 +11,7 @@ interface NavbarProps {
 
 export default function Navbar({ onToggleSidebar }: NavbarProps) {
   return (
-    <header className="flex items-center justify-between bg-white text-black py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full border-b shadow-sm">
+    <header className="flex items-center justify-between bg-white text-black py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full border-b ">
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleSidebar}

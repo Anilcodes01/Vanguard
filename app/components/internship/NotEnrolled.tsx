@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { OnboardingFormData, ProfileType } from "./steps/types";
 
 const LoadingSpinner = () => (
-  <div className="border-4 border-t-4 border-gray-200 border-t-green-500 rounded-full w-12 h-12 animate-spin"></div>
+  <div className="border-4 border-t-4 border-gray-200 border-t-orange-500 rounded-full w-12 h-12 animate-spin"></div>
 );
 
 const reviewSteps = [
@@ -155,7 +155,6 @@ export default function NotEnrolled() {
   //   }
   // }
 
-
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (step < TOTAL_STEPS) {
@@ -184,7 +183,7 @@ export default function NotEnrolled() {
         throw new Error(data.error || "Failed to update profile.");
       }
       toast.success("Profile updated successfully!", { id: toastId });
-       router.refresh();
+      router.refresh();
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "An unexpected error occurred.";
@@ -222,14 +221,14 @@ export default function NotEnrolled() {
   };
 
   return (
-    <div className="flex min-h-screen justify-center items-center text-white overflow-hidden">
+    <div className="flex min-h-screen justify-center items-center text-black overflow-hidden">
       <div
-        className={`fixed inset-0 flex justify-center items-center ${
-          viewState === "centered" ? "bg-opacity-50" : ""
+        className={`fixed inset-0 flex justify-center items-center pointer-events-none ${
+          viewState === "centered" ? " bg-opacity-50" : "" // Add base bg if missing
         }`}
       >
         <div
-          className={`modal-transition rounded-lg p-8 text-center ${
+          className={`modal-transition rounded-lg p-8 text-center pointer-events-auto ${
             viewState === "centered" ? "modal-center" : "modal-left"
           }`}
         >
@@ -249,7 +248,7 @@ export default function NotEnrolled() {
               </p>
               <Button
                 onClick={handleGetStarted}
-                className="bg-green-500 hover:bg-green-600"
+                className="bg-orange-500 hover:bg-orange-600"
               >
                 Get Started now
               </Button>
@@ -266,7 +265,7 @@ export default function NotEnrolled() {
         </div>
 
         {viewState === "side-by-side" && (
-          <div className="profile-panel absolute right-0 top-0 h-full w-1/2 flex items-center justify-center bg-[#2a2a2a] opacity-0 animate-fade-in overflow-y-auto">
+    <div className="profile-panel absolute right-0 top-0 h-full w-1/2 flex items-center justify-center bg-white opacity-0 animate-fade-in overflow-y-auto pointer-events-auto">
             {isLoading ? (
               <LoadingSpinner />
             ) : (
@@ -274,7 +273,7 @@ export default function NotEnrolled() {
                 <h3 className="text-2xl font-bold mb-4 text-center">
                   Review Your Profile
                 </h3>
-                <p className="text-center text-gray-400 mb-6">
+                <p className="text-center text-gray-600 mb-6">
                   Confirm your details to tailor the best experience for you.
                 </p>
                 <ProgressBar currentStep={step} steps={reviewSteps} />
@@ -286,14 +285,14 @@ export default function NotEnrolled() {
                       onClick={prevStep}
                       disabled={step === 1 || isSubmitting}
                       variant="ghost"
-                      className="hover:bg-neutral-800"
+                      className="hover:bg-gray-100"
                     >
                       Back
                     </Button>
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="px-8 bg-green-600 hover:bg-green-700"
+                      className="px-8 bg-orange-600 hover:bg-orange-700"
                     >
                       {isSubmitting
                         ? "Saving..."
