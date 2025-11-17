@@ -2,51 +2,37 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { Menu } from "lucide-react";
 import NavbarActions from "./NavbarActions";
 
-export default function Navbar() {
-  const pathname = usePathname();
+interface NavbarProps {
+  onToggleSidebar?: () => void;
+}
 
-  const links = [
-    { key: "explore", name: "Explore", path: "/explore" },
-    { key: "problems", name: "Problems", path: "/problems" },
-    { key: "discussions", name: "Discussions", path: "/discussions" },
-    { key: "leaderboard", name: "Leaderboard", path: "/leaderboard" },
-    { key: "projects", name: "Projects", path: "/projects" },
-    { key: "internship", name: "Internship", path: "/internship" },
-  ];
-
+export default function Navbar({ onToggleSidebar }: NavbarProps) {
   return (
-    <header className="relative flex items-center justify-between bg-[#ffffff] text-black py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full border-b ">
-      <div className="flex items-center gap-4 xl:gap-8">
+    <header className="flex items-center justify-between bg-white text-black py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full border-b shadow-sm">
+      <div className="flex items-center gap-4">
+        <button
+          onClick={onToggleSidebar}
+          className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          aria-label="Toggle sidebar"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
         <Link
           href="/"
           className="text-xl sm:text-2xl flex gap-2 font-bold flex-shrink-0 z-30"
         >
           <Image
             src={"/ant-intern.png"}
-            alt="adapt logo"
+            alt="AntIntern logo"
             width={200}
             height={200}
-            className="h-12 w-12 sm:h-12 sm:w-12"
+            className="h-8 w-8 sm:h-10 sm:w-10"
           />
+          <span className="hidden sm:inline">AntIntern</span>
         </Link>
-        <div className="hidden lg:flex gap-4 xl:gap-8 items-center">
-          {links.map((link) => (
-            <Link
-              key={link.key}
-              href={link.path}
-              className={`cursor-pointer transition-colors text-sm xl:text-base whitespace-nowrap ${
-                pathname === link.path
-                  ? "text-black font-semibold"
-                  : "text-black hover:text-gray-400"
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
-        </div>
       </div>
 
       <NavbarActions />

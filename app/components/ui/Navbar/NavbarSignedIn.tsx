@@ -41,15 +41,6 @@ export default function NavbarSignedIn({
       )
     : null;
 
-  const links = [
-    { key: "explore", name: "Explore", path: "/explore" },
-    { key: "problems", name: "Problems", path: "/problems" },
-    { key: "discussions", name: "Discussions", path: "/discussions" },
-    { key: "leaderboard", name: "Leaderboard", path: "/leaderboard" },
-    { key: "projects", name: "Projects", path: "/projects" },
-    { key: "internship", name: "Internship", path: "/internship" },
-  ];
-
   const handleMobileNavClick = (path: string) => {
     router.push(path);
     setIsMenuOpen(false);
@@ -122,26 +113,10 @@ export default function NavbarSignedIn({
               className="absolute top-full left-0 w-full bg-[#ffffff] lg:hidden z-20 shadow-lg border-t border-neutral-700"
             >
               <div className="flex flex-col items-center gap-3 py-4 px-4">
-                {links.map((link, index) => (
-                  <motion.div
-                    key={link.key}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05, duration: 0.3 }}
-                    className="w-full"
-                  >
-                    <button
-                      onClick={() => handleMobileNavClick(link.path)}
-                      className="cursor-pointer hover:text-gray-400 transition-colors text-base w-full text-center py-2 block"
-                    >
-                      {link.name}
-                    </button>
-                  </motion.div>
-                ))}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.3 }}
+                  transition={{ duration: 0.3 }}
                   className="flex flex-col items-center gap-3 mt-2 border-t border-neutral-700 pt-4 w-full"
                 >
                   {leagueImage && (
