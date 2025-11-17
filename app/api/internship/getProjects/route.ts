@@ -78,6 +78,7 @@ export async function GET() {
 
     if (existingProjects.length > 0) {
       const projectsWithTechStack = existingProjects.map(project => ({
+        id: project.id,
         title: project.title,
         description: project.description,
         caseStudy: project.caseStudy,
@@ -115,7 +116,22 @@ export async function GET() {
       data: projectsToSave,
     });
 
-    return NextResponse.json(generatedProjects, { status: 201 });
+    const savedProjects = await prisma.internshipProject.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    const projectsWithIds = savedProjects.map(project => ({
+      id: project.id,
+      title: project.title,
+      description: project.description,
+      caseStudy: project.caseStudy,
+      techStack: project.techStack || [],
+      maxTime: project.maxTime,
+    }));
+
+    return NextResponse.json(projectsWithIds, { status: 201 });
   } catch (error) {
     console.error("API Error:", error);
     return NextResponse.json(

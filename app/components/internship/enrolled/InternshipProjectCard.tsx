@@ -1,8 +1,10 @@
 "use client";
 
 import { Layers, Clock } from "lucide-react";
+import Link from "next/link";
 
 export type InternshipProjectCardProps = {
+  id: string
   title: string;
   description: string;
   techStack: string[];
@@ -22,10 +24,13 @@ export default function InternshipProjectCard({
   project: InternshipProjectCardProps;
   priority?: boolean;
 }) {
+
+  console.log('Project data: ', project)
   return (
     <div className="group flex flex-col cursor-pointer h-full bg-[#2a2a2a] rounded-2xl overflow-hidden border border-neutral-700/50 shadow-lg shadow-black/20 hover:border-neutral-600 hover:shadow-xl hover:shadow-black/30 transition-all duration-300">
      
 
+    <Link href={`/internship/${project.id}`}>
       <div className="p-5 flex flex-col flex-grow">
         <h3 className="text-lg font-bold text-gray-100 truncate mb-2">
           {project.title}
@@ -48,7 +53,7 @@ export default function InternshipProjectCard({
             <span>{project.maxTime}</span>
           </span>
         </div>
-      </div>
+      </div></Link>
     </div>
   );
 }
