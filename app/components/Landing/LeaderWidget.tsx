@@ -135,8 +135,8 @@ export default function LeaderboardWidget({
   };
 
   return (
-    <div className="bg-[#1f1f1f] p-5 rounded-lg h-full flex flex-col">
-      <div className="mb-4 pb-3 border-b border-neutral-800 flex items-center gap-2"> 
+    <div className="bg-white p-5 border rounded-lg h-full flex flex-col">
+      <div className="mb-4 pb-3 border-b  flex items-center gap-2"> 
         {leagueImage && ( 
           <Image
             src={leagueImage.imagePath}
@@ -147,7 +147,7 @@ export default function LeaderboardWidget({
             priority
           />
         )}
-        <h2 className="text-base font-semibold text-white">
+        <h2 className="text-base font-semibold text-black">
           {league ? `${league} League` : "Leaderboard"}
         </h2>
       </div>

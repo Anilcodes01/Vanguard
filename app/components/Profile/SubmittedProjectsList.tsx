@@ -18,20 +18,20 @@ interface SubmittedProjectsListProps {
 
 export default function SubmittedProjectsList({ projects }: SubmittedProjectsListProps) {
   return (
-    <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl">
-      <div className="p-6 border-b border-neutral-800">
-        <h2 className="text-lg font-semibold text-neutral-100">
+    <div className=" border  rounded-xl">
+      <div className="p-6 border-b text-black">
+        <h2 className="text-lg font-semibold ">
           Submitted Projects
         </h2>
       </div>
       {projects.length > 0 ? (
-        <div className="divide-y divide-neutral-800">
+        <div className="divide-y ">
           {projects.map((item) => (
             <div
               key={item.id}
               className="grid grid-cols-2 sm:grid-cols-3 items-center p-4 gap-4"
             >
-              <p className="text-neutral-200 font-medium truncate col-span-2 sm:col-span-1">
+              <p className="font-medium truncate col-span-2 sm:col-span-1">
                 {item.project.name}
               </p>
 
@@ -49,7 +49,7 @@ export default function SubmittedProjectsList({ projects }: SubmittedProjectsLis
                     href={item.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-neutral-400 hover:text-white transition-colors"
+                    className="text-neutral-400 hover:text-green-500 transition-colors"
                     title="View GitHub Repository"
                   >
                     <FolderGit2 size={20} />
@@ -60,7 +60,7 @@ export default function SubmittedProjectsList({ projects }: SubmittedProjectsLis
                     href={item.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-neutral-400 hover:text-sky-400 transition-colors"
+                    className="text-neutral-400 hover:text-green-500 transition-colors"
                     title="View Live Site"
                   >
                     <LinkIcon size={20} />

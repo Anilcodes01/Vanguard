@@ -47,7 +47,7 @@ export default function NavbarSignedIn({
     { key: "discussions", name: "Discussions", path: "/discussions" },
     { key: "leaderboard", name: "Leaderboard", path: "/leaderboard" },
     { key: "projects", name: "Projects", path: "/projects" },
-    {key: 'internship', name: 'Internship', path: '/internship'}
+    { key: "internship", name: "Internship", path: "/internship" },
   ];
 
   const handleMobileNavClick = (path: string) => {
@@ -65,7 +65,7 @@ export default function NavbarSignedIn({
         {leagueImage && (
           <Link
             href="/leaderboard"
-            className="flex items-center gap-1 bg-neutral-700/50 border border-neutral-600/60 p-1.5 rounded-full text-sm hover:bg-neutral-700 transition-colors"
+            className="flex items-center gap-1 bg-white border border-neutral-600/60 p-1.5 rounded-full text-sm hover:bg-neutral-700 transition-colors"
             title={`${leagueImage.name} league`}
           >
             <Image
@@ -83,11 +83,11 @@ export default function NavbarSignedIn({
             className="text-yellow-400 xl:w-3.5 xl:h-3.5"
             fill="currentColor"
           />
-          <span className="font-bold text-white">{displayProfile.stars}</span>
+          <span className="font-bold text-black">{displayProfile.stars}</span>
         </div>
         <div className="flex items-center gap-1.5 xl:gap-2 bg-sky-500/10 border border-sky-500/20 px-2 xl:px-3 py-1 xl:py-1.5 rounded-full text-xs xl:text-sm">
           <Zap size={12} className="text-sky-400 xl:w-3.5 xl:h-3.5" />
-          <span className="font-bold text-white">{displayProfile.xp}</span>
+          <span className="font-bold text-black">{displayProfile.xp}</span>
           <span className="text-gray-400 hidden xl:inline">XP</span>
         </div>
         <UserAvatar user={displayProfile} />
@@ -119,7 +119,7 @@ export default function NavbarSignedIn({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="absolute top-full left-0 w-full bg-[#262626] lg:hidden z-20 shadow-lg border-t border-neutral-700"
+              className="absolute top-full left-0 w-full bg-[#ffffff] lg:hidden z-20 shadow-lg border-t border-neutral-700"
             >
               <div className="flex flex-col items-center gap-3 py-4 px-4">
                 {links.map((link, index) => (

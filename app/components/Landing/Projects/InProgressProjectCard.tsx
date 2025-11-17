@@ -31,7 +31,7 @@ function InProgressProjectCard({
         </div>
         <div className="flex-1 flex flex-col justify-between self-stretch">
           <div>
-            <h3 className="text-lg font-bold text-neutral-100">{project.name}</h3>
+            <h3 className="text-lg font-bold text-black">{project.name}</h3>
             <p className="text-sm text-neutral-300 line-clamp-2 mt-1 mb-3">
               {project.description}
             </p>

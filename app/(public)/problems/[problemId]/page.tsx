@@ -8,15 +8,20 @@ import { AppDispatch } from "@/app/store/store";
 import ProblemDetailsPanel from "@/app/components/Problems/ProblemsDetailsPanle";
 import { problemSolved } from "@/app/store/actions";
 import { SuccessModal } from "@/app/components/Problems/CodeEditor/SuccessModal";
-import { ProblemDetails, SubmissionResult, RewardData, ProblemLanguageDetail } from "@/types";
+import {
+  ProblemDetails,
+  SubmissionResult,
+  RewardData,
+  ProblemLanguageDetail,
+} from "@/types";
 import { LoadingSpinner } from "@/app/components/Profile/ProfilePanel";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
 const DynamicCodeEditorPanel = dynamic(
-  () => import('@/app/components/Problems/CodeEditorPanle'),
+  () => import("@/app/components/Problems/CodeEditorPanle"),
   {
     loading: () => <div className="editor-skeleton">Loading Editor...</div>,
-    ssr: false, 
+    ssr: false,
   }
 );
 type TestCaseStatus = "pending" | "running" | "passed" | "failed";
@@ -33,24 +38,28 @@ export default function ProblemPage() {
   const [problem, setProblem] = useState<ProblemDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedLanguage, setSelectedLanguage] = useState<ProblemLanguageDetail | null>(null);
+  const [selectedLanguage, setSelectedLanguage] =
+    useState<ProblemLanguageDetail | null>(null);
   const [code, setCode] = useState<string>("");
-  
-  const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
+
+  const [submissionResult, setSubmissionResult] =
+    useState<SubmissionResult | null>(null);
   const [runResult, setRunResult] = useState<SubmissionResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [rewardData, setRewardData] = useState<RewardData | null>(null);
   const [submissionProgress, setSubmissionProgress] = useState(0);
-  const [testCaseStatuses, setTestCaseStatuses] = useState<TestCaseStatus[]>([]);
+  const [testCaseStatuses, setTestCaseStatuses] = useState<TestCaseStatus[]>(
+    []
+  );
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isMobileDetailsVisible, setIsMobileDetailsVisible] = useState(false);
 
   const toggleMobileDetails = () => {
-    setIsMobileDetailsVisible(prev => !prev);
+    setIsMobileDetailsVisible((prev) => !prev);
   };
 
-  const isCodeRunning = testCaseStatuses.includes('running') || isSubmitting;
+  const isCodeRunning = testCaseStatuses.includes("running") || isSubmitting;
 
   useEffect(() => {
     if (problem) {
@@ -67,7 +76,9 @@ export default function ProblemPage() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await axios.get<ProblemDetails>(`/api/problems/${problemId}`);
+        const response = await axios.get<ProblemDetails>(
+          `/api/problems/${problemId}`
+        );
         setProblem(response.data);
         if (response.data.problemLanguageDetails?.length > 0) {
           const lang = response.data.problemLanguageDetails[0];
@@ -75,7 +86,11 @@ export default function ProblemPage() {
           setCode(lang.starterCode);
         }
       } catch (err) {
-        setError(axios.isAxiosError(err) ? err.response?.data?.message || "Failed to fetch problem" : "An unknown error occurred.");
+        setError(
+          axios.isAxiosError(err)
+            ? err.response?.data?.message || "Failed to fetch problem"
+            : "An unknown error occurred."
+        );
       } finally {
         setIsLoading(false);
       }
@@ -102,10 +117,12 @@ export default function ProblemPage() {
     setRunResult(null);
     setSubmissionResult(null);
 
-    const newStatuses = new Array(problem.testCases.length).fill("pending") as TestCaseStatus[];
-    newStatuses[activeCaseIndex] = 'running';
+    const newStatuses = new Array(problem.testCases.length).fill(
+      "pending"
+    ) as TestCaseStatus[];
+    newStatuses[activeCaseIndex] = "running";
     setTestCaseStatuses(newStatuses);
-    
+
     const currentTestCase = problem.testCases[activeCaseIndex];
     if (!currentTestCase) return;
 
@@ -119,12 +136,16 @@ export default function ProblemPage() {
       });
       setRunResult(response.data);
       const finalStatuses = [...newStatuses];
-      finalStatuses[activeCaseIndex] = response.data.status === 'Accepted' ? 'passed' : 'failed';
+      finalStatuses[activeCaseIndex] =
+        response.data.status === "Accepted" ? "passed" : "failed";
       setTestCaseStatuses(finalStatuses);
     } catch {
-      setRunResult({ status: "Error", message: "Failed to connect to the server." });
+      setRunResult({
+        status: "Error",
+        message: "Failed to connect to the server.",
+      });
       const finalStatuses = [...newStatuses];
-      finalStatuses[activeCaseIndex] = 'failed';
+      finalStatuses[activeCaseIndex] = "failed";
       setTestCaseStatuses(finalStatuses);
     }
   };
@@ -148,15 +169,19 @@ export default function ProblemPage() {
       if (currentProgress >= 95) currentProgress = 95;
       setSubmissionProgress(currentProgress);
 
-      const newStatuses = new Array(problem.testCases.length).fill("pending") as TestCaseStatus[];
-      const runningIndex = Math.floor((currentProgress / 100) * problem.testCases.length);
-      
-      for (let i = 0; i < runningIndex; i++) newStatuses[i] = 'passed';
-      
+      const newStatuses = new Array(problem.testCases.length).fill(
+        "pending"
+      ) as TestCaseStatus[];
+      const runningIndex = Math.floor(
+        (currentProgress / 100) * problem.testCases.length
+      );
+
+      for (let i = 0; i < runningIndex; i++) newStatuses[i] = "passed";
+
       if (runningIndex < newStatuses.length) {
-        newStatuses[runningIndex] = 'running';
+        newStatuses[runningIndex] = "running";
       }
-      
+
       setTestCaseStatuses(newStatuses);
     }, 150);
 
@@ -170,33 +195,54 @@ export default function ProblemPage() {
       clearProgressInterval();
       setSubmissionResult(response.data);
 
-      if (response.data.testCaseResults && Array.isArray(response.data.testCaseResults)) {
-        const finalStatuses = new Array(problem.testCases.length).fill("pending");
-        response.data.testCaseResults.forEach((result: TestCaseResultItem, index: number) => {
-          finalStatuses[index] = result.status === 'Accepted' ? 'passed' : 'failed';
-        });
+      if (
+        response.data.testCaseResults &&
+        Array.isArray(response.data.testCaseResults)
+      ) {
+        const finalStatuses = new Array(problem.testCases.length).fill(
+          "pending"
+        );
+        response.data.testCaseResults.forEach(
+          (result: TestCaseResultItem, index: number) => {
+            finalStatuses[index] =
+              result.status === "Accepted" ? "passed" : "failed";
+          }
+        );
         const lastResultIndex = response.data.testCaseResults.length - 1;
-        if (response.data.status !== 'Accepted' && lastResultIndex < finalStatuses.length - 1) {
-          finalStatuses[lastResultIndex] = 'failed';
+        if (
+          response.data.status !== "Accepted" &&
+          lastResultIndex < finalStatuses.length - 1
+        ) {
+          finalStatuses[lastResultIndex] = "failed";
         }
         setTestCaseStatuses(finalStatuses);
       }
 
-      if (response.data.status === 'Accepted') {
+      if (response.data.status === "Accepted") {
         setSubmissionProgress(100);
-        setTestCaseStatuses(new Array(problem.testCases.length).fill('passed'));
-        setRewardData({ xpEarned: response.data.xpEarned, starsEarned: response.data.starsEarned });
-        dispatch(problemSolved({ xpEarned: response.data.xpEarned, starsEarned: response.data.starsEarned }));
+        setTestCaseStatuses(new Array(problem.testCases.length).fill("passed"));
+        setRewardData({
+          xpEarned: response.data.xpEarned,
+          starsEarned: response.data.starsEarned,
+        });
+        dispatch(
+          problemSolved({
+            xpEarned: response.data.xpEarned,
+            starsEarned: response.data.starsEarned,
+          })
+        );
       } else {
         setSubmissionProgress(0);
       }
     } catch (err) {
       clearProgressInterval();
-      const message = axios.isAxiosError(err) ? err.response?.data.message || "Failed to submit." : "An unknown error occurred.";
+      const message = axios.isAxiosError(err)
+        ? err.response?.data.message || "Failed to submit."
+        : "An unknown error occurred.";
       setSubmissionResult({ status: "Error", message });
       setSubmissionProgress(0);
       const errorStatuses = new Array(problem.testCases.length).fill("pending");
-      if (errorStatuses.length > 0) errorStatuses[0] = 'failed';
+      if (errorStatuses.length > 0) errorStatuses[0] = "failed";
       setTestCaseStatuses(errorStatuses);
     } finally {
       setIsSubmitting(false);
@@ -204,24 +250,34 @@ export default function ProblemPage() {
   };
 
   if (isLoading) {
-    return <LoadingSpinner />
+    return <LoadingSpinner />;
   }
   if (error) {
-    return <div className="flex justify-center items-center bg-[#262626] h-screen text-red-500">Error: {error}</div>;
+    return (
+      <div className="flex justify-center items-center bg-[#ffffff] h-screen text-red-500">
+        Error: {error}
+      </div>
+    );
   }
   if (!problem || !selectedLanguage) {
-    return <div className="flex justify-center items-center bg-[#262626] h-screen">Problem not found or configured correctly.</div>;
+    return (
+      <div className="flex justify-center items-center bg-[#ffffff] h-screen">
+        Problem not found or configured correctly.
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col lg:flex-row lg:h-screen p-2 gap-2 text-black lg:overflow-hidden bg-[#262626]">
-      <div className={`
+    <div className="flex flex-col lg:flex-row lg:h-screen p-2 gap-2 text-black lg:overflow-hidden bg-[#ffffff]">
+      <div
+        className={`
         lg:w-1/2 lg:block
-        ${isMobileDetailsVisible ? 'block' : 'hidden'}
-      `}>
+        ${isMobileDetailsVisible ? "block" : "hidden"}
+      `}
+      >
         <ProblemDetailsPanel problem={problem} />
       </div>
-      
+
       <div className="w-full lg:w-1/2  flex-grow">
         <DynamicCodeEditorPanel
           problemId={problem.id}

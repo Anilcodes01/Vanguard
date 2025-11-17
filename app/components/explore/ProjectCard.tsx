@@ -32,7 +32,7 @@ export default function ProjectCard({ project }: { project: ExploreProject }) {
       onClick={() => {
         router.push(`/projects/${project.id}`);
       }}
-      className="group flex h-full flex-col cursor-pointer overflow-hidden rounded-2xl border border-neutral-700/50 bg-[#2a2a2a] shadow-lg shadow-black/20 transition-all duration-300 hover:border-green-600 hover:shadow-xl hover:shadow-black/30"
+      className="group flex h-full flex-col cursor-pointer overflow-hidden rounded-2xl border  bg-white text-black shadow-lg shadow-black/20 transition-all duration-300 hover:border-green-600 hover:shadow-xl hover:shadow-black/30"
     >
       <div className="relative h-48 w-full overflow-hidden">
         {displayImage ? ( 
@@ -50,10 +50,10 @@ export default function ProjectCard({ project }: { project: ExploreProject }) {
       </div>
 
       <div className="flex flex-grow flex-col p-5">
-        <h3 className="mb-2 truncate text-lg font-bold text-gray-100">
+        <h3 className="mb-2 truncate text-lg font-bold ">
           {project.name}
         </h3>
-        <p className="mb-4 h-[3.75rem] text-sm text-gray-400 line-clamp-3">
+        <p className="mb-4 h-[3.75rem] text-sm  line-clamp-3">
           {project.description}
         </p>
 
@@ -67,8 +67,8 @@ export default function ProjectCard({ project }: { project: ExploreProject }) {
               className="rounded-full bg-neutral-700"
             />
             <div>
-              <p className="text-xs text-gray-400">Top submission by</p>
-              <p className="text-sm font-semibold text-gray-200">
+              <p className="text-xs ">Top submission by</p>
+              <p className="text-sm font-semibold ">
                 {userProfile.name || "Anonymous User"}
               </p>
             </div>

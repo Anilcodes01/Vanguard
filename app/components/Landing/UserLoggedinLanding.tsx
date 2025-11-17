@@ -47,14 +47,14 @@ export default function UserLoggedInLanding() {
 
   if (dashboardError) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#262626] text-white">
+      <div className="flex items-center justify-center min-h-screen bg-[#ffffff] text-white">
         <p className="text-red-400">Error: {dashboardError}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#262626] text-white lg:p-8 p-4">
+    <div className="min-h-screen bg-[#ffffff] text-black lg:p-8 p-4">
       <div className="w-full max-w-7xl mx-auto">
         <div className="text-start w-full mb-8">
           <h1 className="text-4xl font-bold">
@@ -74,7 +74,7 @@ export default function UserLoggedInLanding() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold mb-4 text-neutral-300">
+                <h2 className="text-2xl font-semibold mb-4 text-black">
                   Your In-Progress Projects
                 </h2>
                 {inProgressProjects.length > 0 ? (
@@ -87,8 +87,8 @@ export default function UserLoggedInLanding() {
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-neutral-900/50 p-8 rounded-xl border border-neutral-800 text-center">
-                    <p className="text-neutral-400">
+                  <div className=" p-8 rounded-xl border  text-center">
+                    <p className="text-black">
                       You have no projects in progress. Start one from the
                       projects page!
                     </p>

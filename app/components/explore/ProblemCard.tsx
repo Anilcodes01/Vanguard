@@ -35,11 +35,11 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
       onClick={() => {
         router.push(`/problems/${problem.id}`);
       }}
-      className="group flex flex-col cursor-pointer h-full bg-[#2a2a2a] rounded-2xl p-5 border border-neutral-700/50 shadow-lg shadow-black/20 hover:border-green-400/50 hover:shadow-xl hover:shadow-black/30 transition-all duration-300"
+      className="group flex flex-col cursor-pointer h-full bg-white rounded-2xl p-5 border shadow-lg shadow-black/20 hover:border-green-400/50 hover:shadow-xl hover:shadow-black/30 transition-all duration-300"
     >
       <div className="flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-3">
-          <BrainCircuit size={28} className="text-blue-400" />
+          <BrainCircuit size={28} className="text-green-500" />
           <span
             className={`px-3 py-1 text-xs font-semibold rounded-full border ${getDifficultyClass(
               problem.difficulty
@@ -49,24 +49,24 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
           </span>
         </div>
 
-        <h3 className="text-lg font-bold text-gray-100 truncate mb-2 group-hover:text-blue-300 transition-colors">
+        <h3 className="text-lg font-bold text-black truncate mb-2 group-hover:text-green-500 transition-colors">
           {problem.title}
         </h3>
 
         <div className="flex items-center gap-2 mb-4">
-          <Book size={16} className="text-neutral-500" />
-          <p className="text-sm text-gray-400 truncate">
+          <Book size={16} className="text-black" />
+          <p className="text-sm text-black truncate">
             {problem.topic.join(", ")}
           </p>
         </div>
       </div>
 
-      <div className="mt-auto pt-4 border-t border-neutral-700/50 flex justify-between items-center text-xs text-gray-400">
+      <div className="mt-auto pt-4 border-t flex justify-between items-center text-xs text-black">
         <span className="inline-flex items-center gap-2 font-medium">
           <Users size={16} className="text-green-400" />
           {problem._count.solutions} Solves
         </span>
-        <span className="text-blue-400 font-semibold group-hover:underline">
+        <span className="text-green-500 font-semibold group-hover:underline">
           View Problem →
         </span>
       </div>

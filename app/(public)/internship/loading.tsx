@@ -2,7 +2,7 @@ import { LoadingSpinner } from "@/app/components/Profile/ProfilePanel";
 
 export default function Loading() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#262626]">
+    <div className="flex min-h-screen items-center justify-center bg-[#ffffff]">
       <LoadingSpinner />
     </div>
   );

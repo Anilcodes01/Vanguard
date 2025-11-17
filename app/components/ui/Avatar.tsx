@@ -27,7 +27,7 @@ const DropdownMenuItem = ({
 }) => (
   <button
     onClick={onClick}
-    className={`flex w-full cursor-pointer rounded-lg items-center gap-2 px-3 py-1.5 text-left text-sm text-neutral-300 transition-colors hover:bg-neutral-800 ${className}`}
+    className={`flex w-full cursor-pointer rounded-lg items-center gap-2 px-3 py-1.5 text-left text-sm text-black transition-colors hover:bg-white ${className}`}
   >
     {children}
   </button>
@@ -84,7 +84,7 @@ export default function UserAvatar({ user, onDropdownItemClick }: UserAvatarProp
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group h-10 w-10 rounded-full bg-neutral-800 flex items-center justify-center overflow-hidden border-2 border-neutral-700 transition-colors hover:border-sky-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-sky-500"
+        className="group h-10 w-10 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-sky-500 transition-colors hover:border-sky-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-sky-500"
       >
         {user.avatar_url ? (
           <Image
@@ -101,8 +101,8 @@ export default function UserAvatar({ user, onDropdownItemClick }: UserAvatarProp
 
       <div
         className={`
-          absolute right-0 mt-2 w-56 origin-top-right rounded-xl bg-neutral-900 z-50
-          border border-neutral-800 p-1.5 shadow-lg
+          absolute right-0 mt-2 w-56 origin-top-right rounded-xl white z-50
+          border bg-gray-100 p-1.5 shadow-lg
           transition-all duration-150 ease-in-out
           ${
             isOpen
@@ -113,31 +113,31 @@ export default function UserAvatar({ user, onDropdownItemClick }: UserAvatarProp
       >
         <div className="px-3 py-2">
           <p className="text-xs text-neutral-500">Signed in as</p>
-          <p className="truncate text-sm font-medium text-neutral-200">
+          <p className="truncate text-sm font-medium text-black">
             {user.name || "User"}
           </p>
         </div>
 
-        <div className="my-1 h-px z-10000 bg-neutral-800" />
+        <div className="my-1 h-px z-10000 bg-white text-black" />
 
         <DropdownMenuItem onClick={handleProfileClick}>
-          <UserIcon size={14} className="text-neutral-400" />
+          <UserIcon size={14} className="text-black" />
           <span>My Profile</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => {
           router.push('/bookmarks')
         }}>
-          <Bookmark size={14} className="text-neutral-400" />
+          <Bookmark size={14} className="text-black" />
           <span>Bookmarks</span>
         </DropdownMenuItem>
 
-        <div className="my-1 h-px bg-neutral-800" />
+        <div className="my-1 h-px bg-gray-200" />
 
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="hover:text-red-400"
+          className="hover:text-red-500 hover:bg-white"
         >
-          <LogOut size={14} className="text-neutral-400" />
+          <LogOut size={14} className="text-black-400" />
           <span>Sign Out</span>
         </DropdownMenuItem>
       </div>

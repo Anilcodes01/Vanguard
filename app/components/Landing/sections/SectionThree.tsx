@@ -11,7 +11,7 @@ interface TrustCardProps {
 function TrustCard({ review, avatarUrl, name, designation, index }: TrustCardProps) {
   return (
     <div 
-      className="group relative border border-gray-700 flex flex-col gap-6 p-8 rounded-2xl hover:border-green-500 transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/20 hover:-translate-y-1"
+      className="group relative border border-gray-200 flex flex-col gap-6 p-8 rounded-2xl hover:border-green-500 transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/10 hover:-translate-y-1 bg-white"
       style={{
         animationDelay: `${index * 150}ms`,
         animation: 'fadeInUp 0.6s ease-out forwards',
@@ -28,7 +28,7 @@ function TrustCard({ review, avatarUrl, name, designation, index }: TrustCardPro
       </div>
 
       <div className="text-sm pt-4">
-        <p className="font-sans text-gray-300 leading-relaxed italic">
+        <p className="font-sans text-gray-700 leading-relaxed italic">
           &quot;{review}&quot;
         </p>
       </div>
@@ -40,15 +40,15 @@ function TrustCard({ review, avatarUrl, name, designation, index }: TrustCardPro
             alt={name}
             width={48}
             height={48}
-            className="h-12 w-12 rounded-full border-2 border-gray-700 group-hover:border-green-500 transition-colors duration-300"
+            className="h-12 w-12 rounded-full border-2 border-gray-200 group-hover:border-green-500 transition-colors duration-300"
           />
-          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></div>
+          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
         </div>
         <div className="flex flex-col">
-          <h1 className="font-sans font-semibold text-white group-hover:text-green-400 transition-colors duration-300">
+          <h1 className="font-sans font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
             {name}
           </h1>
-          <h2 className="text-xs font-sans text-gray-400">
+          <h2 className="text-xs font-sans text-gray-500">
             {designation}
           </h2>
         </div>
@@ -84,15 +84,15 @@ export default function SectionThree() {
   ];
 
   return (
-    <div className="flex flex-col items-center gap-12 justify-center min-h-screen py-20 px-4 sm:p-8">
+    <div className="flex flex-col items-center gap-12 justify-center min-h-screen py-20 px-4 sm:p-8 bg-gray-50">
       <div className="flex flex-col gap-4 text-center max-w-3xl">
-        <div className="inline-block mx-auto px-4 py-1.5 rounded-full bg-green-500/20 text-green-400 text-sm font-medium mb-2 border border-green-500/30">
+        <div className="inline-block mx-auto px-4 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-medium mb-2 border border-green-200">
           Testimonials
         </div>
-        <h1 className="text-4xl sm:text-5xl font-bold font-sans text-white tracking-tight">
+        <h1 className="text-4xl sm:text-5xl font-bold font-sans text-gray-900 tracking-tight">
           Trusted By Students Across India
         </h1>
-        <p className="text-gray-400 text-base sm:text-lg leading-relaxed">
+        <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
           Our platform empowers students to bridge the gap between academics and industry. Here&apos;s what they have to say.
         </p>
       </div>
@@ -123,8 +123,8 @@ export default function SectionThree() {
             </svg>
           ))}
         </div>
-        <p className="text-gray-400 text-sm text-center">
-          Rated <span className="text-white font-semibold">4.9/5</span> by over <span className="text-white font-semibold">10,000+</span> students
+        <p className="text-gray-600 text-sm text-center">
+          Rated <span className="text-gray-900 font-semibold">4.9/5</span> by over <span className="text-gray-900 font-semibold">10,000+</span> students
         </p>
       </div>
 

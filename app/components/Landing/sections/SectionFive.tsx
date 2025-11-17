@@ -25,17 +25,17 @@ const faqData = [
 
 const FaqItem = ({ question, answer, isOpen, onClick }: { question: string; answer: string; isOpen: boolean; onClick: () => void; }) => {
   return (
-    <div className="group rounded-xl border border-gray-800 hover:border-green-500/50 transition-all duration-300 overflow-hidden bg-gray-900/30">
+    <div className="group rounded-xl border border-gray-200 hover:border-green-500/50 transition-all duration-300 overflow-hidden bg-white">
       <button
-        className="flex cursor-pointer justify-between items-center w-full text-left text-white p-6 transition-colors duration-200"
+        className="flex cursor-pointer justify-between items-center w-full text-left text-gray-900 p-6 transition-colors duration-200"
         onClick={onClick}
       >
-        <span className="font-semibold pr-8 group-hover:text-green-400 transition-colors duration-300 text-base md:text-lg">
+        <span className="font-semibold pr-8 group-hover:text-green-600 transition-colors duration-300 text-base md:text-lg">
           {question}
         </span>
-        <div className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gray-800 group-hover:bg-green-500/20 flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+        <div className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gray-100 group-hover:bg-green-500/10 flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180' : ''}`}>
           <svg
-            className="w-5 h-5 text-gray-400 group-hover:text-green-500 transition-colors duration-300"
+            className="w-5 h-5 text-gray-500 group-hover:text-green-500 transition-colors duration-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -53,7 +53,7 @@ const FaqItem = ({ question, answer, isOpen, onClick }: { question: string; answ
         }}
       >
         <div 
-          className="px-6 pb-6 pt-2 text-gray-400 leading-relaxed"
+          className="px-6 pb-6 pt-2 text-gray-600 leading-relaxed"
           style={{
             animation: isOpen ? 'slideDown 0.5s ease-out' : 'none'
           }}
@@ -73,22 +73,22 @@ export default function SectionFive() {
   };
 
   return (
-    <div className="relative text-white py-20 px-4 md:px-8 overflow-hidden">
+    <div className="relative py-20 px-4 md:px-8 overflow-hidden bg-gray-50">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-10 w-96 h-96 bg-green-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-10"></div>
+        <div className="absolute top-20 right-10 w-96 h-96 bg-green-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-10 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-10"></div>
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto">
         <div className="text-center mb-16">
-          <div className="inline-block px-4 py-1.5 rounded-full bg-green-500/20 text-green-400 text-sm font-medium mb-4 border border-green-500/30">
+          <div className="inline-block px-4 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-medium mb-4 border border-green-200">
             FAQ
           </div>
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
             Frequently Asked Questions
           </h2>
-          <p className="text-gray-400 text-base sm:text-lg">
+          <p className="text-gray-600 text-base sm:text-lg">
             Everything you need to know about the Adapt platform.
           </p>
         </div>
@@ -113,7 +113,7 @@ export default function SectionFive() {
           ))}
         </div>
 
-      <div className='w-full items-center font-sans justify-center flex flex-wrap gap-1 text-center'>
+      <div className='w-full items-center font-sans justify-center flex flex-wrap gap-1 text-center text-gray-600'>
         <span>Can&apos;t find an answer? </span>
         <span className='text-green-500 underline cursor-pointer'>Contact Support</span>
       </div>

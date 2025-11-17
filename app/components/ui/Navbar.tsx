@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import NavbarActions from "./NavbarActions"; 
+import NavbarActions from "./NavbarActions";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -14,11 +14,11 @@ export default function Navbar() {
     { key: "discussions", name: "Discussions", path: "/discussions" },
     { key: "leaderboard", name: "Leaderboard", path: "/leaderboard" },
     { key: "projects", name: "Projects", path: "/projects" },
-    {key: 'internship', name: 'Internship', path: '/internship'}
+    { key: "internship", name: "Internship", path: "/internship" },
   ];
 
   return (
-    <header className="relative flex items-center justify-between bg-[#262626] text-white py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full border-b border-neutral-800">
+    <header className="relative flex items-center justify-between bg-[#ffffff] text-black py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full border-b ">
       <div className="flex items-center gap-4 xl:gap-8">
         <Link
           href="/"
@@ -39,8 +39,8 @@ export default function Navbar() {
               href={link.path}
               className={`cursor-pointer transition-colors text-sm xl:text-base whitespace-nowrap ${
                 pathname === link.path
-                  ? "text-white font-semibold"
-                  : "text-gray-400 hover:text-white"
+                  ? "text-black font-semibold"
+                  : "text-black hover:text-gray-400"
               }`}
             >
               {link.name}

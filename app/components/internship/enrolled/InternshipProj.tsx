@@ -50,7 +50,7 @@ export default function InternshipProj() {
     if (loading) {
       const interval = setInterval(() => {
         setCurrentLoadingState((prev) => (prev + 1) % loadingStates.length);
-      }, 2000);
+      }, 1000);
 
       return () => clearInterval(interval);
     }

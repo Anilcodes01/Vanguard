@@ -4,20 +4,30 @@ import { Difficulty } from "@prisma/client";
 import ProblemsList from "@/app/components/Problems/ProblemsList.tsx/ProblemsList";
 
 const PAGE_SIZE = 12;
-const VALID_DIFFICULTIES: Difficulty[] = ["Beginner", "Intermediate", "Advanced"];
+const VALID_DIFFICULTIES: Difficulty[] = [
+  "Beginner",
+  "Intermediate",
+  "Advanced",
+];
 
 const getXpForDifficulty = (difficulty: Difficulty): number => {
   switch (difficulty) {
-    case "Beginner": return 100;
-    case "Intermediate": return 250;
-    case "Advanced": return 500;
-    default: return 0;
+    case "Beginner":
+      return 100;
+    case "Intermediate":
+      return 250;
+    case "Advanced":
+      return 500;
+    default:
+      return 0;
   }
 };
 
 async function getProblems(difficulty: Difficulty | "All", page: number) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const skip = (page - 1) * PAGE_SIZE;
   const whereCondition: { difficulty?: Difficulty } = {};
   if (difficulty !== "All" && VALID_DIFFICULTIES.includes(difficulty)) {
@@ -36,7 +46,9 @@ async function getProblems(difficulty: Difficulty | "All", page: number) {
           maxTime: true,
           topic: true,
           _count: {
-            select: { solutions: { where: { userId: user?.id, status: "Solved" } } },
+            select: {
+              solutions: { where: { userId: user?.id, status: "Solved" } },
+            },
           },
         },
         orderBy: { id: "asc" },
@@ -59,22 +71,27 @@ async function getProblems(difficulty: Difficulty | "All", page: number) {
   }
 }
 
-export default async function ProblemsPage({ searchParams }: { searchParams: Promise<{ difficulty?: Difficulty | "All" }> }) {
+export default async function ProblemsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ difficulty?: Difficulty | "All" }>;
+}) {
   const resolvedSearchParams = await searchParams;
   const difficulty = resolvedSearchParams.difficulty || "All";
   const initialData = await getProblems(difficulty, 1);
   return (
-    <div className="bg-[#262626] min-h-screen">
+    <div className="bg-[#ffffff] min-h-screen">
       <div className="w-full max-w-6xl mx-auto px-4 py-12 md:px-8 md:py-16">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-black mb-3 tracking-tight">
             Practice Problems
           </h1>
-          <p className="text-gray-400 text-lg">
-            Sharpen your skills with our curated collection of coding challenges.
+          <p className="text-black text-lg">
+            Sharpen your skills with our curated collection of coding
+            challenges.
           </p>
         </div>
-       
+
         <ProblemsList
           initialProblems={initialData.problems}
           initialTotalCount={initialData.totalCount}

@@ -27,15 +27,15 @@ export default function SectionOne() {
   ];
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen w-full overflow-hidden px-4 md:px-8 py-20">
+    <div className="relative flex flex-col items-center justify-center min-h-screen w-full overflow-hidden px-4 md:px-8 py-20 bg-gray-50">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-green-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-green-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         {mounted && codeSnippets.map((snippet, i) => (
           <div
             key={i}
-            className="absolute text-green-500/20 font-mono text-sm animate-float"
+            className="absolute text-green-500 font-mono text-sm animate-float"
             style={{
               top: `${Math.random() * 80 + 10}%`,
               left: `${Math.random() * 80 + 10}%`,
@@ -47,12 +47,12 @@ export default function SectionOne() {
           </div>
         ))}
 
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20"></div>
       </div>
 
       <div className="relative z-10 flex flex-col w-full gap-8 items-center justify-center">
         <div 
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/20 text-green-400 text-xs sm:text-sm font-medium border border-green-500/30 backdrop-blur-sm text-center"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 text-green-700 text-xs sm:text-sm font-medium border border-green-200 backdrop-blur-sm text-center"
           style={{
             animation: 'fadeInDown 0.6s ease-out forwards',
             opacity: 0
@@ -66,7 +66,7 @@ export default function SectionOne() {
         </div>
 
         <h1 
-          className="text-4xl sm:text-5xl lg:text-7xl font-bold text-center font-sans text-white leading-tight tracking-tight"
+          className="text-4xl sm:text-5xl lg:text-7xl font-bold text-center font-sans text-gray-900 leading-tight tracking-tight"
           style={{
             animation: 'fadeInUp 0.8s ease-out forwards',
             animationDelay: '0.2s',
@@ -75,13 +75,13 @@ export default function SectionOne() {
         >
           Turn Daily Practice
           <br />
-          <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">
+          <span className="bg-gradient-to-r from-green-500 to-emerald-600 text-transparent bg-clip-text">
             Into a Verified Internship
           </span>
         </h1>
 
         <p 
-          className="max-w-2xl text-center font-sans text-gray-400 text-base md:text-lg leading-relaxed"
+          className="max-w-2xl text-center font-sans text-gray-600 text-base md:text-lg leading-relaxed"
           style={{
             animation: 'fadeInUp 0.8s ease-out forwards',
             animationDelay: '0.4s',
@@ -114,14 +114,14 @@ export default function SectionOne() {
 
           <button 
             onClick={() => router.push('/explore')}
-            className="cursor-pointer rounded-xl px-8 py-4 bg-gray-800 text-white font-semibold border border-gray-700 hover:border-green-500 transition-all duration-300 hover:bg-gray-700 w-full sm:w-auto"
+            className="cursor-pointer rounded-xl px-8 py-4 bg-white text-gray-900 font-semibold border border-gray-300 hover:border-green-500 transition-all duration-300 hover:bg-gray-50 w-full sm:w-auto"
           >
             Explore Challenges
           </button>
         </div>
 
         <div 
-          className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12 mt-12 pt-12 border-t border-gray-800"
+          className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12 mt-12 pt-12 border-t border-gray-200"
           style={{
             animation: 'fadeInUp 0.8s ease-out forwards',
             animationDelay: '0.8s',
@@ -130,10 +130,10 @@ export default function SectionOne() {
         >
           {stats.map((stat, index) => (
             <div key={index} className="flex flex-col items-center gap-2">
-              <div className="text-3xl sm:text-4xl font-bold text-white">
+              <div className="text-3xl sm:text-4xl font-bold text-gray-900">
                 {stat.value}
               </div>
-              <div className="text-sm text-gray-400 font-medium">
+              <div className="text-sm text-gray-600 font-medium">
                 {stat.label}
               </div>
             </div>
@@ -141,7 +141,7 @@ export default function SectionOne() {
         </div>
 
         <div 
-          className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-6 mt-8 text-gray-500 text-sm"
+          className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-6 mt-8 text-gray-600 text-sm"
           style={{
             animation: 'fadeInUp 0.8s ease-out forwards',
             animationDelay: '1s',
@@ -176,7 +176,7 @@ export default function SectionOne() {
           animationDelay: '1.5s'
         }}
       >
-        <svg className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
       </div>

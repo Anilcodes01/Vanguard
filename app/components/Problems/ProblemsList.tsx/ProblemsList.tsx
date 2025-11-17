@@ -67,8 +67,8 @@ export default function ProblemsList({
             onClick={() => handleFilterChange(filter)}
             className={`px-4 py-2 rounded-lg text-sm cursor-pointer font-semibold transition-colors duration-200 ${
               activeFilter === filter
-                ? "bg-green-500 text-white shadow-lg shadow-green-500/10"
-                : "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-200"
+                ? "bg-green-500 text-black shadow-lg shadow-green-500/10"
+                : "bg-neutral-800 text-white hover:bg-neutral-700 hover:text-neutral-200"
             }`}
           >
             {filter}
@@ -78,7 +78,7 @@ export default function ProblemsList({
 
       {initialProblems.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-neutral-500">No problems found for this filter.</p>
+          <p className="text-black">No problems found for this filter.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -108,7 +108,7 @@ export default function ProblemsList({
 
       {!hasMore && problems.length > 0 && (
         <div className="text-center mt-12">
-          <p className="text-neutral-500 text-sm">
+          <p className="text-black text-sm">
             ✨ You&apos;ve reached the end ✨
           </p>
         </div>

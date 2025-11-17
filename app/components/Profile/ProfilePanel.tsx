@@ -17,13 +17,13 @@ import { LeaderboardImagesData } from "@/lib/data/leaderboardImagesData";
 import { ProfileData } from "@/types";
 
 export const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-screen bg-[#262626]">
-    <div className="w-12 h-12 border-4 border-neutral-800 border-t-neutral-400 rounded-full animate-spin"></div>
+  <div className="flex items-center justify-center min-h-screen bg-[#ffffff]">
+    <div className="w-12 h-12 border-4 border-gray-500 border-t-neutral-400 rounded-full animate-spin"></div>
   </div>
 );
 
 export const ErrorDisplay = ({ message }: { message: string | null }) => (
-  <div className="flex flex-col items-center justify-center min-h-screen bg-[#262626] text-center p-4">
+  <div className="flex flex-col items-center justify-center min-h-screen bg-[#ffffff] text-center p-4">
     <XCircle className="text-red-500/80 mb-4" size={48} />
     <h2 className="text-xl font-bold text-neutral-200">Profile Not Found</h2>
     <p className="text-neutral-500 max-w-sm">{message}</p>
@@ -39,12 +39,12 @@ export const StatCard = ({
   value: number | string;
   label: string;
 }) => (
-  <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl p-5">
+  <div className=" border  rounded-xl p-5">
     <div className="flex items-center gap-3 mb-3">
-      <Icon size={18} className="text-neutral-500" />
-      <h3 className="text-sm text-neutral-400">{label}</h3>
+      <Icon size={18} className="text-black" />
+      <h3 className="text-sm text-black">{label}</h3>
     </div>
-    <p className="text-3xl font-bold text-neutral-100">{value}</p>
+    <p className="text-3xl font-bold text-black">{value}</p>
   </div>
 );
 
@@ -65,7 +65,7 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
   };
 
   return (
-    <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl p-6 sticky top-6">
+    <div className=" border  rounded-xl p-6 sticky top-6">
       <div className="flex flex-col items-center text-center">
         <Image
           src={
@@ -77,28 +77,28 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
           alt={user.name || "User"}
           width={96}
           height={96}
-          className="w-24 h-24 rounded-full object-cover mb-4 border-2 border-neutral-700"
+          className="w-24 h-24 rounded-full object-cover mb-4 border-2 "
         />
-        <h2 className="text-xl font-bold text-neutral-100">
+        <h2 className="text-xl font-bold text-black">
           {user.name || "Anonymous User"}
         </h2>
         {user.username && (
-          <p className="text-neutral-500 text-sm">@{user.username}</p>
+          <p className="text-black text-sm">@{user.username}</p>
         )}
       </div>
 
-      <div className="border-t border-neutral-800 my-6"></div>
+      <div className="border-t  my-6"></div>
 
       <div className="space-y-4 text-sm">
         <div className="flex items-center gap-3">
           <Zap size={16} className="text-sky-500" />
-          <span className="text-neutral-400">Total XP:</span>
-          <span className="font-bold text-neutral-200 ml-auto">{user.xp}</span>
+          <span className="text-black">Total XP:</span>
+          <span className="font-bold text-black ml-auto">{user.xp}</span>
         </div>
         <div className="flex items-center gap-3">
           <Star size={16} className="text-yellow-500" />
-          <span className="text-neutral-400">Total Stars:</span>
-          <span className="font-bold text-neutral-200 ml-auto">
+          <span className="text-black">Total Stars:</span>
+          <span className="font-bold text-black ml-auto">
             {user.stars}
           </span>
         </div>
@@ -111,26 +111,26 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
             height={20}
             className="w-5 h-5"
           />
-          <span className="text-neutral-400">League:</span>
-          <span className="font-bold text-neutral-200 ml-auto">
+          <span className="text-black">League:</span>
+          <span className="font-bold text-black ml-auto">
             {currentLeague}
           </span>
         </div>
       </div>
 
-      <div className="border-t border-neutral-800 my-6"></div>
+      <div className="border-t  my-6"></div>
 
       <div className="space-y-4 text-sm">
         {user.college_name && (
           <div className="flex items-start gap-3">
-            <School size={16} className="text-neutral-500 mt-0.5 shrink-0" />
-            <p className="text-neutral-400">{user.college_name}</p>
+            <School size={16} className="text-black mt-0.5 shrink-0" />
+            <p className="text-black">{user.college_name}</p>
           </div>
         )}
         {user.domain && (
           <div className="flex items-start gap-3">
-            <Code2 size={16} className="text-neutral-500 mt-0.5 shrink-0" />
-            <p className="text-neutral-400">{user.domain}</p>
+            <Code2 size={16} className="text-black mt-0.5 shrink-0" />
+            <p className="text-black">{user.domain}</p>
           </div>
         )}
       </div>
@@ -139,7 +139,7 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
         {user.username && (
           <button
             onClick={handleCopyLink}
-            className="group flex w-full items-center justify-center gap-2 rounded-lg bg-sky-500/10 px-4 py-2 text-sm text-sky-400 transition-colors hover:bg-sky-500/20 hover:text-sky-300"
+            className="group flex w-full items-center justify-center gap-2 rounded-lg  px-4 py-2 text-sm text-green-500 transition-colors  hover:text-black hover:bg-gray-200"
           >
             {copied ? (
               <>
@@ -154,7 +154,7 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
         )}
         <Link
           href={`/editProfile/${user.username}`}
-          className="group flex w-full items-center justify-center gap-2 rounded-lg bg-neutral-800/80 px-4 py-2 text-sm text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-neutral-200"
+          className="group flex w-full items-center justify-center gap-2 rounded-lg bg- px-4 py-2 text-sm text-green-500 transition-colors  hover:text-black hover:bg-gray-200"
         >
           <Pencil size={14} />
           Edit Profile

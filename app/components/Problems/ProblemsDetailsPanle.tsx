@@ -1,25 +1,26 @@
-import { Tag, ChevronDown, CheckCircle2, Edit3 } from 'lucide-react';
-import React, { useState } from 'react';
-import { ProblemDetails } from '@/types';
-
+import { Tag, ChevronDown, CheckCircle2, Edit3 } from "lucide-react";
+import React, { useState } from "react";
+import { ProblemDetails } from "@/types";
 
 interface ProblemDetailsPanelProps {
   problem: ProblemDetails;
 }
 
 const difficultyStyles = {
-  Beginner: 'bg-green-100 text-green-800',
-  Intermediate: 'bg-yellow-100 text-yellow-800',
-  Advanced: 'bg-red-100 text-red-800',
+  Beginner: "bg-green-100 text-green-800",
+  Intermediate: "bg-yellow-100 text-yellow-800",
+  Advanced: "bg-red-100 text-red-800",
 };
 
-export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProps) {
+export default function ProblemDetailsPanel({
+  problem,
+}: ProblemDetailsPanelProps) {
   const [isTopicsOpen, setIsTopicsOpen] = useState(false);
 
   const renderStatusBadge = () => {
     if (!problem.solutionStatus) return null;
 
-    if (problem.solutionStatus === 'Solved') {
+    if (problem.solutionStatus === "Solved") {
       return (
         <span className="flex items-center gap-1.5 px-3 py-1 text-sm rounded-full bg-emerald-500/10 text-emerald-400">
           <CheckCircle2 size={14} />
@@ -28,7 +29,7 @@ export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProp
       );
     }
 
-    if (problem.solutionStatus === 'Attempted') {
+    if (problem.solutionStatus === "Attempted") {
       return (
         <span className="flex items-center gap-1.5 px-3 py-1 text-sm rounded-full bg-sky-500/10 text-sky-400">
           <Edit3 size={14} />
@@ -40,11 +41,12 @@ export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProp
     return null;
   };
 
-
   return (
-    <div className="w-full  p-4 lg:p-6 flex flex-col gap-4  rounded-lg lg:overflow-y-auto bg-[#262626]">
+    <div className="w-full  p-4 lg:p-6 flex flex-col gap-4  rounded-lg lg:overflow-y-auto bg-[#ffffff]">
       <div className="flex flex-col">
-        <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">{problem.title}</h1>
+        <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
+          {problem.title}
+        </h1>
         <div className="flex gap-4 items-center flex-wrap">
           <span
             className={`px-3 py-1 text-sm rounded-full ${
@@ -53,7 +55,7 @@ export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProp
           >
             {problem.difficulty}
           </span>
-             {renderStatusBadge()}
+          {renderStatusBadge()}
         </div>
       </div>
 
@@ -68,16 +70,16 @@ export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProp
             <h3 className="font-semibold text-white mb-2">
               Example {index + 1}
             </h3>
-          <div className='flex flex-col gap-2'>
+            <div className="flex flex-col gap-2">
               <p className="font-mono text-gray-300 text-sm">
-              <strong className="font-semibold text-white">Input:</strong>{' '}
-              {example.input}
-            </p>
-            <p className="font-mono text-sm text-gray-300">
-              <strong className="font-semibold text-white">Output:</strong>{' '}
-              {example.output}
-            </p>
-          </div>
+                <strong className="font-semibold text-white">Input:</strong>{" "}
+                {example.input}
+              </p>
+              <p className="font-mono text-sm text-gray-300">
+                <strong className="font-semibold text-white">Output:</strong>{" "}
+                {example.output}
+              </p>
+            </div>
           </div>
         ))}
       </div>
@@ -95,7 +97,7 @@ export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProp
           <ChevronDown
             size={20}
             className={`text-gray-400 transition-transform duration-300 ${
-              isTopicsOpen ? 'rotate-180' : ''
+              isTopicsOpen ? "rotate-180" : ""
             }`}
           />
         </button>
@@ -106,7 +108,7 @@ export default function ProblemDetailsPanel({ problem }: ProblemDetailsPanelProp
             transition-[max-height,opacity] 
             duration-300 
             ease-in-out
-            ${isTopicsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
+            ${isTopicsOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}
           `}
         >
           <div className="mt-4 pl-2 flex flex-wrap gap-2">

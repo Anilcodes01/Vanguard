@@ -62,13 +62,13 @@ export default async function ExplorePage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#262626] p-4 text-white sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-[#ffffff] p-4 text-black sm:p-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-100 md:text-5xl">
+          <h1 className="text-4xl font-bold tracking-tight text-black md:text-5xl">
             Explore Community Highlights
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-400">
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-black">
             Discover the most popular projects and challenging problems tackled
             by our community.
           </p>
@@ -76,7 +76,7 @@ export default async function ExplorePage() {
 
         <>
           <section id="top-projects" className="mb-20">
-            <h2 className="mb-8 text-center text-3xl font-bold text-gray-200 sm:text-left">
+            <h2 className="mb-8 text-center text-3xl font-bold text-black sm:text-left">
               Most Popular Projects
             </h2>
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -87,7 +87,7 @@ export default async function ExplorePage() {
           </section>
 
           <section id="top-problems">
-            <h2 className="mb-8 text-center text-3xl font-bold text-gray-200 sm:text-left">
+            <h2 className="mb-8 text-center text-3xl font-bold text-black sm:text-left">
               Most Solved Problems
             </h2>
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">

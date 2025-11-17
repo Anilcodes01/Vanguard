@@ -9,10 +9,9 @@ interface EnrolledUIProps {
 
 export default function EnrolledUI({ userName }: EnrolledUIProps) {
   return (
-  <div className="flex gap-12 w-full min-h-screen flex-col items-center justify-center">
-    <EnrolledTopUi userName={userName}/>
-     <InternshipProj />
-  
-  </div>
+    <div className="flex gap-12 w-full min-h-screen flex-col items-center justify-center">
+      <EnrolledTopUi userName={userName} />
+      <InternshipProj />
+    </div>
   );
 }

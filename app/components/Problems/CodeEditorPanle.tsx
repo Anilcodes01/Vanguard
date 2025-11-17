@@ -1,7 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { BsCheck2Circle } from "react-icons/bs";
-import { ChevronUp, Maximize, Plus, X, Loader2, ChevronDown } from "lucide-react";
+import {
+  ChevronUp,
+  Maximize,
+  Plus,
+  X,
+  Loader2,
+  ChevronDown,
+} from "lucide-react";
 import { EditorHeader } from "./CodeEditor/EditorHeader";
 import { RenderOutput } from "./CodeEditor/RenderOutput";
 import { TestCaseInput } from "./CodeEditor/TestCaseInput";
@@ -27,7 +34,7 @@ interface CodeEditorPanelProps {
   onLanguageChange: (language: ProblemLanguageDetail) => void;
   submissionProgress: number;
   testCaseStatuses: TestCaseStatus[];
-   problemTitle: string;
+  problemTitle: string;
   isMobileDetailsVisible: boolean;
   onToggleMobileDetails: () => void;
 }
@@ -83,19 +90,25 @@ export default function CodeEditorPanel({
     setIsResizing(false);
   }, []);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (isResizing && containerRef.current) {
-      const containerTop = containerRef.current.getBoundingClientRect().top;
-      const newHeight = e.clientY - containerTop;
-      const minHeight = 300;
-      const bottomPanelMinHeight = 156;
-      const resizerHeight = 8;
-      const maxHeight = containerRef.current.offsetHeight - bottomPanelMinHeight - resizerHeight;
-      if (newHeight > minHeight && newHeight < maxHeight) {
-        setEditorHeight(newHeight);
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (isResizing && containerRef.current) {
+        const containerTop = containerRef.current.getBoundingClientRect().top;
+        const newHeight = e.clientY - containerTop;
+        const minHeight = 300;
+        const bottomPanelMinHeight = 156;
+        const resizerHeight = 8;
+        const maxHeight =
+          containerRef.current.offsetHeight -
+          bottomPanelMinHeight -
+          resizerHeight;
+        if (newHeight > minHeight && newHeight < maxHeight) {
+          setEditorHeight(newHeight);
+        }
       }
-    }
-  }, [isResizing]);
+    },
+    [isResizing]
+  );
 
   useEffect(() => {
     if (isResizing) {
@@ -119,9 +132,9 @@ export default function CodeEditorPanel({
   }, [isStarted, startTime, submissionResult]);
 
   useEffect(() => {
-      if (runResult || submissionResult) {
-          setActiveTab("result");
-      }
+    if (runResult || submissionResult) {
+      setActiveTab("result");
+    }
   }, [runResult, submissionResult]);
 
   const formatTime = (elapsedSeconds: number): string => {
@@ -151,31 +164,41 @@ export default function CodeEditorPanel({
 
   const getTestCaseStatusStyle = (status: TestCaseStatus) => {
     switch (status) {
-      case "running": return "bg-zinc-700 text-white border border-sky-500";
-      case "passed": return "bg-emerald-800/60 text-emerald-300 border border-emerald-600";
-      case "failed": return "bg-red-800/60 text-red-300 border border-red-600";
-      default: return "bg-zinc-800 text-gray-400 hover:bg-zinc-700";
+      case "running":
+        return "bg-zinc-700 text-white border border-sky-500";
+      case "passed":
+        return "bg-emerald-800/60 text-emerald-300 border border-emerald-600";
+      case "failed":
+        return "bg-red-800/60 text-red-300 border border-red-600";
+      default:
+        return "bg-zinc-800 text-gray-400 hover:bg-zinc-700";
     }
   };
-  
+
   const getTestCaseStatusIcon = (status: TestCaseStatus) => {
     switch (status) {
-        case 'running': return <Loader2 className="h-4 w-4 animate-spin" />;
-        case 'passed': return <BsCheck2Circle className="h-4 w-4 text-emerald-400" />;
-        case 'failed': return <X className="h-4 w-4 text-red-400" />;
-        default: return null;
+      case "running":
+        return <Loader2 className="h-4 w-4 animate-spin" />;
+      case "passed":
+        return <BsCheck2Circle className="h-4 w-4 text-emerald-400" />;
+      case "failed":
+        return <X className="h-4 w-4 text-red-400" />;
+      default:
+        return null;
     }
   };
 
   const displayResult = submissionResult || runResult;
-  
+
   return (
     <div ref={containerRef} className=" flex flex-col h-full">
-        <button
+      <button
         onClick={onToggleMobileDetails}
         className="lg:hidden flex items-center justify-between w-full p-3 bg-zinc-900 rounded-t-lg border-b border-zinc-700 text-left"
       >
-        <span className="font-semibold text-white truncate pr-4">{problemTitle}</span>
+        <span className="font-semibold text-white truncate pr-4">
+          {problemTitle}
+        </span>
         <ChevronDown
           size={20}
           className={`text-gray-400 flex-shrink-0 transition-transform duration-200 ${
@@ -208,7 +231,9 @@ export default function CodeEditorPanel({
             <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center">
               <div className="text-center">
                 <p className="text-gray-300 font-semibold">Editor is locked.</p>
-                <p className="text-gray-400 text-sm">Click &quot;Start&quot; to begin coding.</p>
+                <p className="text-gray-400 text-sm">
+                  Click &quot;Start&quot; to begin coding.
+                </p>
               </div>
             </div>
           )}
@@ -233,7 +258,7 @@ export default function CodeEditorPanel({
           <span>Ln 1, Col 1</span>
         </div>
       </div>
-      
+
       <div
         onMouseDown={handleMouseDown}
         className="w-full h-2 cursor-row-resize flex items-center justify-center group"
@@ -241,27 +266,39 @@ export default function CodeEditorPanel({
         <div className="w-full h-[3px] bg-transparent group-hover:bg-sky-500/50 transition-colors duration-200"></div>
       </div>
 
-      <div className="flex-1 bg-[#262626] rounded-lg shadow-2xl flex flex-col min-h-0 overflow-hidden">
+      <div className="flex-1 bg-[#ffffff] rounded-lg shadow-2xl flex flex-col min-h-0 overflow-hidden">
         <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-700">
           <div className="flex items-center gap-4 text-sm font-medium">
             <button
               onClick={() => setActiveTab("testcase")}
-              className={`flex items-center gap-2 p-1 rounded-md ${activeTab === "testcase" ? "text-white" : "text-gray-400"}`}
+              className={`flex items-center gap-2 p-1 rounded-md ${
+                activeTab === "testcase" ? "text-white" : "text-gray-400"
+              }`}
             >
-              <BsCheck2Circle className={`${activeTab === "testcase" ? "text-green-400" : ""}`} />
+              <BsCheck2Circle
+                className={`${
+                  activeTab === "testcase" ? "text-green-400" : ""
+                }`}
+              />
               Testcase
             </button>
             <span className="text-zinc-600">|</span>
             <button
               onClick={() => setActiveTab("result")}
-              className={`p-1 rounded-md ${activeTab === "result" ? "text-white" : "text-gray-400"}`}
+              className={`p-1 rounded-md ${
+                activeTab === "result" ? "text-white" : "text-gray-400"
+              }`}
             >
               Test Result
             </button>
           </div>
           <div className="flex items-center gap-2 text-gray-400">
-            <button className="hover:text-white"><Maximize size={16} /></button>
-            <button className="hover:text-white"><ChevronUp size={20} /></button>
+            <button className="hover:text-white">
+              <Maximize size={16} />
+            </button>
+            <button className="hover:text-white">
+              <ChevronUp size={20} />
+            </button>
           </div>
         </div>
 
@@ -269,24 +306,28 @@ export default function CodeEditorPanel({
           {activeTab === "testcase" && (
             <div>
               <div className="flex items-center gap-2 px-4 pt-2 flex-wrap">
-                  {testCases.map((_, index) => (
-                      <button
-                          key={index}
-                          onClick={() => setActiveCaseIndex(index)}
-                          disabled={isCodeRunning}
-                          className={`flex justify-center items-center gap-2 w-24 h-8 px-3 py-1 text-sm rounded-lg transition-colors border ${
-                              activeCaseIndex === index && testCaseStatuses[index] === 'pending'
-                                ? "bg-zinc-700 text-white border-transparent"
-                                : getTestCaseStatusStyle(testCaseStatuses[index])
-                          } disabled:opacity-70 disabled:cursor-not-allowed`}
-                      >
-                           {getTestCaseStatusIcon(testCaseStatuses[index])}
-                           <span>Case {index + 1}</span>
-                      </button>
-                  ))}
-                  <button className="p-1.5 rounded-lg bg-zinc-800 text-gray-400 hover:bg-zinc-700" disabled={isCodeRunning}>
-                      <Plus size={16} />
+                {testCases.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveCaseIndex(index)}
+                    disabled={isCodeRunning}
+                    className={`flex justify-center items-center gap-2 w-24 h-8 px-3 py-1 text-sm rounded-lg transition-colors border ${
+                      activeCaseIndex === index &&
+                      testCaseStatuses[index] === "pending"
+                        ? "bg-zinc-700 text-white border-transparent"
+                        : getTestCaseStatusStyle(testCaseStatuses[index])
+                    } disabled:opacity-70 disabled:cursor-not-allowed`}
+                  >
+                    {getTestCaseStatusIcon(testCaseStatuses[index])}
+                    <span>Case {index + 1}</span>
                   </button>
+                ))}
+                <button
+                  className="p-1.5 rounded-lg bg-zinc-800 text-gray-400 hover:bg-zinc-700"
+                  disabled={isCodeRunning}
+                >
+                  <Plus size={16} />
+                </button>
               </div>
               <TestCaseInput input={testCases[activeCaseIndex]?.input} />
             </div>

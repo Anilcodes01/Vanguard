@@ -64,18 +64,17 @@ export default function ProfilePage({
   };
 
   return (
-    <div className="bg-[#262626] text-neutral-300 min-h-screen p-4 sm:p-8">
+    <div className="bg-[#ffffff] black min-h-screen p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-10">
-          <h1 className="text-3xl font-bold text-neutral-100">
+          <h1 className="text-3xl font-bold text-black">
             {profile.name}&apos;s Profile
           </h1>
-          <p className="text-neutral-500">
+          <p className="text-black">
             Welcome to the activity and progress dashboard.
           </p>
         </div>
 
-  
         <div className="flex flex-col-reverse lg:flex-row gap-8 items-start">
           <div className="flex-1 space-y-8 w-full">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -96,20 +95,20 @@ export default function ProfilePage({
               />
             </div>
 
-            <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl">
-              <div className="p-6 border-b border-neutral-800">
-                <h2 className="text-lg font-semibold text-neutral-100">
+            <div className="border text-black rounded-xl">
+              <div className="p-6 border-b ">
+                <h2 className="text-lg font-semibold ">
                   Recent Submissions
                 </h2>
               </div>
               {profileData.submissions.length > 0 ? (
-                <div className="divide-y divide-neutral-800">
+                <div className="divide-y ">
                   {profileData.submissions.slice(0, 5).map((submission) => (
                     <div
                       key={submission.id}
-                      className="grid grid-cols-3 items-center p-4 gap-4 hover:bg-neutral-900 transition-colors"
+                      className="grid grid-cols-3 items-center p-4 gap-4 hover:bg-gray-200 transition-colors"
                     >
-                      <p className="text-neutral-200 font-medium truncate col-span-2 sm:col-span-1">
+                      <p className="text-black font-medium truncate col-span-2 sm:col-span-1">
                         {submission.problem.title}
                       </p>
                       <p className="hidden sm:block text-neutral-500 text-sm">

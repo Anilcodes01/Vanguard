@@ -17,11 +17,11 @@ export default function EnrolledTopUi({ userName }: EnrolledUIProps) {
         </p>
       </div>
 
-      <div className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-lg p-2 flex items-center gap-2 focus-within:ring-2 focus-within:ring-green-500 transition-all duration-300">
+      <div className="w-full  backdrop-blur-sm border  rounded-2xl shadow-lg p-2 flex items-center gap-2 focus-within:ring-2 focus-within:ring-green-500 transition-all duration-300">
         <textarea
           placeholder="Ask your mentor anything..."
           rows={1}
-          className="flex-grow bg-transparent text-base text-gray-200 placeholder-gray-500 resize-none outline-none p-3 max-h-48"
+          className="flex-grow bg-transparent text-base text-black placeholder-gray-500 resize-none outline-none p-3 max-h-48"
           onInput={(e) => {
             const target = e.target as HTMLTextAreaElement;
             target.style.height = "auto";
@@ -37,13 +37,13 @@ export default function EnrolledTopUi({ userName }: EnrolledUIProps) {
       </div>
 
       <div className="flex flex-wrap justify-center gap-3 text-sm">
-        <button className="bg-gray-800/80 border border-gray-700 px-4 py-2 rounded-full hover:bg-gray-700 transition-colors">
+        <button className=" border  px-4 py-2 hover:text-black text-black rounded-full  transition-colors">
           Review my project plan
         </button>
-        <button className="bg-gray-800/80 border border-gray-700 px-4 py-2 rounded-full hover:bg-gray-700 transition-colors">
+        <button className=" border px-4 py-2 rounded-full text-black transition-colors">
           Suggest a learning path
         </button>
-        <button className="bg-gray-800/80 border border-gray-700 px-4 py-2 rounded-full hover:bg-gray-700 transition-colors">
+        <button className=" border  px-4 py-2 rounded-full text-black transition-colors">
           Explain a concept
         </button>
       </div>

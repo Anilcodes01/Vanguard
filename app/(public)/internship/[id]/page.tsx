@@ -40,7 +40,7 @@ export default async function IndividualInternshipPage({
   }
 
   return (
-    <div className="min-h-screen  text-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen  text-black py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <Link
           href="/internship"
@@ -49,12 +49,12 @@ export default async function IndividualInternshipPage({
           ← Back to Projects
         </Link>
 
-        <div className="bg-[#2a2a2a] rounded-2xl border border-neutral-700/50 shadow-lg shadow-black/20 p-8 mb-8">
+        <div className="bg-white rounded-2xl border  shadow-lg shadow-black/20 p-8 mb-8">
           <div className="flex items-start justify-between mb-4">
-            <h1 className="text-3xl font-bold text-gray-100">
+            <h1 className="text-3xl font-bold text-black">
               {project.title}
             </h1>
-            <div className="inline-flex items-center gap-2 bg-green-900/20 border border-green-500/30 px-3 py-1 rounded-full text-sm text-green-400">
+            <div className="inline-flex items-center gap-2 border border-green-500 px-3 py-1 rounded-full text-sm text-green-400">
               <Clock size={14} />
               <span>{project.maxTime}</span>
             </div>
@@ -64,7 +64,7 @@ export default async function IndividualInternshipPage({
             {project.techStack.map((tech, index) => (
               <span
                 key={index}
-                className="inline-flex items-center gap-1 bg-blue-900/20 border border-blue-500/30 px-3 py-1 rounded-lg text-xs text-blue-400"
+                className="inline-flex items-center gap-1  border border-blue-500/30 px-3 py-1 rounded-lg text-xs text-blue-400"
               >
                 <Layers size={12} />
                 {tech}
@@ -73,14 +73,14 @@ export default async function IndividualInternshipPage({
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-200">Description</h2>
-            <p className="text-gray-300 leading-relaxed">{project.description}</p>
+            <h2 className="text-xl font-semibold text-black">Description</h2>
+            <p className="text-black leading-relaxed">{project.description}</p>
           </div>
         </div>
 
-        <div className="bg-[#2a2a2a] rounded-2xl border border-neutral-700/50 shadow-lg shadow-black/20 p-8">
-          <h2 className="text-xl font-semibold text-gray-200 mb-4">Case Study</h2>
-          <p className="text-gray-300 leading-relaxed">{project.caseStudy}</p>
+        <div className="bg-white rounded-2xl border shadow-lg shadow-black/20 p-8">
+          <h2 className="text-xl font-semibold text-black mb-4">Case Study</h2>
+          <p className="text-black leading-relaxed">{project.caseStudy}</p>
         </div>
       </div>
     </div>

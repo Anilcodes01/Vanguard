@@ -27,20 +27,20 @@ export default function InternshipProjectCard({
 
   console.log('Project data: ', project)
   return (
-    <div className="group flex flex-col cursor-pointer h-full bg-[#2a2a2a] rounded-2xl overflow-hidden border border-neutral-700/50 shadow-lg shadow-black/20 hover:border-neutral-600 hover:shadow-xl hover:shadow-black/30 transition-all duration-300">
+    <div className="group flex flex-col cursor-pointer h-full bg-white rounded-2xl overflow-hidden border  shadow-lg shadow-black/20  hover:shadow-xl hover:shadow-black/30 transition-all duration-300">
      
 
     <Link href={`/internship/${project.id}`}>
       <div className="p-5 flex flex-col flex-grow">
-        <h3 className="text-lg font-bold text-gray-100 truncate mb-2">
+        <h3 className="text-lg font-bold text-black truncate mb-2">
           {project.title}
         </h3>
 
-        <p className="text-sm text-gray-400 line-clamp-3 mb-4">
+        <p className="text-sm text-black line-clamp-3 mb-4">
           {project.description}
         </p>
 
-        <div className="mt-auto pt-4 border-t border-neutral-700/50 flex justify-between items-center gap-4 text-xs text-gray-400">
+        <div className="mt-auto pt-4 border-t  flex justify-between items-center gap-4 text-xs text-black">
           <span className="inline-flex items-center gap-2">
             <Layers size={16} className="text-blue-400" />
             <span className="font-medium">
