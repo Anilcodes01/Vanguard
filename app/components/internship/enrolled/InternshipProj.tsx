@@ -15,9 +15,17 @@ type ProjectData = {
   userId: string;
 };
 
+const loadingStates = [
+  { emoji: "🚀", text: "Launching project ideas..." },
+  { emoji: "🔍", text: "Searching for innovative projects..." },
+  { emoji: "⚡", text: "Generating creative concepts..." },
+  { emoji: "🎯", text: "Tailoring projects to your interests..." },
+];
+
 export default function InternshipProj() {
   const [projects, setProjects] = useState<InternshipProjectCardProps[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentLoadingState, setCurrentLoadingState] = useState(0);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -38,10 +46,25 @@ export default function InternshipProj() {
     fetchProjects();
   }, []);
 
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setCurrentLoadingState((prev) => (prev + 1) % loadingStates.length);
+      }, 2000);
+
+      return () => clearInterval(interval);
+    }
+  }, [loading]);
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <p className="text-gray-400">Loading projects...</p>
+      <div className="flex justify-center items-center h-64 flex-col space-y-4">
+        <div className="text-4xl animate-bounce">
+          {loadingStates[currentLoadingState].emoji}
+        </div>
+        <p className="text-gray-400 text-center">
+          {loadingStates[currentLoadingState].text}
+        </p>
       </div>
     );
   }
