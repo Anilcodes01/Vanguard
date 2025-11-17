@@ -1,14 +1,13 @@
-"use client";
-
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 
 interface EnrolledUIProps {
   userName: string;
 }
 
-export default function EnrolledUI({ userName }: EnrolledUIProps) {
-  return (
-    <div className="w-full max-w-4xl flex flex-col items-center justify-center gap-8 text-white z-10">
+export default function EnrolledTopUi({ userName }: EnrolledUIProps) {
+
+    return (
+          <div className="w-full max-w-4xl flex flex-col items-center justify-center gap-8 text-white">
       <div className="text-center">
         <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
           Welcome, {userName} 👋
@@ -48,6 +47,8 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
           Explain a concept
         </button>
       </div>
+
+       
     </div>
-  );
+    )
 }

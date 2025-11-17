@@ -1,5 +1,5 @@
 import { createClient } from "@/app/utils/supabase/server";
-import NotEnrolled from "./NotEnrolled";
+import NotEnrolled from "../NotEnrolled";
 import EnrolledUI from "./EnrolledUI";
 
 export default async function Enrolled() {

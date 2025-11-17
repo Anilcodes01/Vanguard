@@ -2,7 +2,7 @@ import NotEnrolled from "@/app/components/internship/NotEnrolled";
 import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 
-import EnrolledUI from "@/app/components/internship/EnrolledUI";
+import EnrolledUI from "@/app/components/internship/enrolled/EnrolledUI";
 
 export default async function InternshipPage() {
   const supabase = await createClient();

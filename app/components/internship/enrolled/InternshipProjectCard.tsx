@@ -1,0 +1,72 @@
+"use client";
+
+import Image from "next/image";
+import { Layers, Clock } from "lucide-react";
+
+export type InternshipProjectCardProps = {
+  title: string;
+  description: string;
+  coverImage: string;
+  techStack: string[];
+  maxTime: string;
+};
+
+const PlaceholderIcon = () => (
+  <div className="w-full h-48 bg-neutral-800 flex items-center justify-center border-b border-neutral-700">
+    <Layers className="w-12 h-12 text-neutral-600" />
+  </div>
+);
+
+export default function InternshipProjectCard({
+  project,
+  priority = false,
+}: {
+  project: InternshipProjectCardProps;
+  priority?: boolean;
+}) {
+  return (
+    <div className="group flex flex-col cursor-pointer h-full bg-[#2a2a2a] rounded-2xl overflow-hidden border border-neutral-700/50 shadow-lg shadow-black/20 hover:border-neutral-600 hover:shadow-xl hover:shadow-black/30 transition-all duration-300">
+      <div className="relative w-full h-48 overflow-hidden">
+        {project.coverImage ? (
+          <Image
+            src={project.coverImage}
+            alt={`Cover image for ${project.title}`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
+            priority={priority}
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+          />
+        ) : (
+          <PlaceholderIcon />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+      </div>
+
+      <div className="p-5 flex flex-col flex-grow">
+        <h3 className="text-lg font-bold text-gray-100 truncate mb-2">
+          {project.title}
+        </h3>
+
+        <p className="text-sm text-gray-400 line-clamp-3 mb-4">
+          {project.description}
+        </p>
+
+        <div className="mt-auto pt-4 border-t border-neutral-700/50 flex justify-between items-center gap-4 text-xs text-gray-400">
+          <span className="inline-flex items-center gap-2">
+            <Layers size={16} className="text-blue-400" />
+            <span className="font-medium">
+              {project.techStack.length > 0 ? project.techStack[0] : "General"}
+            </span>
+          </span>
+
+          <span className="inline-flex items-center gap-2">
+            <Clock size={16} className="text-green-400" />
+            <span>{project.maxTime}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
