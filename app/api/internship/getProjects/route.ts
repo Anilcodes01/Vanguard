@@ -1,6 +1,6 @@
 import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { Profiles } from "@prisma/client";
 
@@ -8,7 +8,7 @@ const genAI = new GoogleGenAI({});
 
 async function generateProjectsWithGemini(userProfile: Profiles) {
   const prompt = `
-    Based on the following user profile, generate 4 distinct and creative internship project ideas based on latest technologies with brief case study.
+    Based on the following user profile, generate 4 distinct and creative internship project ideas based on latest technologies with brief case study(more than 100 words descriptive case study).
     The user is interested in:
     - Domain: ${userProfile.domain || "Not specified"}
     - Preferred Languages: ${
