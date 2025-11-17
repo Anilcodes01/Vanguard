@@ -1,12 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { Layers, Clock } from "lucide-react";
 
 export type InternshipProjectCardProps = {
   title: string;
   description: string;
-  coverImage: string;
   techStack: string[];
   maxTime: string;
 };
@@ -26,23 +24,7 @@ export default function InternshipProjectCard({
 }) {
   return (
     <div className="group flex flex-col cursor-pointer h-full bg-[#2a2a2a] rounded-2xl overflow-hidden border border-neutral-700/50 shadow-lg shadow-black/20 hover:border-neutral-600 hover:shadow-xl hover:shadow-black/30 transition-all duration-300">
-      <div className="relative w-full h-48 overflow-hidden">
-        {project.coverImage ? (
-          <Image
-            src={project.coverImage}
-            alt={`Cover image for ${project.title}`}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
-            priority={priority}
-            placeholder="blur"
-            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-          />
-        ) : (
-          <PlaceholderIcon />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-      </div>
+     
 
       <div className="p-5 flex flex-col flex-grow">
         <h3 className="text-lg font-bold text-gray-100 truncate mb-2">

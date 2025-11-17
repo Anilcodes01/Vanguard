@@ -60,6 +60,7 @@ model users {
   comments          Comment[]
   bookmarks         Bookmark[]
   commentLikes      CommentLike[]
+  internshipProject InternshipProject[]
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -427,7 +428,7 @@ model Profiles {
   project_pref        String?
   playstyle           String?
   first_badge         String?
-  internship_enrolled  Boolean
+  internship_enrolled Boolean
 
   league         League            @default(Bronze)
   currentGroupId String?           @map("current_group_id") @db.Uuid
@@ -715,5 +716,18 @@ model CommentLike {
   comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   @@id([userId, commentId])
+  @@schema("public")
+}
+
+model InternshipProject {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  caseStudy   String
+  techStack   String[]
+  maxTime     String
+  userId String
+  user users @relation(fields: [userId], references: [id])
+
   @@schema("public")
 }

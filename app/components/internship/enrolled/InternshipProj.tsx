@@ -1,53 +1,56 @@
+"use client";
+
 import InternshipProjectCard from "./InternshipProjectCard";
 import { InternshipProjectCardProps } from "./InternshipProjectCard";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-
-const DummyProjects: InternshipProjectCardProps[] = [
-  {
-    title: "AI-Powered Admin Manager",
-    description:
-      "An AI-powered admin manager which lets managers to manage their dashboard. It should be dynamic and all.",
-    coverImage: "/images/projects/ai-admin.webp",
-    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL"],
-    maxTime: "12 weeks",
-  },
-  {
-    title: "E-commerce Platform",
-    description:
-      "A full-featured e-commerce platform with a modern, clean, and intuitive user interface.",
-    coverImage: "/images/projects/ecommerce.png",
-    techStack: ["React", "Node.js", "Express", "MongoDB", "Redux"],
-    maxTime: "10 weeks",
-  },
-  {
-    title: "Social Media App",
-    description:
-      "A social media application where users can share their thoughts and connect with others.",
-    coverImage: "/images/projects/socailai.jpeg",
-    techStack: ["Vue.js", "Firebase", "Vuetify", "Vuex"],
-    maxTime: "8 weeks",
-  },
-  {
-    title: "Task Management Tool",
-    description:
-      "A tool to help teams manage their tasks and projects efficiently.",
-    coverImage: "/images/projects/socailai.jpeg",
-    techStack: ["Angular", "NestJS", "GraphQL", "Apollo", "TypeORM"],
-    maxTime: "14 weeks",
-  },
-];
-
+type ProjectData = {
+  id: string;
+  title: string;
+  description: string;
+  caseStudy: string;
+  techStack: string[];
+  maxTime: string;
+  userId: string;
+};
 
 export default function InternshipProj() {
+  const [projects, setProjects] = useState<InternshipProjectCardProps[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get("/api/internship/getProjects");
+        const mappedProjects = response.data.map((project: ProjectData) => ({
+          ...project,
+          coverImage: "",
+        }));
+        setProjects(mappedProjects);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (loading) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 max-w-7xl lg:grid-cols-3 gap-12">
-            {DummyProjects.map((project, index) => (
-                <InternshipProjectCard 
-                    key={project.title}
-                    project={project}   
-                />
-            ))}
-        </div>
-    )
+      <div className="flex justify-center items-center h-64">
+        <p className="text-gray-400">Loading projects...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 max-w-7xl lg:grid-cols-3 gap-12">
+      {projects.map((project) => (
+        <InternshipProjectCard key={project.title} project={project} />
+      ))}
+    </div>
+  );
 }
