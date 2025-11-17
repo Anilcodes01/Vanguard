@@ -19,10 +19,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   try {
     
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json({
         message: 'An error occured during fetching the message',
-        error: error.message
     }, {status: 500})
   }
 }
