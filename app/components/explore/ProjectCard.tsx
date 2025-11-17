@@ -7,8 +7,8 @@ import { useMemo } from "react";
 import { ExploreProject } from "@/types";
 
 const PlaceholderIcon = () => (
-  <div className="w-full h-full bg-neutral-800 flex items-center justify-center">
-    <Layers className="w-12 h-12 text-neutral-600" />
+  <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+    <Layers className="w-12 h-12 text-gray-400" />
   </div>
 );
 
@@ -32,7 +32,7 @@ export default function ProjectCard({ project }: { project: ExploreProject }) {
       onClick={() => {
         router.push(`/projects/${project.id}`);
       }}
-      className="group flex h-full flex-col cursor-pointer overflow-hidden rounded-2xl border  bg-white text-black shadow-lg shadow-black/20 transition-all duration-300 hover:border-green-600 hover:shadow-xl hover:shadow-black/30"
+      className="group flex h-full flex-col cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white text-black shadow-lg shadow-black/20 transition-all duration-300 hover:border-orange-600 hover:shadow-xl hover:shadow-black/30"
     >
       <div className="relative h-48 w-full overflow-hidden">
         {displayImage ? ( 
@@ -50,10 +50,10 @@ export default function ProjectCard({ project }: { project: ExploreProject }) {
       </div>
 
       <div className="flex flex-grow flex-col p-5">
-        <h3 className="mb-2 truncate text-lg font-bold ">
+        <h3 className="mb-2 truncate text-lg font-bold text-black">
           {project.name}
         </h3>
-        <p className="mb-4 h-[3.75rem] text-sm  line-clamp-3">
+        <p className="mb-4 h-[3.75rem] text-sm text-gray-600 line-clamp-3">
           {project.description}
         </p>
 
@@ -64,36 +64,36 @@ export default function ProjectCard({ project }: { project: ExploreProject }) {
               alt={userProfile.name || "User"}
               width={32}
               height={32}
-              className="rounded-full bg-neutral-700"
+              className="rounded-full bg-gray-100"
             />
             <div>
-              <p className="text-xs ">Top submission by</p>
-              <p className="text-sm font-semibold ">
+              <p className="text-xs text-gray-600">Top submission by</p>
+              <p className="text-sm font-semibold text-black">
                 {userProfile.name || "Anonymous User"}
               </p>
             </div>
           </div>
         ) : (
           <div className="mb-4 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-neutral-700"></div>
+            <div className="h-8 w-8 rounded-full bg-gray-100"></div>
             <div>
-              <p className="text-xs text-gray-400">Top submission by</p>
-              <p className="text-sm font-semibold text-gray-200">
+              <p className="text-xs text-gray-600">Top submission by</p>
+              <p className="text-sm font-semibold text-gray-600">
                 Anonymous User
               </p>
             </div>
           </div>
         )}
 
-        <div className="mt-auto flex items-center justify-between gap-4 border-t border-neutral-700/50 pt-4 text-xs text-gray-400">
+        <div className="mt-auto flex items-center justify-between gap-4 border-t border-gray-200 pt-4 text-xs text-gray-600">
           <span className="inline-flex items-center gap-2">
-            <Layers size={16} className="text-blue-400" />
+            <Layers size={16} className="text-orange-400" />
             <span className="font-medium">{project.domain}</span>
           </span>
 
           <div className="flex items-center gap-4">
             <span className="inline-flex items-center gap-2" title="Upvotes">
-              <ThumbsUp size={16} className="text-green-400" />
+              <ThumbsUp size={16} className="text-orange-400" />
               <span className="font-medium">
                 {topSubmission?._count.upvotes ?? 0}
               </span>

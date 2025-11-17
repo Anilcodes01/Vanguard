@@ -47,14 +47,14 @@ export default function UserLoggedInLanding() {
 
   if (dashboardError) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#ffffff] text-white">
+      <div className="flex items-center justify-center min-h-screen bg-white text-black">
         <p className="text-red-400">Error: {dashboardError}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#ffffff] text-black lg:p-8 p-4">
+    <div className="min-h-screen bg-white text-black lg:p-8 p-4">
       <div className="w-full max-w-7xl mx-auto">
         <div className="text-start w-full mb-8">
           <h1 className="text-4xl font-bold">
@@ -87,7 +87,7 @@ export default function UserLoggedInLanding() {
                     ))}
                   </div>
                 ) : (
-                  <div className=" p-8 rounded-xl border  text-center">
+                  <div className=" p-8 rounded-xl border border-gray-200 text-center">
                     <p className="text-black">
                       You have no projects in progress. Start one from the
                       projects page!

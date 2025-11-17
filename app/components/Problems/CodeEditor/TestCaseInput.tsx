@@ -16,13 +16,13 @@ export const TestCaseInput = ({ input }: { input: string | null }) => {
   }
 
   if (!formattedInput) {
-    return <pre className="p-4 text-white font-mono">{input}</pre>;
+    return <pre className="p-4 text-gray-600 font-mono">{input}</pre>;
   }
 
   return (
-    <div className="p-4 text-white font-mono text-sm space-y-2">
-      <p className="text-gray-400">{formattedInput.key} =</p>
-      <div className="bg-zinc-800 rounded-lg p-3">{formattedInput.value}</div>
+    <div className="p-4 text-gray-600 font-mono text-sm space-y-2">
+      <p className="text-gray-500">{formattedInput.key} =</p>
+      <div className="bg-gray-100 rounded-lg p-3">{formattedInput.value}</div>
     </div>
   );
 };

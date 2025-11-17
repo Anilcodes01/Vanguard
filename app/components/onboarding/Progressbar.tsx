@@ -20,9 +20,9 @@ interface ProgressBarProps {
 export const ProgressBar = ({ currentStep, steps = defaultSteps }: ProgressBarProps) => {
   return (
     <div className="flex w-full max-w-lg mx-auto items-start justify-between relative">
-      <div className="absolute top-5 left-5 right-5 h-0.5 bg-slate-700"></div>
+      <div className="absolute top-5 left-5 right-5 h-0.5 bg-gray-300"></div>
       <div
-        className="absolute top-5 left-5 h-0.5 bg-green-500 transition-all duration-500"
+        className="absolute top-5 left-5 h-0.5 bg-orange-500 transition-all duration-500"
         style={{
           width: `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - ${
             currentStep === 1 || currentStep === steps.length
@@ -35,18 +35,18 @@ export const ProgressBar = ({ currentStep, steps = defaultSteps }: ProgressBarPr
         <div key={step.num} className="z-10 flex flex-col items-center">
           <div
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 ${
-              currentStep >= step.num ? "bg-green-500" : "bg-slate-700"
+              currentStep >= step.num ? "bg-orange-500" : "bg-gray-300"
             }`}
           >
             {currentStep > step.num ? (
               <Check className="text-white" />
             ) : (
-              <span className="text-white font-bold text-lg">{step.num}</span>
+              <span className="text-black font-bold text-lg">{step.num}</span>
             )}
           </div>
           <span
             className={`mt-2 text-xs font-semibold transition-colors duration-500 ${
-              currentStep >= step.num ? "text-white" : "text-slate-400"
+              currentStep >= step.num ? "text-orange-500" : "text-gray-500"
             }`}
           >
             {step.title}

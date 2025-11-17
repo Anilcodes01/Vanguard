@@ -62,13 +62,13 @@ export default async function ExplorePage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#ffffff] p-4 text-black sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-white p-4 text-black sm:p-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold tracking-tight text-black md:text-5xl">
             Explore Community Highlights
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-black">
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
             Discover the most popular projects and challenging problems tackled
             by our community.
           </p>

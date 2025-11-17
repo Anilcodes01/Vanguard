@@ -40,11 +40,11 @@ export default function CommentWithReplies({
         className="rounded-full mt-0.5 h-8 w-8 object-cover flex-shrink-0"
       />
       <div className="flex-1">
-        <div className="bg-neutral-800 rounded-lg p-3">
-          <p className="text-sm font-semibold text-white">
+        <div className="bg-gray-50 rounded-lg p-3">
+          <p className="text-sm font-semibold text-black">
             {userProfile?.name || userProfile?.username || "Anonymous"}
           </p>
-          <p className="text-sm text-neutral-300 mt-0.5 whitespace-pre-wrap">
+          <p className="text-sm text-gray-600 mt-0.5 whitespace-pre-wrap">
             {comment.text}
           </p>
         </div>
@@ -53,8 +53,8 @@ export default function CommentWithReplies({
             onClick={() => onToggleCommentLike(comment.id, comment.hasLiked)}
             className={`text-xs flex items-center gap-1 px-1.5 py-0.5 rounded transition-colors ${
               comment.hasLiked
-                ? "text-green-400 hover:text-green-300"
-                : "text-neutral-400 hover:text-white"
+                ? "text-orange-400 hover:text-orange-300"
+                : "text-gray-500 hover:text-gray-900"
             }`}
           >
             <ThumbsUp className={`w-3 h-3 ${comment.hasLiked && "fill-current"}`} />
@@ -62,7 +62,7 @@ export default function CommentWithReplies({
           </button>
           <button
             onClick={() => setShowReplyForm(!showReplyForm)}
-            className="text-xs text-neutral-400 hover:text-white flex items-center gap-1 px-1.5 py-0.5 rounded"
+            className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 px-1.5 py-0.5 rounded"
           >
             <CornerDownRight className="w-3 h-3" />
             <span>Reply</span>

@@ -68,16 +68,16 @@ export default function NavbarSignedIn({
             />
           </Link>
         )}
-        <div className="flex items-center gap-1.5 xl:gap-2 bg-yellow-500/10 border border-yellow-500/20 px-2 xl:px-3 py-1 xl:py-1.5 rounded-full text-xs xl:text-sm">
+        <div className="flex items-center gap-1.5 xl:gap-2 bg-orange-500/10 border border-orange-500/20 px-2 xl:px-3 py-1 xl:py-1.5 rounded-full text-xs xl:text-sm">
           <Star
             size={12}
-            className="text-yellow-400 xl:w-3.5 xl:h-3.5"
+            className="text-orange-400 xl:w-3.5 xl:h-3.5"
             fill="currentColor"
           />
           <span className="font-bold text-black">{displayProfile.stars}</span>
         </div>
-        <div className="flex items-center gap-1.5 xl:gap-2 bg-sky-500/10 border border-sky-500/20 px-2 xl:px-3 py-1 xl:py-1.5 rounded-full text-xs xl:text-sm">
-          <Zap size={12} className="text-sky-400 xl:w-3.5 xl:h-3.5" />
+        <div className="flex items-center gap-1.5 xl:gap-2 bg-orange-600/10 border border-orange-600/20 px-2 xl:px-3 py-1 xl:py-1.5 rounded-full text-xs xl:text-sm">
+          <Zap size={12} className="text-orange-500 xl:w-3.5 xl:h-3.5" />
           <span className="font-bold text-black">{displayProfile.xp}</span>
           <span className="text-gray-400 hidden xl:inline">XP</span>
         </div>
@@ -110,7 +110,7 @@ export default function NavbarSignedIn({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="absolute top-full left-0 w-full bg-[#ffffff] lg:hidden z-20 shadow-lg border-t border-neutral-700"
+              className="absolute top-full left-0 w-full bg-black lg:hidden z-20 shadow-lg border-t border-neutral-700"
             >
               <div className="flex flex-col items-center gap-3 py-4 px-4">
                 <motion.div
@@ -136,10 +136,10 @@ export default function NavbarSignedIn({
                       </span>
                     </button>
                   )}
-                  <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 px-4 py-2 rounded-full text-sm">
+                  <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 px-4 py-2 rounded-full text-sm">
                     <Star
                       size={16}
-                      className="text-yellow-400"
+                      className="text-orange-400"
                       fill="currentColor"
                     />
                     <span className="font-bold text-white">
@@ -147,8 +147,8 @@ export default function NavbarSignedIn({
                     </span>
                     <span className="text-gray-400">Stars</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-sky-500/10 border border-sky-500/20 px-4 py-2 rounded-full text-sm">
-                    <Zap size={16} className="text-sky-400" />
+                  <div className="flex items-center gap-2 bg-orange-600/10 border border-orange-600/20 px-4 py-2 rounded-full text-sm">
+                    <Zap size={16} className="text-orange-500" />
                     <span className="font-bold text-white">
                       {displayProfile.xp}
                     </span>

@@ -22,7 +22,7 @@ export default function ProblemDetailsPanel({
 
     if (problem.solutionStatus === "Solved") {
       return (
-        <span className="flex items-center gap-1.5 px-3 py-1 text-sm rounded-full bg-emerald-500/10 text-emerald-400">
+        <span className="flex items-center gap-1.5 px-3 py-1 text-sm rounded-full bg-orange-500/10 text-orange-400">
           <CheckCircle2 size={14} />
           Solved
         </span>
@@ -42,9 +42,9 @@ export default function ProblemDetailsPanel({
   };
 
   return (
-    <div className="w-full  p-4 lg:p-6 flex flex-col gap-4  rounded-lg lg:overflow-y-auto bg-[#ffffff]">
+    <div className="w-full  p-4 lg:p-6 flex flex-col gap-4  rounded-lg lg:overflow-y-auto bg-white">
       <div className="flex flex-col">
-        <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
+        <h1 className="text-3xl lg:text-4xl font-bold text-black mb-2">
           {problem.title}
         </h1>
         <div className="flex gap-4 items-center flex-wrap">
@@ -60,23 +60,23 @@ export default function ProblemDetailsPanel({
       </div>
 
       <div
-        className="prose prose-invert max-w-none text-gray-300 mt-6"
+        className="prose prose-p:text-gray-600 mt-6"
         dangerouslySetInnerHTML={{ __html: problem.description }}
       />
 
       <div className="mt-6 flex flex-col gap-8">
         {problem.examples.map((example, index) => (
           <div key={example.id} className="rounded-lg mb-4">
-            <h3 className="font-semibold text-white mb-2">
+            <h3 className="font-semibold text-black mb-2">
               Example {index + 1}
             </h3>
             <div className="flex flex-col gap-2">
-              <p className="font-mono text-gray-300 text-sm">
-                <strong className="font-semibold text-white">Input:</strong>{" "}
+              <p className="font-mono text-gray-600 text-sm">
+                <strong className="font-semibold text-black">Input:</strong>{" "}
                 {example.input}
               </p>
-              <p className="font-mono text-sm text-gray-300">
-                <strong className="font-semibold text-white">Output:</strong>{" "}
+              <p className="font-mono text-sm text-gray-600">
+                <strong className="font-semibold text-black">Output:</strong>{" "}
                 {example.output}
               </p>
             </div>
@@ -84,10 +84,10 @@ export default function ProblemDetailsPanel({
         ))}
       </div>
 
-      <div className="mt-4 border-t border-gray-700 pt-6">
+      <div className="mt-4 border-t border-gray-200 pt-6">
         <button
           onClick={() => setIsTopicsOpen(!isTopicsOpen)}
-          className="flex items-center justify-between w-full text-left text-white hover:cursor-pointer p-2 rounded-md"
+          className="flex items-center justify-between w-full text-left text-black hover:cursor-pointer p-2 rounded-md"
           aria-expanded={isTopicsOpen}
         >
           <div className="flex items-center gap-2">
@@ -96,7 +96,7 @@ export default function ProblemDetailsPanel({
           </div>
           <ChevronDown
             size={20}
-            className={`text-gray-400 transition-transform duration-300 ${
+            className={`text-gray-500 transition-transform duration-300 ${
               isTopicsOpen ? "rotate-180" : ""
             }`}
           />
@@ -115,7 +115,7 @@ export default function ProblemDetailsPanel({
             {problem.topic.map((topic, index) => (
               <span
                 key={index}
-                className="bg-gray-700 text-gray-300 text-sm font-medium px-3 py-1 rounded-full"
+                className="bg-gray-200 text-gray-600 text-sm font-medium px-3 py-1 rounded-full"
               >
                 {topic}
               </span>

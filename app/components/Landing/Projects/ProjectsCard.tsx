@@ -16,8 +16,8 @@ type ProjectWithProgress = {
 };
 
 const PlaceholderIcon = () => (
-  <div className="w-full h-48 bg-neutral-800 flex items-center justify-center border-b border-neutral-700">
-    <Layers className="w-12 h-12 text-neutral-600" />
+  <div className="w-full h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200">
+    <Layers className="w-12 h-12 text-gray-400" />
   </div>
 );
 
@@ -35,7 +35,7 @@ export default function ProjectCard({
       onClick={() => {
         router.push(`/projects/${project.id}`);
       }}
-      className="group flex flex-col cursor-pointer h-full bg-[#2a2a2a] rounded-2xl overflow-hidden border border-neutral-700/50 shadow-lg shadow-black/20 hover:border-neutral-600 hover:shadow-xl hover:shadow-black/30 transition-all duration-300"
+      className="group flex flex-col cursor-pointer h-full bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-lg shadow-black/20 hover:border-orange-600 hover:shadow-xl hover:shadow-black/30 transition-all duration-300"
     >
       <div className="relative w-full h-48 overflow-hidden">
         {project.coverImage ? (
@@ -56,17 +56,17 @@ export default function ProjectCard({
       </div>
 
       <div className="p-5 flex flex-col flex-grow">
-        <h3 className="text-lg font-bold text-gray-100 truncate mb-2">
+        <h3 className="text-lg font-bold text-black truncate mb-2">
           {project.name}
         </h3>
 
-        <p className="text-sm text-gray-400 line-clamp-3 mb-4">
+        <p className="text-sm text-gray-600 line-clamp-3 mb-4">
           {project.description}
         </p>
 
-        <div className="mt-auto pt-4 border-t border-neutral-700/50 flex justify-between items-center gap-4 text-xs text-gray-400">
+        <div className="mt-auto pt-4 border-t border-gray-200 flex justify-between items-center gap-4 text-xs text-gray-600">
           <span className="inline-flex items-center gap-2">
-            <Layers size={16} className="text-blue-400" />
+            <Layers size={16} className="text-orange-400" />
             <span className="font-medium">{project.domain}</span>
           </span>
 
@@ -74,7 +74,7 @@ export default function ProjectCard({
             <Clock
               size={16}
               className={
-                project.startedAt ? "text-yellow-400" : "text-green-400"
+                project.startedAt ? "text-orange-400" : "text-orange-400"
               }
             />
             {project.startedAt ? (

@@ -42,10 +42,10 @@ export default function ProjectCard({
 
   return (
     <div
-      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg cursor-pointer bg-[#333] hover:bg-neutral-700 transition-colors border border-transparent hover:border-neutral-600"
+      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200"
       onClick={onClick}
     >
-      <div className="text-base sm:text-lg font-medium text-neutral-400">
+      <div className="text-base sm:text-lg font-medium text-gray-600">
         #{rank}
       </div>
       <Image
@@ -57,13 +57,13 @@ export default function ProjectCard({
       />
 
       <div className="flex-grow min-w-0">
-        <h3 className="font-bold text-white text-base sm:text-lg truncate">
+        <h3 className="font-bold text-black text-base sm:text-lg truncate">
           {project.name || project.project.name}
         </h3>
-        <p className="text-neutral-300 text-xs sm:text-sm truncate">
+        <p className="text-gray-600 text-xs sm:text-sm truncate">
           {project.short_description || "No description available."}
         </p>
-        <div className="flex items-center gap-4 mt-2 text-xs text-neutral-400">
+        <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
           <div className="flex items-center gap-1.5">
             <MessageCircle className="w-3.5 h-3.5" />
             <span>{project.commentsCount ?? 0}</span>
@@ -72,7 +72,7 @@ export default function ProjectCard({
           <div
             onClick={handleBookmarkClick}
             className={`flex sm:hidden items-center gap-1.5 cursor-pointer ${
-              project.hasBookmarked ? "text-blue-400" : "text-neutral-400"
+              project.hasBookmarked ? "text-blue-400" : "text-gray-500"
             }`}
           >
             {isBookmarking ? (
@@ -104,7 +104,7 @@ export default function ProjectCard({
             ${
               project.hasBookmarked
                 ? "border-blue-500 bg-blue-500/10 text-blue-400"
-                : "border-neutral-600 bg-neutral-700/50 hover:bg-neutral-600 text-neutral-300"
+                : "border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-600"
             } ${isBookmarking ? "cursor-not-allowed" : ""}`}
         >
           {isBookmarking ? (
@@ -128,13 +128,13 @@ export default function ProjectCard({
           className={`flex flex-col items-center justify-center p-1 border rounded-md w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 transition-colors
             ${
               project.hasUpvoted
-                ? "border-green-500 bg-green-500/10 text-green-400"
-                : "border-neutral-600 bg-neutral-700/50 hover:bg-neutral-600 text-neutral-300"
+                ? "border-orange-500 bg-orange-500/10 text-orange-400"
+                : "border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-600"
             }`}
         >
           <ArrowBigUp
             className={`w-5 h-5 sm:w-6 sm:h-6 ${
-              project.hasUpvoted ? "fill-current text-green-500" : ""
+              project.hasUpvoted ? "fill-current text-orange-500" : ""
             }`}
           />
           <span className="text-xs sm:text-sm font-semibold">

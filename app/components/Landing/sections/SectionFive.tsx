@@ -25,17 +25,17 @@ const faqData = [
 
 const FaqItem = ({ question, answer, isOpen, onClick }: { question: string; answer: string; isOpen: boolean; onClick: () => void; }) => {
   return (
-    <div className="group rounded-xl border border-gray-200 hover:border-green-500/50 transition-all duration-300 overflow-hidden bg-white">
+    <div className="group rounded-xl border border-gray-200 hover:border-orange-500/50 transition-all duration-300 overflow-hidden bg-white">
       <button
         className="flex cursor-pointer justify-between items-center w-full text-left text-gray-900 p-6 transition-colors duration-200"
         onClick={onClick}
       >
-        <span className="font-semibold pr-8 group-hover:text-green-600 transition-colors duration-300 text-base md:text-lg">
+        <span className="font-semibold pr-8 group-hover:text-orange-600 transition-colors duration-300 text-base md:text-lg">
           {question}
         </span>
-        <div className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gray-100 group-hover:bg-green-500/10 flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+        <div className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gray-100 group-hover:bg-orange-500/10 flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180' : ''}`}>
           <svg
-            className="w-5 h-5 text-gray-500 group-hover:text-green-500 transition-colors duration-300"
+            className="w-5 h-5 text-gray-500 group-hover:text-orange-500 transition-colors duration-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -75,14 +75,14 @@ export default function SectionFive() {
   return (
     <div className="relative py-20 px-4 md:px-8 overflow-hidden bg-gray-50">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-10 w-96 h-96 bg-green-400/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 right-10 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-10 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl"></div>
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-10"></div>
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto">
         <div className="text-center mb-16">
-          <div className="inline-block px-4 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-medium mb-4 border border-green-200">
+          <div className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-4 border border-orange-200">
             FAQ
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
@@ -115,7 +115,7 @@ export default function SectionFive() {
 
       <div className='w-full items-center font-sans justify-center flex flex-wrap gap-1 text-center text-gray-600'>
         <span>Can&apos;t find an answer? </span>
-        <span className='text-green-500 underline cursor-pointer'>Contact Support</span>
+        <span className='text-orange-500 underline cursor-pointer'>Contact Support</span>
       </div>
       </div>
 

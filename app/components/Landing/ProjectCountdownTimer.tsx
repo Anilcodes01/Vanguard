@@ -57,7 +57,7 @@ export default function ProjectCountdownTimer({
 
   const textColor = timeLeft.isExpired
     ? "text-red-400 font-bold"
-    : "text-yellow-400 font-semibold";
+    : "text-orange-400 font-semibold";
 
   return <span className={textColor}>{timeLeft.text}</span>;
 }

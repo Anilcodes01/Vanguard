@@ -22,7 +22,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = ({ children, ...props }: ButtonProps) => (
   <button
     {...props}
-    className={`flex items-center justify-center gap-2 rounded-md py-2.5 font-semibold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-[#ffffff] disabled:cursor-not-allowed disabled:opacity-60 ${props.className}`}
+    className={`flex items-center justify-center gap-2 rounded-md py-2.5 font-semibold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#ffffff] disabled:cursor-not-allowed disabled:opacity-60 ${props.className}`}
   >
     {children}
   </button>
@@ -120,13 +120,13 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#ffffff] px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-white px-4 py-12">
       <div className="w-full max-w-2xl">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-white">
+          <h1 className="text-3xl font-bold text-black">
             Coder&apos;s Initiation
           </h1>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-gray-600">
             A few quick questions to personalize your journey.
           </p>
         </div>
@@ -158,14 +158,14 @@ export default function OnboardingPage() {
               type="button"
               onClick={prevStep}
               disabled={step === 1 || isSubmitting}
-              className="text-gray-400 hover:bg-neutral-800 hover:text-white"
+              className="text-gray-600 hover:bg-gray-100 hover:text-black bg-transparent border border-gray-300"
             >
               Back
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="px-8 bg-green-600 hover:bg-green-700"
+              className="px-8 bg-orange-600 hover:bg-orange-700"
             >
               {isSubmitting
                 ? "Saving..."

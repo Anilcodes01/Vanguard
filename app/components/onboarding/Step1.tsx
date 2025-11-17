@@ -88,7 +88,7 @@ export const Step1: React.FC<Step1Props> = ({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="relative h-32 w-32 rounded-full border-2 border-dashed border-gray-600 bg-green-800/50 flex items-center justify-center text-gray-400 transition-all hover:border-green-500 cursor-pointer hover:bg-green-800 overflow-hidden"
+          className="relative h-32 w-32 rounded-full border-2 border-dashed border-gray-600 bg-orange-800/50 flex items-center justify-center text-gray-400 transition-all hover:border-orange-500 cursor-pointer hover:bg-orange-800 overflow-hidden"
         >
           {avatarPreview ? (
             <Image
@@ -107,7 +107,7 @@ export const Step1: React.FC<Step1Props> = ({
       </div>
       <div className="w-full space-y-6">
         <div>
-          <label className="text-sm text-gray-400 mb-2 block">
+          <label className="text-sm text-gray-600 mb-2 block">
             Primary Domain
           </label>
           <Popover open={openDomainPopover} onOpenChange={setOpenDomainPopover}>
@@ -115,13 +115,13 @@ export const Step1: React.FC<Step1Props> = ({
               <UiButton
                 variant="outline"
                 role="combobox"
-                className="w-full justify-between bg-transparent border-gray-600 text-white hover:bg-neutral-800 hover:text-white focus:border-green-500 h-auto py-2.5"
+                className="w-full justify-between bg-transparent border-gray-600 text-black hover:bg-gray-100 hover:text-black focus:border-orange-500 h-auto py-2.5"
               >
                 {formData.domain || "Select your domain..."}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </UiButton>
             </PopoverTrigger>
-            <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-neutral-800 border-gray-700 text-white">
+            <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-gray-800 border-gray-700 text-white">
               <Command>
                 <CommandInput placeholder="Search domain..." />
                 <CommandEmpty>No domain found.</CommandEmpty>

@@ -157,21 +157,21 @@ export default function CodeEditorPanel({
     }
     const remainingSeconds = maxTimeInSeconds - elapsedSeconds;
     if (remainingSeconds <= 60) {
-      return "text-yellow-400";
+      return "text-orange-400";
     }
-    return "text-gray-300";
+    return "text-gray-600";
   };
 
   const getTestCaseStatusStyle = (status: TestCaseStatus) => {
     switch (status) {
       case "running":
-        return "bg-zinc-700 text-white border border-sky-500";
+        return "bg-gray-200 text-black border border-orange-500";
       case "passed":
-        return "bg-emerald-800/60 text-emerald-300 border border-emerald-600";
+        return "bg-orange-100/60 text-orange-600 border border-orange-400";
       case "failed":
-        return "bg-red-800/60 text-red-300 border border-red-600";
+        return "bg-red-100/60 text-red-600 border border-red-400";
       default:
-        return "bg-zinc-800 text-gray-400 hover:bg-zinc-700";
+        return "bg-gray-100 text-gray-500 hover:bg-gray-200";
     }
   };
 
@@ -180,7 +180,7 @@ export default function CodeEditorPanel({
       case "running":
         return <Loader2 className="h-4 w-4 animate-spin" />;
       case "passed":
-        return <BsCheck2Circle className="h-4 w-4 text-emerald-400" />;
+        return <BsCheck2Circle className="h-4 w-4 text-orange-400" />;
       case "failed":
         return <X className="h-4 w-4 text-red-400" />;
       default:
@@ -194,20 +194,20 @@ export default function CodeEditorPanel({
     <div ref={containerRef} className=" flex flex-col h-full">
       <button
         onClick={onToggleMobileDetails}
-        className="lg:hidden flex items-center justify-between w-full p-3 bg-zinc-900 rounded-t-lg border-b border-zinc-700 text-left"
+        className="lg:hidden flex items-center justify-between w-full p-3 bg-gray-50 rounded-t-lg border-b border-gray-200 text-left"
       >
-        <span className="font-semibold text-white truncate pr-4">
+        <span className="font-semibold text-black truncate pr-4">
           {problemTitle}
         </span>
         <ChevronDown
           size={20}
-          className={`text-gray-400 flex-shrink-0 transition-transform duration-200 ${
+          className={`text-gray-500 flex-shrink-0 transition-transform duration-200 ${
             isMobileDetailsVisible ? "rotate-180" : ""
           }`}
         />
       </button>
       <div
-        className="bg-zinc-900 rounded-lg shadow-2xl flex flex-col overflow-hidden flex-shrink-0"
+        className="bg-gray-50 rounded-lg shadow-2xl flex flex-col overflow-hidden flex-shrink-0"
         style={{ height: editorHeight ? `${editorHeight}px` : "60%" }}
       >
         <EditorHeader
@@ -253,7 +253,7 @@ export default function CodeEditorPanel({
             }}
           />
         </div>
-        <div className="flex justify-between items-center px-4 py-1 bg-zinc-800 border-t border-zinc-700 text-xs text-gray-400">
+        <div className="flex justify-between items-center px-4 py-1 bg-gray-100 border-t border-gray-200 text-xs text-gray-600">
           <span>{isStarted ? "In Progress" : "Not Started"}</span>
           <span>Ln 1, Col 1</span>
         </div>
@@ -263,40 +263,40 @@ export default function CodeEditorPanel({
         onMouseDown={handleMouseDown}
         className="w-full h-2 cursor-row-resize flex items-center justify-center group"
       >
-        <div className="w-full h-[3px] bg-transparent group-hover:bg-sky-500/50 transition-colors duration-200"></div>
+        <div className="w-full h-[3px] bg-transparent group-hover:bg-orange-500/50 transition-colors duration-200"></div>
       </div>
 
-      <div className="flex-1 bg-[#ffffff] rounded-lg shadow-2xl flex flex-col min-h-0 overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-700">
+      <div className="flex-1 bg-white rounded-lg shadow-2xl flex flex-col min-h-0 overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
           <div className="flex items-center gap-4 text-sm font-medium">
             <button
               onClick={() => setActiveTab("testcase")}
               className={`flex items-center gap-2 p-1 rounded-md ${
-                activeTab === "testcase" ? "text-white" : "text-gray-400"
+                activeTab === "testcase" ? "text-black" : "text-gray-600"
               }`}
             >
               <BsCheck2Circle
                 className={`${
-                  activeTab === "testcase" ? "text-green-400" : ""
+                  activeTab === "testcase" ? "text-orange-400" : ""
                 }`}
               />
               Testcase
             </button>
-            <span className="text-zinc-600">|</span>
+            <span className="text-gray-300">|</span>
             <button
               onClick={() => setActiveTab("result")}
               className={`p-1 rounded-md ${
-                activeTab === "result" ? "text-white" : "text-gray-400"
+                activeTab === "result" ? "text-black" : "text-gray-600"
               }`}
             >
               Test Result
             </button>
           </div>
-          <div className="flex items-center gap-2 text-gray-400">
-            <button className="hover:text-white">
+          <div className="flex items-center gap-2 text-gray-500">
+            <button className="hover:text-gray-900">
               <Maximize size={16} />
             </button>
-            <button className="hover:text-white">
+            <button className="hover:text-gray-900">
               <ChevronUp size={20} />
             </button>
           </div>
@@ -314,7 +314,7 @@ export default function CodeEditorPanel({
                     className={`flex justify-center items-center gap-2 w-24 h-8 px-3 py-1 text-sm rounded-lg transition-colors border ${
                       activeCaseIndex === index &&
                       testCaseStatuses[index] === "pending"
-                        ? "bg-zinc-700 text-white border-transparent"
+                        ? "bg-gray-200 text-black border-transparent"
                         : getTestCaseStatusStyle(testCaseStatuses[index])
                     } disabled:opacity-70 disabled:cursor-not-allowed`}
                   >
@@ -323,7 +323,7 @@ export default function CodeEditorPanel({
                   </button>
                 ))}
                 <button
-                  className="p-1.5 rounded-lg bg-zinc-800 text-gray-400 hover:bg-zinc-700"
+                  className="p-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200"
                   disabled={isCodeRunning}
                 >
                   <Plus size={16} />

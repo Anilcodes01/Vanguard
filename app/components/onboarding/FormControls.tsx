@@ -16,12 +16,12 @@ export const TextInput: React.FC<TextInputProps> = ({
     <input
       {...props}
       id={id}
-      className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2.5 text-white placeholder-transparent focus:border-green-500 focus:outline-none"
+      className="peer w-full rounded-md border border-gray-300 bg-transparent px-4 py-2.5 text-black placeholder-transparent focus:border-orange-500 focus:outline-none"
       placeholder={label}
     />
     <label
       htmlFor={id}
-      className="absolute -top-2.5 left-3 cursor-text bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-green-500"
+      className="absolute -top-2.5 left-3 cursor-text bg-white px-1 text-sm text-gray-600 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-orange-500"
     >
       {label}
     </label>
@@ -42,7 +42,7 @@ export const ChoiceButtons: React.FC<SingleChoiceProps> = ({
   onSelect,
 }) => (
   <div>
-    <label className="text-sm text-gray-400 mb-2 block">{label}</label>
+    <label className="text-sm text-gray-600 mb-2 block">{label}</label>
     <div className="flex flex-wrap gap-3">
       {options.map((opt: string) => (
         <button
@@ -51,8 +51,8 @@ export const ChoiceButtons: React.FC<SingleChoiceProps> = ({
           onClick={() => onSelect(opt)}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
             selected === opt
-              ? "bg-green-600 text-white shadow-lg"
-              : "bg-neutral-800 text-gray-300 hover:bg-neutral-700"
+              ? "bg-orange-600 text-white shadow-lg"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
         >
           {opt}
@@ -69,8 +69,8 @@ export const SegmentedControl: React.FC<SingleChoiceProps> = ({
   onSelect,
 }) => (
   <div>
-    <label className="text-sm text-gray-400 mb-2 block">{label}</label>
-    <div className="flex w-full bg-neutral-800 rounded-lg p-1">
+    <label className="text-sm text-gray-600 mb-2 block">{label}</label>
+    <div className="flex w-full bg-gray-200 rounded-lg p-1">
       {options.map((opt: string) => (
         <button
           key={opt}
@@ -78,8 +78,8 @@ export const SegmentedControl: React.FC<SingleChoiceProps> = ({
           onClick={() => onSelect(opt)}
           className={`w-full text-center px-4 py-2 rounded-md text-sm font-medium transition-all ${
             selected === opt
-              ? "bg-green-600 text-white shadow"
-              : "text-gray-300 hover:bg-neutral-700"
+              ? "bg-orange-600 text-white shadow"
+              : "text-gray-700 hover:bg-gray-300"
           }`}
         >
           {opt}
@@ -103,7 +103,7 @@ export const ChoiceGrid: React.FC<ChoiceGridProps> = ({
   description,
 }) => (
   <div>
-    <label className="text-sm text-gray-400 mb-2 block">{label}</label>
+    <label className="text-sm text-gray-600 mb-2 block">{label}</label>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {options.map((opt: string) => {
         const isSelected = selected === opt;
@@ -116,18 +116,18 @@ export const ChoiceGrid: React.FC<ChoiceGridProps> = ({
             onClick={() => onSelect(opt)}
             className={`p-4 rounded-lg text-left transition-all border-2 ${
               isSelected
-                ? "border-green-500 bg-green-900/50"
-                : "border-gray-700 bg-neutral-800 hover:bg-neutral-700"
+                ? "border-orange-500 bg-orange-50"
+                : "border-gray-200 bg-white hover:bg-gray-50"
             }`}
           >
             <div className="flex items-center">
-              {isBadge && <Sparkles className="h-5 w-5 mr-3 text-yellow-400" />}
-              <span className="font-semibold text-white">{mainText}</span>
+              {isBadge && <Sparkles className="h-5 w-5 mr-3 text-orange-500" />}
+              <span className="font-semibold text-black">{mainText}</span>
               {isSelected && (
-                <Check className="ml-auto h-5 w-5 text-green-500" />
+                <Check className="ml-auto h-5 w-5 text-orange-500" />
               )}
             </div>
-            {subText && <p className="text-xs text-gray-400 mt-1">{subText}</p>}
+            {subText && <p className="text-xs text-gray-500 mt-1">{subText}</p>}
           </button>
         );
       })}
@@ -149,7 +149,7 @@ export const MultiChoiceGrid: React.FC<MultiChoiceGridProps> = ({
   onSelect,
 }) => (
   <div>
-    <label className="text-sm text-gray-400 mb-2 block">{label}</label>
+    <label className="text-sm text-gray-600 mb-2 block">{label}</label>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       {options.map((opt: string) => {
         const isSelected = selected.includes(opt);
@@ -160,18 +160,18 @@ export const MultiChoiceGrid: React.FC<MultiChoiceGridProps> = ({
             onClick={() => onSelect(opt)}
             className={`p-3 rounded-lg text-left transition-all border flex items-center text-sm ${
               isSelected
-                ? "border-green-600 bg-green-900/30"
-                : "border-gray-700 bg-neutral-800 hover:bg-neutral-700"
+                ? "border-orange-600 bg-orange-50"
+                : "border-gray-200 bg-white hover:bg-gray-50"
             }`}
           >
             <div
               className={`w-4 h-4 rounded-sm flex-shrink-0 mr-3 border-2 flex items-center justify-center ${
-                isSelected ? "bg-green-600 border-green-500" : "border-gray-500"
+                isSelected ? "bg-orange-600 border-orange-500" : "border-gray-400"
               }`}
             >
               {isSelected && <Check className="h-3 w-3 text-white" />}
             </div>
-            <span className="text-gray-200">{opt}</span>
+            <span className="text-gray-800">{opt}</span>
           </button>
         );
       })}

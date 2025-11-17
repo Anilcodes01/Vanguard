@@ -13,26 +13,26 @@ interface FeatureCardProps {
 function FeatureCard({ icon, title, description, index }: FeatureCardProps) {
     return (
         <div 
-            className="group relative flex flex-col items-start p-8 rounded-2xl border border-gray-200 hover:border-green-500 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-green-500/10 hover:-translate-y-1 w-full max-w-sm bg-white"
+            className="group relative flex flex-col items-start p-8 rounded-2xl border border-gray-200 hover:border-orange-500 transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-orange-500/10 hover:-translate-y-1 w-full max-w-sm bg-white"
             style={{
                 animationDelay: `${index * 150}ms`,
                 animation: 'fadeInUp 0.6s ease-out forwards',
                 opacity: 0
             }}
         >
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
             
-            <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 text-white mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-lg shadow-green-500/50">
+            <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 text-white mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-lg shadow-orange-500/50">
                 <span className="text-2xl">{icon}</span>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-green-600 transition-colors duration-300">
+            <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-orange-600 transition-colors duration-300">
                 {title}
             </h3>
             <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">
                 {description}
             </p>
             
-            <div className="flex items-center text-green-500 font-medium text-sm group-hover:gap-2 transition-all duration-300">
+            <div className="flex items-center text-orange-500 font-medium text-sm group-hover:gap-2 transition-all duration-300">
                 <span>Learn more</span>
                 <svg 
                     className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" 
@@ -69,7 +69,7 @@ export default function SectionTwo() {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-20 px-4 sm:p-8 bg-gray-50">
             <div className="text-center mb-16 max-w-3xl">
-                <div className="inline-block px-4 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-medium mb-4 border border-green-200">
+                <div className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-4 border border-orange-200">
                     Platform Features
                 </div>
                 <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
@@ -93,7 +93,7 @@ export default function SectionTwo() {
             </div>
             
             <div className="mt-16 text-center">
-                <button className="px-8 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/50 hover:scale-105">
+                <button className="px-8 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/50 hover:scale-105">
                     Start Learning Today
                 </button>
             </div>

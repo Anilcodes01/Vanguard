@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState, FormEvent, ChangeEvent, useRef } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -254,21 +254,21 @@ export default function ProblemPage() {
   }
   if (error) {
     return (
-      <div className="flex justify-center items-center bg-[#ffffff] h-screen text-red-500">
+      <div className="flex justify-center items-center bg-white h-screen text-red-500">
         Error: {error}
       </div>
     );
   }
   if (!problem || !selectedLanguage) {
     return (
-      <div className="flex justify-center items-center bg-[#ffffff] h-screen">
+      <div className="flex justify-center items-center bg-white h-screen">
         Problem not found or configured correctly.
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col lg:flex-row lg:h-screen p-2 gap-2 text-black lg:overflow-hidden bg-[#ffffff]">
+    <div className="flex flex-col lg:flex-row lg:h-screen p-2 gap-2 text-black lg:overflow-hidden bg-white">
       <div
         className={`
         lg:w-1/2 lg:block

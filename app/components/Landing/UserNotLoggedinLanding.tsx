@@ -9,7 +9,7 @@ import Footer from "./sections/Footer";
 
 export default function UsernotLoggedInLanding() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#ffffff] text-black gap-5">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#ffffff] text-black gap-">
       <div className="w-full">
         <SectionOne />
       </div>

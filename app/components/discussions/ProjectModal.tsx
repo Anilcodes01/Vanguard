@@ -66,12 +66,12 @@ export default function ProjectModal({
       onClick={handleClose}
     >
       <div
-        className={`bg-[#2d2d2d] border border-[#404040] rounded-2xl w-full max-w-6xl max-h-[90vh] shadow-2xl flex flex-col transition-all duration-300 ${
+        className={`bg-white border border-gray-200 rounded-2xl w-full max-w-6xl max-h-[90vh] shadow-2xl flex flex-col transition-all duration-300 ${
           isClosing ? "opacity-0 scale-95" : "opacity-100 scale-100"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-5 border-b border-[#404040] flex-shrink-0">
+        <div className="p-5 border-b border-gray-200 flex-shrink-0">
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-4 flex-1">
               <Image
@@ -79,20 +79,20 @@ export default function ProjectModal({
                 alt={userProfile?.name || "User"}
                 width={48}
                 height={48}
-                className="rounded-full h-12 w-12 ring-2 ring-[#404040]"
+                className="rounded-full h-12 w-12 ring-2 ring-gray-200"
               />
               <div>
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-xl font-bold text-black">
                   {project.name || project.project.name}
                 </h2>
-                <p className="text-sm text-neutral-400">
+                <p className="text-sm text-gray-600">
                   by {userProfile?.name || userProfile?.username || "Anonymous"}
                 </p>
               </div>
             </div>
             <button
               onClick={handleClose}
-              className="text-neutral-500 hover:text-white transition-all duration-300 hover:rotate-90 p-1 rounded-lg hover:bg-[#404040]"
+              className="text-gray-500 hover:text-black transition-all duration-300 hover:rotate-90 p-1 rounded-lg hover:bg-gray-100"
             >
               <X className="w-5 h-5" />
             </button>
@@ -101,12 +101,12 @@ export default function ProjectModal({
 
         {isLoading ? (
           <div className="flex-1 flex justify-center min-h-screen items-center p-10">
-            <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+            <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto p-5 grid grid-cols-1 lg:grid-cols-3 gap-6 scrollbar-none">
             <div className="lg:col-span-2 flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative aspect-video rounded-lg overflow-hidden bg-[#222]">
+              <div className="flex-1 relative aspect-video rounded-lg overflow-hidden bg-gray-100">
                 {selectedImage ? (
                   <Image
                     src={selectedImage}
@@ -115,7 +115,7 @@ export default function ProjectModal({
                     className="object-contain"
                   />
                 ) : (
-                  <div className="flex items-center justify-center h-full text-neutral-500">
+                  <div className="flex items-center justify-center h-full text-gray-500">
                     No image available
                   </div>
                 )}
@@ -128,8 +128,8 @@ export default function ProjectModal({
                       onClick={() => setSelectedImage(url)}
                       className={`relative flex-shrink-0 w-24 h-14 md:w-28 md:h-16 rounded-md overflow-hidden ring-2 transition-all duration-200 ${
                         selectedImage === url
-                          ? "ring-green-500"
-                          : "ring-transparent hover:ring-neutral-500"
+                          ? "ring-orange-500"
+                          : "ring-transparent hover:ring-gray-500"
                       }`}
                     >
                       <Image
@@ -150,8 +150,8 @@ export default function ProjectModal({
                   onClick={() => onUpvote(project.id)}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-medium text-sm transition-all ${
                     project.hasUpvoted
-                      ? "bg-green-500/10 text-green-400 border border-green-500/30"
-                      : "bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a]"
+                      ? "bg-orange-500/10 text-orange-400 border border-orange-500/30"
+                      : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
                   }`}
                 >
                   <ArrowBigUp
@@ -161,7 +161,7 @@ export default function ProjectModal({
                   />
                   <span>{project.upvotesCount}</span>
                 </button>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#333] text-neutral-300 border border-[#444] font-medium text-sm">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 border border-gray-200 font-medium text-sm">
                   <MessageCircle className="w-4 h-4" />
                   <span>{project.commentsCount}</span>
                 </div>
@@ -172,7 +172,7 @@ export default function ProjectModal({
                     ${
                       project.hasBookmarked
                         ? "bg-blue-500/10 text-blue-400 border border-blue-500/30"
-                        : "bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a]"
+                        : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
                     } ${isBookmarking ? "cursor-not-allowed" : ""}`}
                 >
                   {isBookmarking ? (
@@ -194,7 +194,7 @@ export default function ProjectModal({
                     href={project.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a] hover:text-white transition-colors text-sm font-medium"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200 hover:text-black transition-colors text-sm font-medium"
                   >
                     <Github className="w-4 h-4" /> Code
                   </a>
@@ -204,7 +204,7 @@ export default function ProjectModal({
                     href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#333] text-neutral-300 border border-[#444] hover:bg-[#3a3a3a] hover:text-white transition-colors text-sm font-medium"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200 hover:text-black transition-colors text-sm font-medium"
                   >
                     <LinkIcon className="w-4 h-4" /> Demo
                   </a>
@@ -213,7 +213,7 @@ export default function ProjectModal({
 
               {project.short_description && (
                 <div>
-                  <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap">
+                  <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">
                     {project.short_description}
                   </p>
                 </div>
@@ -221,10 +221,10 @@ export default function ProjectModal({
 
               {project.description && (
                 <div>
-                  <h3 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                     Description
                   </h3>
-                  <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap">
+                  <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">
                     {project.description}
                   </p>
                 </div>
@@ -232,14 +232,14 @@ export default function ProjectModal({
 
               {project.builtWith?.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                     Built With
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {project.builtWith.map((tech) => (
                       <span
                         key={tech}
-                        className="bg-[#333] text-neutral-300 text-xs font-medium px-2.5 py-1 rounded-md border border-[#444]"
+                        className="bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-1 rounded-md border border-gray-200"
                       >
                         {tech}
                       </span>
@@ -249,7 +249,7 @@ export default function ProjectModal({
               )}
             </div>
 
-            <div className="lg:col-span-3 pt-4 border-t border-[#404040]">
+            <div className="lg:col-span-3 pt-4 border-t border-gray-200">
               <DynamicCommentSection
                 project={project}
                 onNewComment={onNewComment}

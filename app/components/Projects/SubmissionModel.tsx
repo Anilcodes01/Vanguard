@@ -19,7 +19,7 @@ export default function SubmissionModal({
         <SubmissionForm {...formProps} />
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 bg-gray-800 rounded-full hover:bg-gray-700 hover:text-white"
+          className="absolute top-4 right-4 p-2 text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200 hover:text-black"
         >
           <X className="h-5 w-5" />
         </button>

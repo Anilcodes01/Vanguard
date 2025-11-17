@@ -33,7 +33,7 @@ export default function ProjectDetails({
   return (
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 w-full">
       <div className="lg:w-2/3">
-        <div className="h-full w-full bg-gray-800 rounded-xl overflow-hidden ring-1 ring-white/10">
+        <div className="h-full w-full bg-white rounded-xl overflow-hidden ring-1 ring-gray-200">
           {project.coverImage && (
             <Image
               src={project.coverImage}
@@ -49,12 +49,12 @@ export default function ProjectDetails({
       <div className="lg:w-1/3 flex flex-col gap-8">
         <div>
           <div className="space-y-4">
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white">
+            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-black">
               {project.name}
             </h1>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-gray-400">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-gray-600">
               <div className="flex items-center gap-2">
-                <Tag className="w-4 h-4 text-green-400" />
+                <Tag className="w-4 h-4 text-orange-400" />
                 <span className="text-sm font-medium">{project.domain}</span>
               </div>
               <div className="flex items-center gap-2">
@@ -72,10 +72,10 @@ export default function ProjectDetails({
               </div>
             </div>
           </div>
-          <h2 className="text-xl mt-6 font-semibold text-white mb-2">
+          <h2 className="text-xl mt-6 font-semibold text-black mb-2">
             Project Description
           </h2>
-          <div className="prose prose-invert prose-p:text-gray-300 prose-p:leading-relaxed whitespace-pre-wrap">
+          <div className="prose prose-p:text-gray-600 prose-p:leading-relaxed whitespace-pre-wrap">
             {project.description}
           </div>
         </div>

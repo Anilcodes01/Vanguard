@@ -80,13 +80,13 @@ export default async function ProblemsPage({
   const difficulty = resolvedSearchParams.difficulty || "All";
   const initialData = await getProblems(difficulty, 1);
   return (
-    <div className="bg-[#ffffff] min-h-screen">
+    <div className="bg-white min-h-screen">
       <div className="w-full max-w-6xl mx-auto px-4 py-12 md:px-8 md:py-16">
         <div className="mb-12 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-black mb-3 tracking-tight">
             Practice Problems
           </h1>
-          <p className="text-black text-lg">
+          <p className="text-gray-600 text-lg">
             Sharpen your skills with our curated collection of coding
             challenges.
           </p>

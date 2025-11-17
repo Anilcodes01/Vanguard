@@ -85,8 +85,8 @@ export default function SubmissionForm({
   };
 
   return (
-    <div className="bg-[#1a1a1a] p-8 rounded-lg shadow-2xl w-full max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold text-white mb-6 text-center">
+    <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-4xl mx-auto">
+      <h2 className="text-2xl font-bold text-black mb-6 text-center">
         Showcase Your Project
       </h2>
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -95,20 +95,20 @@ export default function SubmissionForm({
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-neutral-300 mb-1"
+                className="block text-sm font-medium text-gray-600 mb-1"
               >
                 Project Name (Optional)
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Type className="h-5 w-5 text-gray-400" />
+                  <Type className="h-5 w-5 text-gray-500" />
                 </div>
                 <input
                   type="text"
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
                   placeholder="Leave blank to use the default name"
                 />
               </div>
@@ -117,20 +117,20 @@ export default function SubmissionForm({
             <div>
               <label
                 htmlFor="description"
-                className="block text-sm font-medium text-neutral-300 mb-1"
+                className="block text-sm font-medium text-gray-600 mb-1"
               >
                 Description (Optional)
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 pt-2.5">
-                  <FileText className="h-5 w-5 text-gray-400" />
+                  <FileText className="h-5 w-5 text-gray-500" />
                 </div>
                 <textarea
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
-                  className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
                   placeholder="A detailed description of your project..."
                 />
               </div>
@@ -139,20 +139,20 @@ export default function SubmissionForm({
             <div>
               <label
                 htmlFor="githubUrl"
-                className="block text-sm font-medium text-neutral-300 mb-1"
+                className="block text-sm font-medium text-gray-600 mb-1"
               >
                 GitHub Repository URL*
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Github className="w-5 h-5 text-gray-400" />
+                  <Github className="w-5 h-5 text-gray-500" />
                 </div>
                 <input
                   type="url"
                   id="githubUrl"
                   value={githubUrl}
                   onChange={(e) => setGithubUrl(e.target.value)}
-                  className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
                   placeholder="https://github.com/user/repo"
                   required
                 />
@@ -161,20 +161,20 @@ export default function SubmissionForm({
             <div>
               <label
                 htmlFor="liveUrl"
-                className="block text-sm font-medium text-neutral-300 mb-1"
+                className="block text-sm font-medium text-gray-600 mb-1"
               >
                 Live Deployed URL (Optional)
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <LinkIcon className="h-5 w-5 text-gray-400" />
+                  <LinkIcon className="h-5 w-5 text-gray-500" />
                 </div>
                 <input
                   type="url"
                   id="liveUrl"
                   value={liveUrl}
                   onChange={(e) => setLiveUrl(e.target.value)}
-                  className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
                   placeholder="https://my-project.vercel.app"
                 />
               </div>
@@ -182,20 +182,20 @@ export default function SubmissionForm({
             <div>
               <label
                 htmlFor="builtWith"
-                className="block text-sm font-medium text-neutral-300 mb-1"
+                className="block text-sm font-medium text-gray-600 mb-1"
               >
                 Technologies Used*
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Code className="h-5 w-5 text-gray-400" />
+                  <Code className="h-5 w-5 text-gray-500" />
                 </div>
                 <input
                   type="text"
                   id="builtWith"
                   value={builtWith}
                   onChange={(e) => setBuiltWith(e.target.value)}
-                  className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
                   placeholder="Next.js, Tailwind CSS, Prisma"
                   required
                 />
@@ -208,29 +208,29 @@ export default function SubmissionForm({
                <div>
               <label
                 htmlFor="shortDescription"
-                className="block text-sm font-medium text-neutral-300 mb-1"
+                className="block text-sm font-medium text-gray-600 mb-1"
               >
                 Short Description (Optional)
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 pt-2.5">
-                  <FileText className="h-5 w-5 text-gray-400" />
+                  <FileText className="h-5 w-5 text-gray-500" />
                 </div>
                 <textarea
                   id="shortDescription"
                   value={shortDescription}
                   onChange={(e) => setShortDescription(e.target.value)}
                   rows={2}
-                  className="block w-full rounded-md border-0 bg-[#222] py-2.5 pl-10 text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
                   placeholder="A brief summary of your project..."
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-1">
+              <label className="block text-sm font-medium text-gray-600 mb-1">
                 Cover Image (Optional)
               </label>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-neutral-600 px-6 py-10">
+              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10">
                 {coverImagePreview ? (
                   <div className="relative">
                     <Image
@@ -249,13 +249,13 @@ export default function SubmissionForm({
                 ) : (
                   <div className="text-center">
                     <ImageUp
-                      className="mx-auto h-12 w-12 text-neutral-500"
+                      className="mx-auto h-12 w-12 text-gray-500"
                       aria-hidden="true"
                     />
-                    <div className="mt-4 flex justify-center text-sm leading-6 text-neutral-400">
+                    <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                       <label
                         htmlFor="coverImage"
-                        className="relative cursor-pointer rounded-md font-semibold text-green-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-green-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-green-300"
+                        className="relative cursor-pointer rounded-md font-semibold text-orange-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-orange-500 focus-within:ring-offset-2 focus-within:ring-offset-white hover:text-orange-300"
                       >
                         <span>Upload a file</span>
                         <input
@@ -269,7 +269,7 @@ export default function SubmissionForm({
                         />
                       </label>
                     </div>
-                    <p className="text-xs leading-5 text-neutral-500">
+                    <p className="text-xs leading-5 text-gray-500">
                       PNG, JPG, GIF up to 10MB
                     </p>
                   </div>
@@ -278,10 +278,10 @@ export default function SubmissionForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-1">
+              <label className="block text-sm font-medium text-gray-600 mb-1">
                 Project Screenshots (Optional)
               </label>
-              <div className="mt-2 flex items-center justify-center rounded-lg border border-dashed border-neutral-600 px-6 py-10">
+              <div className="mt-2 flex items-center justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10">
                 {screenshotsPreview.length > 0 ? (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {screenshotsPreview.map((src, index) => (
@@ -304,13 +304,13 @@ export default function SubmissionForm({
                 ) : (
                   <div className="text-center">
                     <ImageUp
-                      className="mx-auto h-12 w-12 text-neutral-500"
+                      className="mx-auto h-12 w-12 text-gray-500"
                       aria-hidden="true"
                     />
-                    <div className="mt-4 flex justify-center text-sm leading-6 text-neutral-400">
+                    <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                       <label
                         htmlFor="screenshots"
-                        className="relative cursor-pointer rounded-md font-semibold text-green-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-green-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-green-300"
+                        className="relative cursor-pointer rounded-md font-semibold text-orange-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-orange-500 focus-within:ring-offset-2 focus-within:ring-offset-white hover:text-orange-300"
                       >
                         <span>Upload files</span>
                         <input
@@ -325,7 +325,7 @@ export default function SubmissionForm({
                         />
                       </label>
                     </div>
-                    <p className="text-xs leading-5 text-neutral-500">
+                    <p className="text-xs leading-5 text-gray-500">
                       Upload up to 4 images
                     </p>
                   </div>
@@ -339,7 +339,7 @@ export default function SubmissionForm({
           <button
             type="submit"
             disabled={isSubmitting || !githubUrl || !builtWith}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-500 disabled:opacity-50 transition-colors duration-200"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 disabled:opacity-50 transition-colors duration-200"
           >
             {isSubmitting ? (
               <>
@@ -360,7 +360,7 @@ export default function SubmissionForm({
           <p
             className={`text-sm text-center ${
               submissionStatus.type === "success"
-                ? "text-green-400"
+                ? "text-orange-400"
                 : "text-red-400"
             }`}
           >

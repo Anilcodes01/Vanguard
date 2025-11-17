@@ -65,10 +65,10 @@ export default async function ProjectsPage() {
 
     if (!data || !data.projects || data.projects.length === 0) {
       return (
-        <main className="min-h-screen bg-[#ffffff] p-4 sm:p-6 md:p-8">
+        <main className="min-h-screen bg-white p-4 sm:p-6 md:p-8">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold text-white mb-8">Projects</h1>
-            <div className="text-center text-neutral-400 text-lg">
+            <h1 className="text-3xl font-bold text-black mb-8">Projects</h1>
+            <div className="text-center text-gray-600 text-lg">
               No projects found for your domain.
             </div>
           </div>
@@ -77,9 +77,9 @@ export default async function ProjectsPage() {
     }
 
     return (
-      <main className="min-h-screen bg-[#ffffff] p-4 sm:p-6 md:p-8">
+      <main className="min-h-screen bg-white p-4 sm:p-6 md:p-8">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-white mb-8">Projects</h1>
+          <h1 className="text-3xl font-bold text-black mb-8">Projects</h1>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
             {data.projects.map((project, index: number) => (
@@ -97,7 +97,7 @@ export default async function ProjectsPage() {
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred.";
     return (
-      <div className="flex justify-center items-center min-h-screen bg-[#ffffff] text-red-400">
+      <div className="flex justify-center items-center min-h-screen bg-white text-red-400">
         Error: {errorMessage}
       </div>
     );

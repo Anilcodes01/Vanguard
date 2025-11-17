@@ -29,13 +29,13 @@ export default function SectionOne() {
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen w-full overflow-hidden px-4 md:px-8 py-20 bg-gray-50">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-green-400/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         {mounted && codeSnippets.map((snippet, i) => (
           <div
             key={i}
-            className="absolute text-green-500 font-mono text-sm animate-float"
+            className="absolute text-orange-500 font-mono text-sm animate-float"
             style={{
               top: `${Math.random() * 80 + 10}%`,
               left: `${Math.random() * 80 + 10}%`,
@@ -52,15 +52,15 @@ export default function SectionOne() {
 
       <div className="relative z-10 flex flex-col w-full gap-8 items-center justify-center">
         <div 
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 text-green-700 text-xs sm:text-sm font-medium border border-green-200 backdrop-blur-sm text-center"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 text-orange-700 text-xs sm:text-sm font-medium border border-orange-200 backdrop-blur-sm text-center"
           style={{
             animation: 'fadeInDown 0.6s ease-out forwards',
             opacity: 0
           }}
         >
           <span className="relative flex h-2 w-2 flex-shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
           </span>
           <span>Join 10,000+ students building their careers</span>
         </div>
@@ -75,7 +75,7 @@ export default function SectionOne() {
         >
           Turn Daily Practice
           <br />
-          <span className="bg-gradient-to-r from-green-500 to-emerald-600 text-transparent bg-clip-text">
+          <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-transparent bg-clip-text">
             Into a Verified Internship
           </span>
         </h1>
@@ -101,7 +101,7 @@ export default function SectionOne() {
         >
           <button 
             onClick={() => router.push('/signup')} 
-            className="group relative cursor-pointer rounded-xl px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/50 hover:scale-105 w-full sm:w-auto"
+            className="group relative cursor-pointer rounded-xl px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/50 hover:scale-105 w-full sm:w-auto"
           >
             <span className="relative z-10 flex items-center justify-center gap-2">
               Start Solving Now
@@ -109,12 +109,12 @@ export default function SectionOne() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </button>
 
           <button 
             onClick={() => router.push('/explore')}
-            className="cursor-pointer rounded-xl px-8 py-4 bg-white text-gray-900 font-semibold border border-gray-300 hover:border-green-500 transition-all duration-300 hover:bg-gray-50 w-full sm:w-auto"
+            className="cursor-pointer rounded-xl px-8 py-4 bg-white text-gray-900 font-semibold border border-gray-300 hover:border-orange-500 transition-all duration-300 hover:bg-gray-50 w-full sm:w-auto"
           >
             Explore Challenges
           </button>
@@ -149,19 +149,19 @@ export default function SectionOne() {
           }}
         >
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             <span>Free to start</span>
           </div>
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             <span>No credit card required</span>
           </div>
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             <span>Join a cohort of learners</span>

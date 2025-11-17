@@ -67,8 +67,8 @@ export default function ProblemsList({
             onClick={() => handleFilterChange(filter)}
             className={`px-4 py-2 rounded-lg text-sm cursor-pointer font-semibold transition-colors duration-200 ${
               activeFilter === filter
-                ? "bg-green-500 text-black shadow-lg shadow-green-500/10"
-                : "bg-neutral-800 text-white hover:bg-neutral-700 hover:text-neutral-200"
+                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/10"
+                : "bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900"
             }`}
           >
             {filter}
@@ -78,7 +78,7 @@ export default function ProblemsList({
 
       {initialProblems.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-black">No problems found for this filter.</p>
+          <p className="text-gray-600">No problems found for this filter.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -93,7 +93,7 @@ export default function ProblemsList({
           <button
             onClick={loadMoreProblems}
             disabled={isLoading}
-            className="px-6 py-2 cursor-pointer bg-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 cursor-pointer bg-orange-500 text-white font-semibold rounded-lg transition-all duration-300 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Load More
           </button>
@@ -102,13 +102,13 @@ export default function ProblemsList({
 
       {isLoading && (
         <div className="flex justify-center items-center py-10">
-          <div className="w-8 h-8 border-4 border-neutral-800 border-t-green-500 rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
         </div>
       )}
 
       {!hasMore && problems.length > 0 && (
         <div className="text-center mt-12">
-          <p className="text-black text-sm">
+          <p className="text-gray-600 text-sm">
             ✨ You&apos;ve reached the end ✨
           </p>
         </div>

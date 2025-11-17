@@ -235,7 +235,7 @@ export default function IndividualProjectPage() {
   if (error) return <ErrorMessage message={error} />;
   if (!project) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-900 text-gray-400">
+      <div className="flex justify-center items-center min-h-screen bg-white text-gray-600">
         <p>Project not found.</p>
       </div>
     );
@@ -243,7 +243,7 @@ export default function IndividualProjectPage() {
 
   return (
     <>
-      <main className="min-h-screen bg-[#ffffff] text-gray-100">
+      <main className="min-h-screen bg-white text-black">
         <div className="max-w-7xl mx-auto p-4 sm:p-8">
           <div className="w-full">
             <ProjectDetails
