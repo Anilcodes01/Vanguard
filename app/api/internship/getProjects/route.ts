@@ -59,7 +59,7 @@ async function generateProjectsWithGemini(userProfile: Profiles) {
   }
 }
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET() {
   try {
     const supabase = await createClient();
     const {
