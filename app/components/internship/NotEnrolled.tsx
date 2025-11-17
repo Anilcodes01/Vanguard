@@ -82,44 +82,11 @@ export default function NotEnrolled() {
     setStep((prev) => (prev < TOTAL_STEPS ? prev + 1 : prev));
   const prevStep = () => setStep((prev) => (prev > 1 ? prev - 1 : prev));
 
-  // const handleGetStarted = async () => {
-  //   setIsLoading(true);
-  //   setViewState("side-by-side");
-  //   try {
-  //     const response = await fetch("/api/internship/greet", { method: "POST" });
-  //     if (!response.ok) throw new Error("Failed to fetch profile data");
-
-  //     const data: { greeting: string; profileData: ProfileType } =
-  //       await response.json();
-  //     setGreeting(data.greeting);
-
-  //     if (data.profileData) {
-  //       setFormData((prev) => ({
-  //         ...prev,
-  //         ...(data.profileData as Partial<OnboardingFormData>),
-  //       }));
-  //       if (data.profileData.avatar_url)
-  //         setAvatarPreview(data.profileData.avatar_url);
-  //     }
-  //   } catch (error) {
-  //     const message =
-  //       error instanceof Error
-  //         ? error.message
-  //         : "An unexpected error occurred.";
-  //     toast.error(`Failed to load profile: ${message}`);
-  //     setGreeting("Sorry, I couldn't prepare your greeting. Please try again.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const handleGetStarted = async () => {
     setIsLoading(true);
     setViewState("side-by-side");
     try {
-      const response = await fetch("/api/internship/callAI", {
-        method: "POST",
-      });
+      const response = await fetch("/api/internship/greet", { method: "POST" });
       if (!response.ok) throw new Error("Failed to fetch profile data");
 
       const data: { greeting: string; profileData: ProfileType } =
@@ -146,47 +113,49 @@ export default function NotEnrolled() {
     }
   };
 
-  async function send() {
-    setIsLoading(true);
-    setViewState("side-by-side");
-    try {
-      const response = await fetch("/api/internship/callAI", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({}),
-      });
+  // async function send() {
+  //   setIsLoading(true);
+  //   setViewState("side-by-side");
+  //   try {
+  //     const response = await fetch("/api/internship/callAI", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({}),
+  //     });
 
-      if (!response.ok) {
-        throw new Error("Failed to get a response from the AI.");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to get a response from the AI.");
+  //     }
 
-      const data: { greeting: string; profileData: ProfileType } =
-        await response.json();
+  //     const data: { greeting: string; profileData: ProfileType } =
+  //       await response.json();
 
-      setGreeting(data.greeting);
+  //     setGreeting(data.greeting);
 
-      if (data.profileData) {
-        setFormData((prev) => ({
-          ...prev,
-          ...(data.profileData as Partial<OnboardingFormData>),
-        }));
-        if (data.profileData.avatar_url) {
-          setAvatarPreview(data.profileData.avatar_url);
-        }
-      }
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred.";
-      toast.error(`Failed to load profile: ${message}`);
-      setGreeting("Sorry, I couldn't prepare your greeting. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  //     if (data.profileData) {
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         ...(data.profileData as Partial<OnboardingFormData>),
+  //       }));
+  //       if (data.profileData.avatar_url) {
+  //         setAvatarPreview(data.profileData.avatar_url);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     const message =
+  //       error instanceof Error
+  //         ? error.message
+  //         : "An unexpected error occurred.";
+  //     toast.error(`Failed to load profile: ${message}`);
+  //     setGreeting("Sorry, I couldn't prepare your greeting. Please try again.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
+
+
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (step < TOTAL_STEPS) {
@@ -279,7 +248,7 @@ export default function NotEnrolled() {
                 your profile and get you started!
               </p>
               <Button
-                onClick={send}
+                onClick={handleGetStarted}
                 className="bg-green-500 hover:bg-green-600"
               >
                 Get Started now
