@@ -11,7 +11,7 @@ interface NavbarProps {
 
 export default function Navbar({ onToggleSidebar }: NavbarProps) {
   return (
-    <header className="flex items-center justify-between bg-white text-black py-3 sm:py-4 px-4 sm:px-6 lg:px-8 w-full border-b ">
+    <header className="flex items-center justify-between bg-white text-black py-3 sm:py-4 px- px-2  w-full border-b ">
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleSidebar}
@@ -25,13 +25,13 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
           className="text-xl sm:text-2xl flex gap-2 font-bold flex-shrink-0 z-30"
         >
           <Image
-            src={"/ant-intern.png"}
+            src={"/final.png"}
             alt="AntIntern logo"
             width={200}
             height={200}
-            className="h-8 w-8 sm:h-10 sm:w-10"
+            className="h-8 w-8  sm:h-10 sm:w-10"
           />
-          <span className="hidden sm:inline">AntIntern</span>
+          {/* <span className="hidden sm:inline">AntIntern</span> */}
         </Link>
       </div>
 

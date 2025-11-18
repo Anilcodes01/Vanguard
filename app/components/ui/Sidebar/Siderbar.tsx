@@ -41,7 +41,7 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
         collapsed ? "w-14" : "w-64"
       }`}
     >
-      <nav className="flex-1 px-1 py-4 space-y-2">
+      <nav className="flex-1 px-2 py-4 space-y-2">
         {sidebarItems.map((item) => {
           const isActive = pathname === item.path;
 
@@ -58,7 +58,7 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
                 }
               `}
             >
-              <div className="flex h-6 w-6 items-center justify-center flex-shrink-0">
+              <div className="flex h-4 w-4 items-center justify-center flex-shrink-0">
                 {item.icon}
               </div>
 
