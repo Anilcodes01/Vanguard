@@ -38,10 +38,10 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={`bg-white border-r border-gray-200 transition-all duration-300 ease-in-out flex flex-col ${
-        collapsed ? "w-20" : "w-64"
+        collapsed ? "w-16" : "w-64"
       }`}
     >
-      <nav className="flex-1 px-4 py-4 space-y-2">
+      <nav className="flex-1 px-2 py-4 space-y-2">
         {sidebarItems.map((item) => {
           const isActive = pathname === item.path;
 
