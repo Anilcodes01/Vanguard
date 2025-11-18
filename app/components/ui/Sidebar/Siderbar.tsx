@@ -38,10 +38,10 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={`bg-white border-r border-gray-200 transition-all duration-300 ease-in-out flex flex-col ${
-        collapsed ? "w-16" : "w-64"
+        collapsed ? "w-14" : "w-64"
       }`}
     >
-      <nav className="flex-1 px-2 py-4 space-y-2">
+      <nav className="flex-1 px-1 py-4 space-y-2">
         {sidebarItems.map((item) => {
           const isActive = pathname === item.path;
 
@@ -51,14 +51,14 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
               href={item.path}
               className={`
                 group relative flex items-center gap-4
-                h-12 px-2 rounded-xl transition-all duration-200
+                h-10 px-3 rounded-lg transition-all duration-200
                 ${isActive
                   ? "bg-orange-500 text-white font-medium shadow-sm"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 }
               `}
             >
-              <div className="flex h-8 w-8 items-center justify-center flex-shrink-0">
+              <div className="flex h-6 w-6 items-center justify-center flex-shrink-0">
                 {item.icon}
               </div>
 
