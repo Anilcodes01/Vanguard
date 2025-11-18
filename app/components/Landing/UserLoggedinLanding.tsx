@@ -39,7 +39,7 @@ export default function UserLoggedInLanding() {
 
   if (dashboardError) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white text-black">
+      <div className="flex items-center justify-center h-full bg-white text-black">
         <p className="text-red-400">Error: {dashboardError}</p>
       </div>
     );

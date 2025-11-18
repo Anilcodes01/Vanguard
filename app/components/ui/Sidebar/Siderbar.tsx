@@ -13,14 +13,7 @@ import {
   Plus,
 } from "lucide-react";
 
-interface SidebarItem {
-  key: string;
-  name: string;
-  path: string;
-  icon: React.ReactNode;
-}
-
-const sidebarItems: SidebarItem[] = [
+const sidebarItems = [
   { key: "home", name: "Home", path: "/", icon: <Home className="h-5 w-5" /> },
   { key: "explore", name: "Explore", path: "/explore", icon: <Search className="h-5 w-5" /> },
   { key: "problems", name: "Problems", path: "/problems", icon: <Code className="h-5 w-5" /> },
@@ -37,11 +30,7 @@ interface SidebarProps {
   onMouseLeave: () => void;
 }
 
-export default function Sidebar({
-  collapsed,
-  onMouseEnter,
-  onMouseLeave,
-}: SidebarProps) {
+export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -49,41 +38,46 @@ export default function Sidebar({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={`bg-white border-r border-gray-200 transition-all duration-300 ease-in-out flex flex-col ${
-        collapsed ? "w-16" : "w-64"
+        collapsed ? "w-20" : "w-64"
       }`}
     >
-      <nav className="flex-1 p-2 space-y-2 scrollbar-stable">
-        {sidebarItems.map((item) => (
-          <Link
-            key={item.key}
-            href={item.path}
-            className={`group flex items-center gap-3 py-2 rounded-lg transition-all duration-200 ${
-              pathname === item.path
-                ? "bg-orange-500 text-white shadow-sm"
-                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-            } ${
-              collapsed ? "px-[14px]" : "px-4"
-            }`}
-          >
-            <span className="flex-shrink-0">{item.icon}</span>
+      <nav className="flex-1 px-4 py-4 space-y-2">
+        {sidebarItems.map((item) => {
+          const isActive = pathname === item.path;
 
-            <span
-              className={`text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-300 ${
-                collapsed
-                  ? "w-0 opacity-0"
-                  : "w-auto opacity-100"
-              }`}
+          return (
+            <Link
+              key={item.key}
+              href={item.path}
+              className={`
+                group relative flex items-center gap-4
+                h-12 px-2 rounded-xl transition-all duration-200
+                ${isActive
+                  ? "bg-orange-500 text-white font-medium shadow-sm"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                }
+              `}
             >
-              {item.name}
-            </span>
+              <div className="flex h-8 w-8 items-center justify-center flex-shrink-0">
+                {item.icon}
+              </div>
 
-            {collapsed && (
-              <span className="absolute left-16 ml-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+              <span
+                className={`
+                  text-sm font-medium origin-left transition-all duration-300
+                  ${collapsed 
+                    ? "scale-0 opacity-0 w-0" 
+                    : "scale-100 opacity-100"
+                  }
+                `}
+              >
                 {item.name}
               </span>
-            )}
-          </Link>
-        ))}
+
+             
+            </Link>
+          );
+        })}
       </nav>
     </aside>
   );

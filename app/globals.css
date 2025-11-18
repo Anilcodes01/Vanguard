@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import 'tailwind-scrollbar-hide/v4';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -175,23 +176,3 @@
   transition-delay: 0.3s;
 }
 
-
-.scrollbar-stable {
-  overflow-y: auto;
-  scrollbar-gutter: stable;
-}
-
-
-
-.scrollbar-stable::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-stable::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-}
-
-.scrollbar-stable::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.4);
-}
