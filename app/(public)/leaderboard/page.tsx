@@ -34,7 +34,7 @@ const LeaderboardRow = ({
 
   return (
     <div
-      className={`flex items-center gap-3 py-3 border-b border-neutral-800 transition-colors ${
+      className={`flex items-center gap-3 py-3 border-b  transition-colors ${
         isCurrentUser ? "text-sky-400" : "text-neutral-300 hover:text-white"
       }`}
     >
@@ -100,7 +100,7 @@ export default function LeaderboardPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#ffffff] text-center p-4">
         <Trophy className="text-neutral-700 mb-4" size={40} />
-        <h2 className="text-lg font-semibold text-neutral-300 mb-2">
+        <h2 className="text-lg font-semibold black mb-2">
           Join a League
         </h2>
         <p className="text-sm text-neutral-500 max-w-sm">{error}</p>
@@ -111,7 +111,7 @@ export default function LeaderboardPage() {
   return (
     <div className="bg-[#ffffff] text-white min-h-screen p-4 sm:p-8">
       <div className="max-w-2xl mx-auto">
-        <div className="mb-8 pb-6 border-b border-neutral-800 flex items-center gap-2">
+        <div className="mb-8 pb-6 border-b flex items-center gap-2">
           {leagueImage && (
             <Image
               src={leagueImage.imagePath}
@@ -121,7 +121,7 @@ export default function LeaderboardPage() {
               className="w-8 h-8"
             />
           )}
-          <h1 className="text-2xl font-semibold text-white mb-1">
+          <h1 className="text-2xl font-semibold text-black mb-1">
             {league ? `${league} League` : "Leaderboard"}
           </h1>
           <p className="text-sm text-neutral-500">Resets every Sunday</p>

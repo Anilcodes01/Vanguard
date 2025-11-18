@@ -11,12 +11,14 @@ import {
   Beaker,
   BookOpen,
   Plus,
+  ChartColumn
 } from "lucide-react";
 
 const sidebarItems = [
   { key: "home", name: "Home", path: "/", icon: <Home className="h-5 w-5" /> },
   { key: "explore", name: "Explore", path: "/explore", icon: <Search className="h-5 w-5" /> },
   { key: "problems", name: "Problems", path: "/problems", icon: <Code className="h-5 w-5" /> },
+  {key: 'leaderboard', name: 'Leaderboard', path: '/leaderboard', icon: <ChartColumn className="h-5 w-5"/>},
   { key: "projects", name: "Projects", path: "/projects", icon: <Folder className="h-5 w-5" /> },
   { key: "discussions", name: "Discussions", path: "/discussions", icon: <MessageCircle className="h-5 w-5" /> },
   { key: "internlab", name: "Internlab", path: "/internship", icon: <Beaker className="h-5 w-5" /> },

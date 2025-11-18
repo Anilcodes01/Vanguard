@@ -4,8 +4,8 @@ import { LeaderboardEntry } from '@/app/store/features/leaderboard/leaderboardSl
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-const PROMOTION_ZONE= 3
-const DEMOTION_ZONE = 5
+const PROMOTION_ZONE = 3;
+const DEMOTION_ZONE = 5;
 
 export const LeagueStatusBar = ({
   league,
@@ -58,32 +58,32 @@ export const LeagueStatusBar = ({
 
   return (
     <div className="mb-4">
-      <div className="flex justify-between items-center text-xs text-neutral-400 mb-2">
-        <span className="font-semibold text-green-400">
+      <div className="flex justify-between items-center text-xs text-gray-600 mb-2">
+        <span className="font-semibold text-orange-500">
           Promote to {nextLeague}
         </span>
         <span>
-          Ends in: <span className="font-semibold text-white">{timeRemaining.days}d {timeRemaining.hours}h</span>
+          Ends in: <span className="font-semibold text-black">{timeRemaining.days}d {timeRemaining.hours}h</span>
         </span>
       </div>
 
-      <div className="w-full bg-neutral-800 rounded-full h-2.5 relative">
+      <div className="w-full bg-gray-200 rounded-full h-2.5 relative">
         <div className="flex h-full rounded-full overflow-hidden">
-          <div className="bg-green-500" style={{ width: `${promotionPercent}%` }}></div>
-          <div className="bg-sky-500" style={{ width: `${safePercent}%` }}></div>
+          <div className="bg-orange-500" style={{ width: `${promotionPercent}%` }}></div>
+          <div className="bg-gray-300" style={{ width: `${safePercent}%` }}></div>
           <div className="bg-red-500" style={{ width: `${demotionPercent}%` }}></div>
         </div>
         <div 
-          className="absolute top-1/2 -translate-y-1/2 rounded-full ring-2 ring-neutral-900 transition-all duration-500"
-          style={{ left: `calc(${userPositionPercent}% - 8px)` }}
+          className="absolute top-1/2 -translate-y-1/2 rounded-full ring-2 ring-white transition-all duration-500 shadow-lg"
+          style={{ left: `calc(${userPositionPercent}% - 10px)` }}
           title={`You are rank ${currentUserRank}`}
         >
           <Image
-            src={currentUserEntry.avatar_url || `https://ui-avatars.com/api/?name=${currentUserEntry.name || "A"}`}
+            src={currentUserEntry.avatar_url || `https://ui-avatars.com/api/?name=${currentUserEntry.name || "A"}&background=f59120&color=fff`}
             alt="Your rank"
-            width={16}
-            height={16}
-            className="w-4 h-4 rounded-full object-cover"
+            width={20}
+            height={20}
+            className="w-5 h-5 rounded-full object-cover border-2 border-white"
             priority
           />
         </div>

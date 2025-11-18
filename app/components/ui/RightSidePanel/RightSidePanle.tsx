@@ -14,7 +14,7 @@ export default function RightSidePanel() {
   );
 
   return (
-    <div className="hidden lg:block w-80 xl:w-96 border-l border-gray-200 bg-gray-50 p-6 overflow-y-auto">
+    <div className="hidden lg:block w-80 xl:w-96 border-l border-gray-200 bg-white p-6 overflow-y-auto">
       <LeaderboardWidget
         leaderboard={leaderboard}
         league={league}
