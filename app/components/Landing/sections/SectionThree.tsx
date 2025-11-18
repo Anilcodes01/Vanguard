@@ -8,21 +8,31 @@ interface TrustCardProps {
   index: number;
 }
 
-function TrustCard({ review, avatarUrl, name, designation, index }: TrustCardProps) {
+function TrustCard({
+  review,
+  avatarUrl,
+  name,
+  designation,
+  index,
+}: TrustCardProps) {
   return (
-    <div 
-      className="group relative border border-gray-200 flex flex-col gap-6 p-8 rounded-2xl hover:border-orange-500 transition-all duration-500 hover:shadow-2xl hover:shadow-orange-500/10 hover:-translate-y-1 bg-white"
+    <div
+      className="group relative border border-gray-200 flex flex-col gap-6 p-8 rounded-2xl hover:border-[#f59120] transition-all duration-500 hover:shadow-2xl hover:shadow-[#f59120]/10 hover:-translate-y-1 bg-white"
       style={{
         animationDelay: `${index * 150}ms`,
-        animation: 'fadeInUp 0.6s ease-out forwards',
+        animation: "fadeInUp 0.6s ease-out forwards",
         opacity: 0,
-        maxWidth: '380px' 
+        maxWidth: "380px",
       }}
     >
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#f59120]/5 to-orange-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
 
-      <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/50 group-hover:scale-110 transition-transform duration-300">
-        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-gradient-to-br from-[#f59120] to-orange-600 flex items-center justify-center shadow-lg shadow-[#f59120]/50 group-hover:scale-110 transition-transform duration-300">
+        <svg
+          className="w-6 h-6 text-white"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
         </svg>
       </div>
@@ -40,17 +50,15 @@ function TrustCard({ review, avatarUrl, name, designation, index }: TrustCardPro
             alt={name}
             width={48}
             height={48}
-            className="h-12 w-12 rounded-full border-2 border-gray-200 group-hover:border-orange-500 transition-colors duration-300"
+            className="h-12 w-12 rounded-full border-2 border-gray-200 group-hover:border-[#f59120] transition-colors duration-300"
           />
-          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-500 rounded-full border-2 border-white"></div>
+          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#f59120] rounded-full border-2 border-white"></div>
         </div>
         <div className="flex flex-col">
           <h1 className="font-sans font-semibold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
             {name}
           </h1>
-          <h2 className="text-xs font-sans text-gray-500">
-            {designation}
-          </h2>
+          <h2 className="text-xs font-sans text-gray-500">{designation}</h2>
         </div>
       </div>
     </div>
@@ -73,7 +81,7 @@ export default function SectionThree() {
       name: "Priya Sharma",
       designation: "B.Tech Student, Mumbai",
     },
-    
+
     {
       review:
         "The verified internship record made a huge difference in my job applications. I finally had tangible proof of my skills to stand out from the crowd.",
@@ -93,7 +101,8 @@ export default function SectionThree() {
           Trusted By Students Across India
         </h1>
         <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
-          Our platform empowers students to bridge the gap between academics and industry. Here&apos;s what they have to say.
+          Our platform empowers students to bridge the gap between academics and
+          industry. Here&apos;s what they have to say.
         </p>
       </div>
 
@@ -115,7 +124,7 @@ export default function SectionThree() {
           {[...Array(5)].map((_, i) => (
             <svg
               key={i}
-              className="w-6 h-6 text-orange-500"
+              className="w-6 h-6 text-[#f59120]"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -124,7 +133,9 @@ export default function SectionThree() {
           ))}
         </div>
         <p className="text-gray-600 text-sm text-center">
-          Rated <span className="text-gray-900 font-semibold">4.9/5</span> by over <span className="text-gray-900 font-semibold">10,000+</span> students
+          Rated <span className="text-gray-900 font-semibold">4.9/5</span> by
+          over <span className="text-gray-900 font-semibold">10,000+</span>{" "}
+          students
         </p>
       </div>
 

@@ -108,12 +108,12 @@ export default function SubmissionForm({
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-[#f59120]"
                   placeholder="Leave blank to use the default name"
                 />
               </div>
             </div>
-          
+
             <div>
               <label
                 htmlFor="description"
@@ -130,12 +130,12 @@ export default function SubmissionForm({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
-                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-[#f59120]"
                   placeholder="A detailed description of your project..."
                 />
               </div>
             </div>
-            
+
             <div>
               <label
                 htmlFor="githubUrl"
@@ -152,7 +152,7 @@ export default function SubmissionForm({
                   id="githubUrl"
                   value={githubUrl}
                   onChange={(e) => setGithubUrl(e.target.value)}
-                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-[#f59120]"
                   placeholder="https://github.com/user/repo"
                   required
                 />
@@ -174,7 +174,7 @@ export default function SubmissionForm({
                   id="liveUrl"
                   value={liveUrl}
                   onChange={(e) => setLiveUrl(e.target.value)}
-                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-[#f59120]"
                   placeholder="https://my-project.vercel.app"
                 />
               </div>
@@ -195,17 +195,16 @@ export default function SubmissionForm({
                   id="builtWith"
                   value={builtWith}
                   onChange={(e) => setBuiltWith(e.target.value)}
-                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-[#f59120]"
                   placeholder="Next.js, Tailwind CSS, Prisma"
                   required
                 />
               </div>
             </div>
-           
           </div>
 
           <div className="space-y-6">
-               <div>
+            <div>
               <label
                 htmlFor="shortDescription"
                 className="block text-sm font-medium text-gray-600 mb-1"
@@ -221,7 +220,7 @@ export default function SubmissionForm({
                   value={shortDescription}
                   onChange={(e) => setShortDescription(e.target.value)}
                   rows={2}
-                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-orange-500"
+                  className="block w-full rounded-md border-0 bg-gray-50 py-2.5 pl-10 text-black placeholder-gray-400 focus:ring-2 focus:ring-[#f59120]"
                   placeholder="A brief summary of your project..."
                 />
               </div>
@@ -255,7 +254,7 @@ export default function SubmissionForm({
                     <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                       <label
                         htmlFor="coverImage"
-                        className="relative cursor-pointer rounded-md font-semibold text-orange-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-orange-500 focus-within:ring-offset-2 focus-within:ring-offset-white hover:text-orange-300"
+                        className="relative cursor-pointer rounded-md font-semibold text-orange-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-[#f59120] focus-within:ring-offset-2 focus-within:ring-offset-white hover:text-orange-300"
                       >
                         <span>Upload a file</span>
                         <input
@@ -310,7 +309,7 @@ export default function SubmissionForm({
                     <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                       <label
                         htmlFor="screenshots"
-                        className="relative cursor-pointer rounded-md font-semibold text-orange-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-orange-500 focus-within:ring-offset-2 focus-within:ring-offset-white hover:text-orange-300"
+                        className="relative cursor-pointer rounded-md font-semibold text-orange-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-[#f59120] focus-within:ring-offset-2 focus-within:ring-offset-white hover:text-orange-300"
                       >
                         <span>Upload files</span>
                         <input
@@ -339,7 +338,7 @@ export default function SubmissionForm({
           <button
             type="submit"
             disabled={isSubmitting || !githubUrl || !builtWith}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 disabled:opacity-50 transition-colors duration-200"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#f59120] disabled:opacity-50 transition-colors duration-200"
           >
             {isSubmitting ? (
               <>

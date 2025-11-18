@@ -12,7 +12,7 @@ const renderContent = (props: ProjectSidebarProps) => {
   if (projectStatus === "Submitted") {
     return (
       <div className="flex flex-col items-center justify-center text-center space-y-3 p-8">
-        <div className="bg-orange-500/10 p-3 rounded-full">
+        <div className="bg-[#f59120]/10 p-3 rounded-full">
           <CheckCheck className="h-8 w-8 text-orange-400" />
         </div>
         <h3 className="text-xl font-bold text-black pt-2">
@@ -36,7 +36,7 @@ const renderContent = (props: ProjectSidebarProps) => {
         </div>
         <button
           onClick={handleOpenSubmitModal}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 disabled:opacity-50 transition-colors duration-200"
+          className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#f59120] disabled:opacity-50 transition-colors duration-200"
         >
           <Send className="h-5 w-5" />
           <span>Submit Your Project</span>

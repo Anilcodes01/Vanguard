@@ -68,13 +68,13 @@ export default function SignUpPage() {
               onChange={(e) => setName(e.target.value)}
               required
               autoComplete="name"
-              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-orange-500 focus:outline-none"
+              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-[#f59120] focus:outline-none"
               placeholder="Full Name"
               disabled={isSubmitting}
             />
             <label
               htmlFor="name"
-              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-orange-500"
+              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-[#f59120]"
             >
               Full Name
             </label>
@@ -88,13 +88,13 @@ export default function SignUpPage() {
               onChange={(e) => setUsername(e.target.value)}
               required
               autoComplete="username"
-              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-orange-500 focus:outline-none"
+              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-[#f59120] focus:outline-none"
               placeholder="Username"
               disabled={isSubmitting}
             />
             <label
               htmlFor="username"
-              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-orange-500"
+              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-[#f59120]"
             >
               Username
             </label>
@@ -108,13 +108,13 @@ export default function SignUpPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-orange-500 focus:outline-none"
+              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-[#f59120] focus:outline-none"
               placeholder="Email"
               disabled={isSubmitting}
             />
             <label
               htmlFor="email"
-              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-orange-500"
+              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-[#f59120]"
             >
               Email
             </label>
@@ -128,13 +128,13 @@ export default function SignUpPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="new-password"
-              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-orange-500 focus:outline-none"
+              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-[#f59120] focus:outline-none"
               placeholder="Password"
               disabled={isSubmitting}
             />
             <label
               htmlFor="password"
-              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-orange-500"
+              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-[#f59120]"
             >
               Password
             </label>
@@ -142,7 +142,7 @@ export default function SignUpPage() {
 
           <button
             type="submit"
-            className="w-full rounded-md bg-orange-600 py-2.5 cursor-pointer font-semibold text-black transition-colors hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#ffffff] disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full rounded-md bg-orange-600 py-2.5 cursor-pointer font-semibold text-black transition-colors hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-[#f59120] focus:ring-offset-2 focus:ring-offset-[#ffffff] disabled:opacity-60 disabled:cursor-not-allowed"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Creating Account..." : "Sign Up"}
@@ -153,7 +153,7 @@ export default function SignUpPage() {
           Already have an account?{" "}
           <a
             href="/login"
-            className="font-medium text-orange-500 hover:underline"
+            className="font-medium text-[#f59120] hover:underline"
           >
             Log In
           </a>

@@ -36,7 +36,7 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
   return (
     <Link
       href={`/problems/${problem.id}`}
-      className="group flex flex-col cursor-pointer h-full bg-white rounded-2xl p-5 border border-gray-200 shadow-lg shadow-black/20 hover:border-orange-500/50 hover:shadow-orange-500/10 hover:-translate-y-1 transition-all duration-300"
+      className="group flex flex-col cursor-pointer h-full bg-white rounded-2xl p-5 border border-gray-200 shadow-lg shadow-black/20 hover:border-[#f59120]/50 hover:shadow-[#f59120]/10 hover:-translate-y-1 transition-all duration-300"
     >
       <div className="flex-grow">
         <div className="flex justify-between items-start mb-2">

@@ -22,7 +22,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = ({ children, ...props }: ButtonProps) => (
   <button
     {...props}
-    className={`flex items-center justify-center gap-2 rounded-md py-2.5 font-semibold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#ffffff] disabled:cursor-not-allowed disabled:opacity-60 ${props.className}`}
+    className={`flex items-center justify-center gap-2 rounded-md py-2.5 font-semibold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-[#f59120] focus:ring-offset-2 focus:ring-offset-[#ffffff] disabled:cursor-not-allowed disabled:opacity-60 ${props.className}`}
   >
     {children}
   </button>

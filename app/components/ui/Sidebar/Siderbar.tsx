@@ -53,7 +53,7 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
                 group relative flex items-center gap-4
                 h-10 px-3 rounded-lg transition-all duration-200
                 ${isActive
-                  ? "bg-orange-500 text-white font-medium shadow-sm"
+                  ? "bg-[#f59120] text-white font-medium shadow-sm"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 }
               `}

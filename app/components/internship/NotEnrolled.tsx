@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { OnboardingFormData, ProfileType } from "./steps/types";
 
 const LoadingSpinner = () => (
-  <div className="border-4 border-t-4 border-gray-200 border-t-orange-500 rounded-full w-12 h-12 animate-spin"></div>
+  <div className="border-4 border-t-4 border-gray-200 border-t-[#f59120] rounded-full w-12 h-12 animate-spin"></div>
 );
 
 const reviewSteps = [
@@ -248,7 +248,7 @@ export default function NotEnrolled() {
               </p>
               <Button
                 onClick={handleGetStarted}
-                className="bg-orange-500 hover:bg-orange-600"
+                className="bg-[#f59120] hover:bg-orange-600"
               >
                 Get Started now
               </Button>
@@ -265,7 +265,7 @@ export default function NotEnrolled() {
         </div>
 
         {viewState === "side-by-side" && (
-    <div className="profile-panel absolute right-0 top-0 h-full w-1/2 flex items-center justify-center bg-white opacity-0 animate-fade-in overflow-y-auto pointer-events-auto">
+          <div className="profile-panel absolute right-0 top-0 h-full w-1/2 flex items-center justify-center bg-white opacity-0 animate-fade-in overflow-y-auto pointer-events-auto">
             {isLoading ? (
               <LoadingSpinner />
             ) : (

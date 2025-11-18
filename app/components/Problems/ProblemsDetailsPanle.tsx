@@ -22,7 +22,7 @@ export default function ProblemDetailsPanel({
 
     if (problem.solutionStatus === "Solved") {
       return (
-        <span className="flex items-center gap-1.5 px-3 py-1 text-sm rounded-full bg-orange-500/10 text-orange-400">
+        <span className="flex items-center gap-1.5 px-3 py-1 text-sm rounded-full bg-[#f59120]/10 text-orange-400">
           <CheckCircle2 size={14} />
           Solved
         </span>

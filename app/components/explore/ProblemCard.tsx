@@ -39,7 +39,7 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
     >
       <div className="flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-3">
-          <BrainCircuit size={28} className="text-orange-500" />
+          <BrainCircuit size={28} className="text-[#f59120]" />
           <span
             className={`px-3 py-1 text-xs font-semibold rounded-full border ${getDifficultyClass(
               problem.difficulty
@@ -49,7 +49,7 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
           </span>
         </div>
 
-        <h3 className="text-lg font-bold text-black truncate mb-2 group-hover:text-orange-500 transition-colors">
+        <h3 className="text-lg font-bold text-black truncate mb-2 group-hover:text-[#f59120] transition-colors">
           {problem.title}
         </h3>
 
@@ -66,7 +66,7 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
           <Users size={16} className="text-orange-400" />
           {problem._count.solutions} Solves
         </span>
-        <span className="text-orange-500 font-semibold group-hover:underline">
+        <span className="text-[#f59120] font-semibold group-hover:underline">
           View Problem →
         </span>
       </div>

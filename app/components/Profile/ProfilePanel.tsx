@@ -18,7 +18,7 @@ import { ProfileData } from "@/types";
 
 export const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen bg-white">
-    <div className="w-12 h-12 border-4 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
+    <div className="w-12 h-12 border-4 border-gray-300 border-t-[#f59120] rounded-full animate-spin"></div>
   </div>
 );
 
@@ -91,16 +91,14 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
 
       <div className="space-y-4 text-sm">
         <div className="flex items-center gap-3">
-          <Zap size={16} className="text-orange-500" />
+          <Zap size={16} className="text-[#f59120]" />
           <span className="text-gray-600">Total XP:</span>
           <span className="font-bold text-black ml-auto">{user.xp}</span>
         </div>
         <div className="flex items-center gap-3">
           <Star size={16} className="text-yellow-500" />
           <span className="text-gray-600">Total Stars:</span>
-          <span className="font-bold text-black ml-auto">
-            {user.stars}
-          </span>
+          <span className="font-bold text-black ml-auto">{user.stars}</span>
         </div>
 
         <div className="flex items-center gap-3">
@@ -112,9 +110,7 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
             className="w-5 h-5"
           />
           <span className="text-gray-600">League:</span>
-          <span className="font-bold text-black ml-auto">
-            {currentLeague}
-          </span>
+          <span className="font-bold text-black ml-auto">{currentLeague}</span>
         </div>
       </div>
 
@@ -139,7 +135,7 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
         {user.username && (
           <button
             onClick={handleCopyLink}
-            className="group flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm text-orange-500 transition-colors hover:text-black hover:bg-gray-100"
+            className="group flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm text-[#f59120] transition-colors hover:text-black hover:bg-gray-100"
           >
             {copied ? (
               <>
@@ -154,7 +150,7 @@ export const ProfilePanel = ({ user }: { user: ProfileData }) => {
         )}
         <Link
           href={`/editProfile/${user.username}`}
-          className="group flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm text-white transition-colors hover:bg-orange-600"
+          className="group flex w-full items-center justify-center gap-2 rounded-lg bg-[#f59120] px-4 py-2 text-sm text-white transition-colors hover:bg-orange-600"
         >
           <Pencil size={14} />
           Edit Profile

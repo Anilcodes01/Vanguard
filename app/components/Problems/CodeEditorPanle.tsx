@@ -165,7 +165,7 @@ export default function CodeEditorPanel({
   const getTestCaseStatusStyle = (status: TestCaseStatus) => {
     switch (status) {
       case "running":
-        return "bg-gray-200 text-black border border-orange-500";
+        return "bg-gray-200 text-black border border-[#f59120]";
       case "passed":
         return "bg-orange-100/60 text-orange-600 border border-orange-400";
       case "failed":
@@ -263,7 +263,7 @@ export default function CodeEditorPanel({
         onMouseDown={handleMouseDown}
         className="w-full h-2 cursor-row-resize flex items-center justify-center group"
       >
-        <div className="w-full h-[3px] bg-transparent group-hover:bg-orange-500/50 transition-colors duration-200"></div>
+        <div className="w-full h-[3px] bg-transparent group-hover:bg-[#f59120]/50 transition-colors duration-200"></div>
       </div>
 
       <div className="flex-1 bg-white rounded-lg shadow-2xl flex flex-col min-h-0 overflow-hidden">

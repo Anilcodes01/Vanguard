@@ -1,16 +1,22 @@
 import React from "react";
 import { Rocket } from "lucide-react";
 import { SectionHeader } from "@/app/components/onboarding/SectionHeader";
-import { MultiChoiceGrid, ChoiceButtons } from "@/app/components/onboarding/FormControls";
-import { OnboardingFormData } from "./types"; 
+import {
+  MultiChoiceGrid,
+  ChoiceButtons,
+} from "@/app/components/onboarding/FormControls";
+import { OnboardingFormData } from "./types";
 
 interface StepProps {
   formData: OnboardingFormData;
   setFormData: React.Dispatch<React.SetStateAction<OnboardingFormData>>;
 }
 
-export const InternshipStep3: React.FC<StepProps> = ({ formData, setFormData }) => (
-    <div className="space-y-8 animate-fade-in">
+export const InternshipStep3: React.FC<StepProps> = ({
+  formData,
+  setFormData,
+}) => (
+  <div className="space-y-8 animate-fade-in">
     <SectionHeader
       icon={Rocket}
       title="Step 3: Your Quest"
@@ -45,7 +51,7 @@ export const InternshipStep3: React.FC<StepProps> = ({ formData, setFormData }) 
     />
     {(formData.internship_interest === "Yes" ||
       formData.internship_interest === "Maybe later") && (
-      <div className="space-y-8 border-l-2 border-orange-500 pl-6 animate-fade-in">
+      <div className="space-y-8 border-l-2 border-[#f59120] pl-6 animate-fade-in">
         <MultiChoiceGrid
           label="What kind of roles interest you the most?"
           options={[

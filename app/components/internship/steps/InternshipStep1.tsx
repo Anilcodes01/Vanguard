@@ -2,22 +2,43 @@ import React from "react";
 import Image from "next/image";
 import { UploadCloud, Check, User, ChevronsUpDown } from "lucide-react";
 import { Button as UiButton } from "@/components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/app/components/onboarding/SectionHeader";
 import { TextInput } from "@/app/components/onboarding/FormControls";
-import {  Step1Props} from "./types";
+import { Step1Props } from "./types";
 
 const domainOptions = [
-  "Web Development", "Mobile Development", "Data Science & AI",
-  "Cloud Computing & DevOps", "Cybersecurity", "Game Development",
-  "UI/UX Design", "Other",
+  "Web Development",
+  "Mobile Development",
+  "Data Science & AI",
+  "Cloud Computing & DevOps",
+  "Cybersecurity",
+  "Game Development",
+  "UI/UX Design",
+  "Other",
 ];
 
 export const InternshipStep1: React.FC<Step1Props> = ({
-  formData, setFormData, avatarPreview, fileInputRef,
-  handleFileChange, openDomainPopover, setOpenDomainPopover,
+  formData,
+  setFormData,
+  avatarPreview,
+  fileInputRef,
+  handleFileChange,
+  openDomainPopover,
+  setOpenDomainPopover,
 }) => (
   <div className="space-y-6 animate-fade-in">
     <SectionHeader
@@ -38,10 +59,15 @@ export const InternshipStep1: React.FC<Step1Props> = ({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="relative h-32 w-32 rounded-full border-2 border-dashed border-gray-300 bg-orange-800/50 flex items-center justify-center text-gray-500 transition-all hover:border-orange-500 cursor-pointer hover:bg-orange-800 overflow-hidden"
+          className="relative h-32 w-32 rounded-full border-2 border-dashed border-gray-300 bg-orange-800/50 flex items-center justify-center text-gray-500 transition-all hover:border-[#f59120] cursor-pointer hover:bg-orange-800 overflow-hidden"
         >
           {avatarPreview ? (
-            <Image src={avatarPreview} alt="Avatar Preview" fill className="object-cover" />
+            <Image
+              src={avatarPreview}
+              alt="Avatar Preview"
+              fill
+              className="object-cover"
+            />
           ) : (
             <div className="flex flex-col items-center">
               <UploadCloud size={32} />
@@ -52,13 +78,15 @@ export const InternshipStep1: React.FC<Step1Props> = ({
       </div>
       <div className="w-full space-y-6">
         <div>
-          <label className="text-sm text-gray-600 mb-2 block">Primary Domain</label>
+          <label className="text-sm text-gray-600 mb-2 block">
+            Primary Domain
+          </label>
           <Popover open={openDomainPopover} onOpenChange={setOpenDomainPopover}>
             <PopoverTrigger asChild>
               <UiButton
                 variant="outline"
                 role="combobox"
-                className="w-full justify-between bg-transparent border-gray-300 text-black hover:bg-gray-100 hover:text-black focus:border-orange-500 h-auto py-2.5"
+                className="w-full justify-between bg-transparent border-gray-300 text-black hover:bg-gray-100 hover:text-black focus:border-[#f59120] h-auto py-2.5"
               >
                 {formData.domain || "Select your domain..."}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -80,7 +108,14 @@ export const InternshipStep1: React.FC<Step1Props> = ({
                         }}
                       >
                         {opt}
-                        <Check className={cn("ml-auto h-4 w-4", formData.domain === opt ? "opacity-100" : "opacity-0")} />
+                        <Check
+                          className={cn(
+                            "ml-auto h-4 w-4",
+                            formData.domain === opt
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
+                        />
                       </CommandItem>
                     ))}
                   </CommandGroup>
@@ -93,7 +128,9 @@ export const InternshipStep1: React.FC<Step1Props> = ({
           id="name"
           label="What’s your full name?"
           value={formData.name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, name: e.target.value })}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFormData({ ...formData, name: e.target.value })
+          }
           required
         />
       </div>

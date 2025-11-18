@@ -1,31 +1,46 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 const faqData = [
   {
     question: "Is Adapt really free to use?",
-    answer: "Yes! Our core Habit Engine is completely free. You can solve daily problems, build mini-projects, maintain streaks, and create your portfolio without any cost. The 2-month virtual internship is a paid, cohort-based program you can enroll in when you're ready."
+    answer:
+      "Yes! Our core Habit Engine is completely free. You can solve daily problems, build mini-projects, maintain streaks, and create your portfolio without any cost. The 2-month virtual internship is a paid, cohort-based program you can enroll in when you're ready.",
   },
   {
     question: "What do I get from the paid virtual internship?",
-    answer: "The paid internship provides a structured, 2-month experience with real-world projects, AI-driven evaluation, a skill graph, a job-readiness score, a verified LinkedIn-embeddable record, mentor AMAs, and access to our recruiter showcase for top performers."
+    answer:
+      "The paid internship provides a structured, 2-month experience with real-world projects, AI-driven evaluation, a skill graph, a job-readiness score, a verified LinkedIn-embeddable record, mentor AMAs, and access to our recruiter showcase for top performers.",
   },
   {
     question: "Will recruiters recognize this internship?",
-    answer: "We focus on verifiable experience, not just a certificate. We are building pilot partnerships with startups and colleges to ensure our verified internship records are recognized. Top performers also get a human-signed reference letter and are featured in our recruiter showcase."
+    answer:
+      "We focus on verifiable experience, not just a certificate. We are building pilot partnerships with startups and colleges to ensure our verified internship records are recognized. Top performers also get a human-signed reference letter and are featured in our recruiter showcase.",
   },
   {
     question: "How does the 'Internship Ready' trigger work?",
-    answer: "After you reach milestones like a 30-day streak or completing 50 projects, our system generates a preview of your 'AI Readiness Report'. This highlights your strengths and shows how the paid internship can help you level up, encouraging you to convert when you're prepared."
+    answer:
+      "After you reach milestones like a 30-day streak or completing 50 projects, our system generates a preview of your 'AI Readiness Report'. This highlights your strengths and shows how the paid internship can help you level up, encouraging you to convert when you're prepared.",
   },
   {
     question: "What domains or tracks can I choose from?",
-    answer: "In Phase 1, we focus on high-demand tracks like Web Development, Data Science, and Algorithms. You can set your preference upon signing up, and we will be expanding our offerings based on student feedback and industry demand."
-  }
+    answer:
+      "In Phase 1, we focus on high-demand tracks like Web Development, Data Science, and Algorithms. You can set your preference upon signing up, and we will be expanding our offerings based on student feedback and industry demand.",
+  },
 ];
 
-const FaqItem = ({ question, answer, isOpen, onClick }: { question: string; answer: string; isOpen: boolean; onClick: () => void; }) => {
+const FaqItem = ({
+  question,
+  answer,
+  isOpen,
+  onClick,
+}: {
+  question: string;
+  answer: string;
+  isOpen: boolean;
+  onClick: () => void;
+}) => {
   return (
-    <div className="group rounded-xl border border-gray-200 hover:border-orange-500/50 transition-all duration-300 overflow-hidden bg-white">
+    <div className="group rounded-xl border border-gray-200 hover:border-[#f59120]/50 transition-all duration-300 overflow-hidden bg-white">
       <button
         className="flex cursor-pointer justify-between items-center w-full text-left text-gray-900 p-6 transition-colors duration-200"
         onClick={onClick}
@@ -33,29 +48,38 @@ const FaqItem = ({ question, answer, isOpen, onClick }: { question: string; answ
         <span className="font-semibold pr-8 group-hover:text-orange-600 transition-colors duration-300 text-base md:text-lg">
           {question}
         </span>
-        <div className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gray-100 group-hover:bg-orange-500/10 flex items-center justify-center transition-all duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+        <div
+          className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gray-100 group-hover:bg-[#f59120]/10 flex items-center justify-center transition-all duration-300 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        >
           <svg
-            className="w-5 h-5 text-gray-500 group-hover:text-orange-500 transition-colors duration-300"
+            className="w-5 h-5 text-gray-500 group-hover:text-[#f59120] transition-colors duration-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
           </svg>
         </div>
       </button>
-      
-      <div 
+
+      <div
         className="overflow-hidden transition-all duration-500 ease-in-out"
         style={{
-          maxHeight: isOpen ? '500px' : '0',
-          opacity: isOpen ? 1 : 0
+          maxHeight: isOpen ? "500px" : "0",
+          opacity: isOpen ? 1 : 0,
         }}
       >
-        <div 
+        <div
           className="px-6 pb-6 pt-2 text-gray-600 leading-relaxed"
           style={{
-            animation: isOpen ? 'slideDown 0.5s ease-out' : 'none'
+            animation: isOpen ? "slideDown 0.5s ease-out" : "none",
           }}
         >
           {answer}
@@ -98,9 +122,9 @@ export default function SectionFive() {
             <div
               key={index}
               style={{
-                animation: 'fadeInUp 0.6s ease-out forwards',
+                animation: "fadeInUp 0.6s ease-out forwards",
                 animationDelay: `${index * 0.1}s`,
-                opacity: 0
+                opacity: 0,
               }}
             >
               <FaqItem
@@ -113,10 +137,12 @@ export default function SectionFive() {
           ))}
         </div>
 
-      <div className='w-full items-center font-sans justify-center flex flex-wrap gap-1 text-center text-gray-600'>
-        <span>Can&apos;t find an answer? </span>
-        <span className='text-orange-500 underline cursor-pointer'>Contact Support</span>
-      </div>
+        <div className="w-full items-center font-sans justify-center flex flex-wrap gap-1 text-center text-gray-600">
+          <span>Can&apos;t find an answer? </span>
+          <span className="text-[#f59120] underline cursor-pointer">
+            Contact Support
+          </span>
+        </div>
       </div>
 
       <style>{`

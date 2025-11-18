@@ -88,7 +88,7 @@ export const Step1: React.FC<Step1Props> = ({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="relative h-32 w-32 rounded-full border-2 border-dashed border-gray-600 bg-orange-800/50 flex items-center justify-center text-gray-400 transition-all hover:border-orange-500 cursor-pointer hover:bg-orange-800 overflow-hidden"
+          className="relative h-32 w-32 rounded-full border-2 border-dashed border-gray-600 bg-orange-800/50 flex items-center justify-center text-gray-400 transition-all hover:border-[#f59120] cursor-pointer hover:bg-orange-800 overflow-hidden"
         >
           {avatarPreview ? (
             <Image
@@ -115,7 +115,7 @@ export const Step1: React.FC<Step1Props> = ({
               <UiButton
                 variant="outline"
                 role="combobox"
-                className="w-full justify-between bg-transparent border-gray-600 text-black hover:bg-gray-100 hover:text-black focus:border-orange-500 h-auto py-2.5"
+                className="w-full justify-between bg-transparent border-gray-600 text-black hover:bg-gray-100 hover:text-black focus:border-[#f59120] h-auto py-2.5"
               >
                 {formData.domain || "Select your domain..."}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import ProblemCard, {
-} from "@/app/components/Problems/ProblemCard";
+import ProblemCard from "@/app/components/Problems/ProblemCard";
 import { fetchMoreProblems } from "@/app/(public)/problems/action";
 
 type Problem = Awaited<ReturnType<typeof fetchMoreProblems>>[0];
@@ -67,7 +66,7 @@ export default function ProblemsList({
             onClick={() => handleFilterChange(filter)}
             className={`px-4 py-2 rounded-lg text-sm cursor-pointer font-semibold transition-colors duration-200 ${
               activeFilter === filter
-                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/10"
+                ? "bg-[#f59120] text-white shadow-lg shadow-[#f59120]/10"
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900"
             }`}
           >
@@ -93,7 +92,7 @@ export default function ProblemsList({
           <button
             onClick={loadMoreProblems}
             disabled={isLoading}
-            className="px-6 py-2 cursor-pointer bg-orange-500 text-white font-semibold rounded-lg transition-all duration-300 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 cursor-pointer bg-[#f59120] text-white font-semibold rounded-lg transition-all duration-300 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Load More
           </button>
@@ -102,7 +101,7 @@ export default function ProblemsList({
 
       {isLoading && (
         <div className="flex justify-center items-center py-10">
-          <div className="w-8 h-8 border-4 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-gray-300 border-t-[#f59120] rounded-full animate-spin"></div>
         </div>
       )}
 

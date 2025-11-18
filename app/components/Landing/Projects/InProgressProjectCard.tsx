@@ -11,9 +11,7 @@ interface InProgressProjectCardProps {
   project: InProgressProject;
 }
 
-function InProgressProjectCard({
-  project,
-}: InProgressProjectCardProps) {
+function InProgressProjectCard({ project }: InProgressProjectCardProps) {
   return (
     <Link
       href={`/projects/${project.id}`}
@@ -35,7 +33,7 @@ function InProgressProjectCard({
             <p className="text-sm text-gray-600 line-clamp-2 mt-1 mb-3">
               {project.description}
             </p>
-            <span className="inline-block bg-orange-500/20 text-orange-400 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+            <span className="inline-block bg-[#f59120]/20 text-orange-400 text-xs font-semibold px-2.5 py-0.5 rounded-full">
               {project.domain}
             </span>
           </div>
@@ -48,7 +46,7 @@ function InProgressProjectCard({
               />
             )}
 
-            <div className="inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-700">
+            <div className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#f59120] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-700">
               <span>Continue</span>
               <ArrowRight size={16} />
             </div>

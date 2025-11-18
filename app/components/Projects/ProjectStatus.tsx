@@ -24,7 +24,7 @@ export default function ProjectStatus({
           <button
             onClick={onStartProject}
             disabled={isStarting}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 disabled:opacity-50"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#f59120] disabled:opacity-50"
           >
             {isStarting ? (
               <>
@@ -41,7 +41,7 @@ export default function ProjectStatus({
       );
     case "Submitted":
       return (
-        <div className="text-center bg-orange-500/10 border border-orange-500/30 rounded-lg p-6">
+        <div className="text-center bg-[#f59120]/10 border border-[#f59120]/30 rounded-lg p-6">
           <CheckCircle className="h-12 w-12 text-orange-400 mx-auto mb-4" />
           <h2 className="text-2xl font-semibold text-orange-700">
             Project Submitted!
@@ -64,8 +64,6 @@ export default function ProjectStatus({
         </div>
       );
     default:
-      return (
-        <div className="h-40 bg-gray-100 rounded-lg animate-pulse"></div>
-      );
+      return <div className="h-40 bg-gray-100 rounded-lg animate-pulse"></div>;
   }
 }

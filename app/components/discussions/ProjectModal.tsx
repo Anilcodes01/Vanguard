@@ -11,10 +11,10 @@ import {
   Loader2,
 } from "lucide-react";
 import Image from "next/image";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import { ProjectSubmission, Comment } from "@/types";
 
-const DynamicCommentSection = dynamic(() => import('./CommentSection'), {
+const DynamicCommentSection = dynamic(() => import("./CommentSection"), {
   loading: () => <p>Loading comments...</p>,
 });
 
@@ -128,7 +128,7 @@ export default function ProjectModal({
                       onClick={() => setSelectedImage(url)}
                       className={`relative flex-shrink-0 w-24 h-14 md:w-28 md:h-16 rounded-md overflow-hidden ring-2 transition-all duration-200 ${
                         selectedImage === url
-                          ? "ring-orange-500"
+                          ? "ring-[#f59120]"
                           : "ring-transparent hover:ring-gray-500"
                       }`}
                     >
@@ -150,7 +150,7 @@ export default function ProjectModal({
                   onClick={() => onUpvote(project.id)}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-medium text-sm transition-all ${
                     project.hasUpvoted
-                      ? "bg-orange-500/10 text-orange-400 border border-orange-500/30"
+                      ? "bg-[#f59120]/10 text-orange-400 border border-[#f59120]/30"
                       : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
                   }`}
                 >

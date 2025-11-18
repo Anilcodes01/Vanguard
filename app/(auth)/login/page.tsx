@@ -59,13 +59,13 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-orange-500 focus:outline-none"
+              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-[#f59120] focus:outline-none"
               placeholder="Email"
               disabled={isSubmitting}
             />
             <label
               htmlFor="email"
-              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-orange-500"
+              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-[#f59120]"
             >
               Email
             </label>
@@ -78,13 +78,13 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-orange-500 focus:outline-none"
+              className="peer w-full rounded-md border border-gray-600 bg-transparent px-4 py-2 text-black placeholder-transparent focus:border-[#f59120] focus:outline-none"
               placeholder="Password"
               disabled={isSubmitting}
             />
             <label
               htmlFor="password"
-              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-orange-500"
+              className="absolute -top-3.5 left-3 bg-[#ffffff] px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-[#f59120]"
             >
               Password
             </label>
@@ -92,7 +92,7 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full rounded-md bg-orange-600 py-2.5 cursor-pointer font-semibold text-white transition-colors hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#ffffff] disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full rounded-md bg-orange-600 py-2.5 cursor-pointer font-semibold text-white transition-colors hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-[#f59120] focus:ring-offset-2 focus:ring-offset-[#ffffff] disabled:opacity-60 disabled:cursor-not-allowed"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Logging in..." : "Login"}
@@ -103,7 +103,7 @@ export default function LoginPage() {
           Don’t have an account?{" "}
           <a
             href="/signup"
-            className="font-medium text-orange-500 hover:underline"
+            className="font-medium text-[#f59120] hover:underline"
           >
             Sign Up
           </a>

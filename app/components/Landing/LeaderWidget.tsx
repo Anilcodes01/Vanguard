@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image"; 
+import Image from "next/image";
 import Link from "next/link";
 import { Trophy, ArrowUp, ArrowDown } from "lucide-react";
 import { LeaderboardEntry } from "@/app/store/features/leaderboard/leaderboardSlice";
@@ -59,7 +59,7 @@ const LeaderboardRow = ({
     >
       <div className="w-4 flex items-center justify-center">
         {showIcon && zone === "promotion" && (
-          <ArrowUp size={14} className="text-orange-500" />
+          <ArrowUp size={14} className="text-[#f59120]" />
         )}
         {showIcon && zone === "demotion" && (
           <ArrowDown size={14} className="text-red-500" />
@@ -69,32 +69,39 @@ const LeaderboardRow = ({
       <Image
         src={
           entry.avatar_url ||
-          `https://ui-avatars.com/api/?name=${entry.name || "A"}&background=262626&color=fff`
+          `https://ui-avatars.com/api/?name=${
+            entry.name || "A"
+          }&background=262626&color=fff`
         }
         alt={entry.name || "User"}
         width={32}
         height={32}
         className="w-8 h-8 rounded-full object-cover"
       />
-      <p className="flex-1 text-sm font-medium truncate">{entry.name || "Anonymous"}</p>
-     <p className="text-sm font-semibold tabular-nums text-gray-900">{entry.weeklyXP}</p>
+      <p className="flex-1 text-sm font-medium truncate">
+        {entry.name || "Anonymous"}
+      </p>
+      <p className="text-sm font-semibold tabular-nums text-gray-900">
+        {entry.weeklyXP}
+      </p>
     </div>
   );
 };
 
 export default function LeaderboardWidget({
-   leaderboard,
+  leaderboard,
   league,
   currentUserId,
   isLoading,
   error,
 }: LeaderboardWidgetProps) {
-     const displayedLeaderboard = leaderboard.slice(0, 10);
+  const displayedLeaderboard = leaderboard.slice(0, 10);
 
-     const leagueImage = league
-        ? LeaderboardImagesData.find((imgData) => imgData.name.toLowerCase() === league.toLowerCase())
-        : null;
-
+  const leagueImage = league
+    ? LeaderboardImagesData.find(
+        (imgData) => imgData.name.toLowerCase() === league.toLowerCase()
+      )
+    : null;
 
   const renderContent = () => {
     if (isLoading) {
@@ -111,12 +118,14 @@ export default function LeaderboardWidget({
     }
 
     if (leaderboard.length === 0) {
-        return (
-            <div className="flex flex-col items-center justify-center text-center py-8">
-                <Trophy className="text-gray-400 mb-3" size={28} />
-                <p className="text-sm text-gray-500">Your leaderboard is being prepared. Check back soon!</p>
-            </div>
-        );
+      return (
+        <div className="flex flex-col items-center justify-center text-center py-8">
+          <Trophy className="text-gray-400 mb-3" size={28} />
+          <p className="text-sm text-gray-500">
+            Your leaderboard is being prepared. Check back soon!
+          </p>
+        </div>
+      );
     }
 
     return (
@@ -136,14 +145,14 @@ export default function LeaderboardWidget({
 
   return (
     <div className="bg-white p-5 border border-gray-200 rounded-lg h-full flex flex-col">
-      <div className="mb-4 pb-3 border-b border-gray-200 flex items-center gap-2"> 
-        {leagueImage && ( 
+      <div className="mb-4 pb-3 border-b border-gray-200 flex items-center gap-2">
+        {leagueImage && (
           <Image
             src={leagueImage.imagePath}
             alt={leagueImage.name}
-            width={24} 
+            width={24}
             height={24}
-            className="w-6 h-6" 
+            className="w-6 h-6"
             priority
           />
         )}
@@ -152,13 +161,17 @@ export default function LeaderboardWidget({
         </h2>
       </div>
 
-      {!isLoading && !error && league && currentUserId && leaderboard.length > 0 && (
-        <LeagueStatusBar
-          league={league}
-          currentUserId={currentUserId}
-          leaderboard={leaderboard}
-        />
-      )}
+      {!isLoading &&
+        !error &&
+        league &&
+        currentUserId &&
+        leaderboard.length > 0 && (
+          <LeagueStatusBar
+            league={league}
+            currentUserId={currentUserId}
+            leaderboard={leaderboard}
+          />
+        )}
 
       <div className="flex-grow overflow-y-auto">{renderContent()}</div>
 
@@ -166,7 +179,7 @@ export default function LeaderboardWidget({
         <div className="mt-4 pt-3 border-t border-gray-200">
           <Link
             href="/leaderboard"
-            className="text-orange-400 hover:text-orange-500 transition-colors text-xs font-medium"
+            className="text-orange-400 hover:text-[#f59120] transition-colors text-xs font-medium"
           >
             View all →
           </Link>

@@ -54,7 +54,6 @@ export default function UserLoggedInLanding() {
           </h1>
         </div>
 
-        {/* Main content only – no grid with leaderboard */}
         <div className="space-y-12">
           <div>
             {dailyProblem ? (

@@ -8,7 +8,7 @@ const CodePlatformIcon = () => (
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="text-orange-500"
+    className="text-[#f59120]"
   >
     <path
       d="M9.4 16.6L4.8 12L9.4 7.4L8 6L2 12L8 18L9.4 16.6ZM14.6 16.6L19.2 12L14.6 7.4L16 6L22 12L16 18L14.6 16.6Z"
@@ -30,7 +30,7 @@ export default function Footer() {
         {/* Brand Section - Full Width on Mobile */}
         <div className="mb-12 pb-8 border-b border-gray-200">
           <div className="flex items-center space-x-3 group cursor-pointer mb-6">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg shadow-orange-500/30 group-hover:shadow-orange-500/50 transition-all duration-300 group-hover:scale-110">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-[#f59120] to-orange-600 shadow-lg shadow-[#f59120]/30 group-hover:shadow-[#f59120]/50 transition-all duration-300 group-hover:scale-110">
               <CodePlatformIcon />
             </div>
             <span className="text-gray-900 text-2xl font-bold group-hover:text-orange-600 transition-colors duration-300">
@@ -38,8 +38,8 @@ export default function Footer() {
             </span>
           </div>
           <p className="text-gray-600 leading-relaxed text-sm mb-6 max-w-md">
-            Empowering developers to build, test, and deploy applications
-            faster and more efficiently than ever before.
+            Empowering developers to build, test, and deploy applications faster
+            and more efficiently than ever before.
           </p>
 
           <div>
@@ -50,9 +50,9 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:border-orange-500 transition-colors duration-300"
+                className="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:border-[#f59120] transition-colors duration-300"
               />
-              <button className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/50 flex-shrink-0">
+              <button className="px-4 py-2 bg-gradient-to-r from-[#f59120] to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 hover:shadow-lg hover:shadow-[#f59120]/50 flex-shrink-0">
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -77,7 +77,7 @@ export default function Footer() {
           <div>
             <h3 className="text-gray-900 font-bold text-base sm:text-lg mb-4 flex items-center gap-2">
               Product
-              <div className="h-0.5 w-6 sm:w-8 bg-gradient-to-r from-orange-500 to-transparent"></div>
+              <div className="h-0.5 w-6 sm:w-8 bg-gradient-to-r from-[#f59120] to-transparent"></div>
             </h3>
             <ul className="space-y-2.5">
               <li>
@@ -85,7 +85,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Features
                 </a>
               </li>
@@ -94,7 +94,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Pricing
                 </a>
               </li>
@@ -103,7 +103,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Integrations
                 </a>
               </li>
@@ -112,7 +112,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   API
                 </a>
               </li>
@@ -121,7 +121,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Documentation
                 </a>
               </li>
@@ -132,7 +132,7 @@ export default function Footer() {
           <div>
             <h3 className="text-gray-900 font-bold text-base sm:text-lg mb-4 flex items-center gap-2">
               Company
-              <div className="h-0.5 w-6 sm:w-8 bg-gradient-to-r from-orange-500 to-transparent"></div>
+              <div className="h-0.5 w-6 sm:w-8 bg-gradient-to-r from-[#f59120] to-transparent"></div>
             </h3>
             <ul className="space-y-2.5">
               <li>
@@ -140,7 +140,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   About Us
                 </a>
               </li>
@@ -149,7 +149,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Careers
                 </a>
               </li>
@@ -158,7 +158,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Blog
                 </a>
               </li>
@@ -167,7 +167,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Press Kit
                 </a>
               </li>
@@ -176,7 +176,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Contact
                 </a>
               </li>
@@ -187,7 +187,7 @@ export default function Footer() {
           <div>
             <h3 className="text-gray-900 font-bold text-base sm:text-lg mb-4 flex items-center gap-2">
               Legal
-              <div className="h-0.5 w-6 sm:w-8 bg-gradient-to-r from-orange-500 to-transparent"></div>
+              <div className="h-0.5 w-6 sm:w-8 bg-gradient-to-r from-[#f59120] to-transparent"></div>
             </h3>
             <ul className="space-y-2.5">
               <li>
@@ -195,7 +195,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Terms of Service
                 </a>
               </li>
@@ -204,7 +204,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Privacy Policy
                 </a>
               </li>
@@ -213,7 +213,7 @@ export default function Footer() {
                   href="#"
                   className="group flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200"
                 >
-                  <span className="w-0 group-hover:w-2 h-0.5 bg-orange-500 mr-0 group-hover:mr-2 transition-all duration-200"></span>
+                  <span className="w-0 group-hover:w-2 h-0.5 bg-[#f59120] mr-0 group-hover:mr-2 transition-all duration-200"></span>
                   Cookie Policy
                 </a>
               </li>
@@ -224,30 +224,30 @@ export default function Footer() {
           <div>
             <h3 className="text-gray-900 font-bold text-base sm:text-lg mb-4 flex items-center gap-2">
               Follow Us
-              <div className="h-0.5 w-6 sm:w-8 bg-gradient-to-r from-orange-500 to-transparent"></div>
+              <div className="h-0.5 w-6 sm:w-8 bg-gradient-to-r from-[#f59120] to-transparent"></div>
             </h3>
             <div className="flex flex-wrap gap-3">
               <a
                 href="#"
-                className="group p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-orange-500/10"
+                className="group p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#f59120]/10"
               >
                 <Code className="h-5 w-5 text-gray-600 group-hover:text-orange-600 transition-colors duration-300" />
               </a>
               <a
                 href="#"
-                className="group p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-orange-500/10"
+                className="group p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#f59120]/10"
               >
                 <Mail className="h-5 w-5 text-gray-600 group-hover:text-orange-600 transition-colors duration-300" />
               </a>
               <a
                 href="#"
-                className="group p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-orange-500/10"
+                className="group p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#f59120]/10"
               >
                 <Users className="h-5 w-5 text-gray-600 group-hover:text-orange-600 transition-colors duration-300" />
               </a>
               <a
                 href="#"
-                className="group p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-orange-500/10"
+                className="group p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#f59120]/10"
               >
                 <MessageCircle className="h-5 w-5 text-gray-600 group-hover:text-orange-600 transition-colors duration-300" />
               </a>
@@ -280,7 +280,7 @@ export default function Footer() {
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#f59120]"></span>
                 </span>
                 <span className="text-orange-600">All Systems Operational</span>
               </div>

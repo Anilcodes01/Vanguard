@@ -128,13 +128,13 @@ export default function ProjectCard({
           className={`flex flex-col items-center justify-center p-1 border rounded-md w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 transition-colors
             ${
               project.hasUpvoted
-                ? "border-orange-500 bg-orange-500/10 text-orange-400"
+                ? "border-[#f59120] bg-[#f59120]/10 text-orange-400"
                 : "border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-600"
             }`}
         >
           <ArrowBigUp
             className={`w-5 h-5 sm:w-6 sm:h-6 ${
-              project.hasUpvoted ? "fill-current text-orange-500" : ""
+              project.hasUpvoted ? "fill-current text-[#f59120]" : ""
             }`}
           />
           <span className="text-xs sm:text-sm font-semibold">
