@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { createClient } from "@/app/utils/supabase/client";
 import Navbar from "@/app/components/ui/Navbar";
 import Sidebar from "../components/ui/Sidebar/Siderbar";
+import RightSidePanel from "../components/ui/RightSidePanel/RightSidePanle";
 import { UserProfile } from "@/types";
 
 export default function PublicLayout({
@@ -74,7 +75,9 @@ export default function PublicLayout({
             onMouseLeave={handleMouseLeave}
           />
 
-          <main className="flex-1 overflow-y-auto">{children}</main>
+          <main className="flex-1 overflow-y-auto bg-white">{children}</main>
+
+          <RightSidePanel />
         </div>
       ) : (
         <main className="flex-1 overflow-y-auto">{children}</main>

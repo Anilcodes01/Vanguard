@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { fetchDashboard } from "@/app/store/features/dashboard/dashboardSlice";
 import FullProjectCardSkeleton from "./Projects/ProjectCardSkeleton";
-import LeaderboardWidget from "./LeaderWidget";
 import { DailyProblemCard, AllProblemsSolvedCard } from "./DailyProblemsCard";
 import InProgressProjectCard from "./Projects/InProgressProjectCard";
 
@@ -16,18 +15,12 @@ export default function UserLoggedInLanding() {
     profile,
     dailyProblem,
     inProgressProjects,
-    leaderboard,
-    league,
-    currentUserId,
     dashboardStatus,
     dashboardError,
   } = useSelector((state: RootState) => ({
     profile: state.profile.profile,
     dailyProblem: state.dashboard.dailyProblem,
     inProgressProjects: state.dashboard.inProgressProjects,
-    leaderboard: state.dashboard.leaderboard,
-    league: state.dashboard.league,
-    currentUserId: state.dashboard.currentUserId,
     dashboardStatus: state.dashboard.status,
     dashboardError: state.dashboard.error,
   }));
@@ -38,8 +31,7 @@ export default function UserLoggedInLanding() {
     }
   }, [dashboardStatus, dispatch]);
 
-  const isPageLoading =
-    dashboardStatus === "loading" || dashboardStatus === "idle";
+  const isPageLoading = dashboardStatus === "loading" || dashboardStatus === "idle";
 
   if (isPageLoading) {
     return <FullProjectCardSkeleton />;
@@ -62,50 +54,33 @@ export default function UserLoggedInLanding() {
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <div className="space-y-8">
-              <div>
-                {dailyProblem ? (
-                  <DailyProblemCard problem={dailyProblem} />
-                ) : (
-                  <AllProblemsSolvedCard />
-                )}
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4 text-black">
-                  Your In-Progress Projects
-                </h2>
-                {inProgressProjects.length > 0 ? (
-                  <div className="space-y-4">
-                    {inProgressProjects.map((project) => (
-                      <InProgressProjectCard
-                        key={project.id}
-                        project={project}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className=" p-8 rounded-xl border border-gray-200 text-center">
-                    <p className="text-black">
-                      You have no projects in progress. Start one from the
-                      projects page!
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+        {/* Main content only – no grid with leaderboard */}
+        <div className="space-y-12">
+          <div>
+            {dailyProblem ? (
+              <DailyProblemCard problem={dailyProblem} />
+            ) : (
+              <AllProblemsSolvedCard />
+            )}
           </div>
 
-          <div className="lg:col-span-1">
-            <LeaderboardWidget
-              leaderboard={leaderboard}
-              league={league}
-              currentUserId={currentUserId}
-              isLoading={false}
-              error={null}
-            />
+          <div>
+            <h2 className="text-2xl font-semibold mb-4 text-black">
+              Your In-Progress Projects
+            </h2>
+            {inProgressProjects.length > 0 ? (
+              <div className="space-y-4">
+                {inProgressProjects.map((project) => (
+                  <InProgressProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 rounded-xl border border-gray-200 text-center">
+                <p className="text-black">
+                  You have no projects in progress. Start one from the projects page!
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
