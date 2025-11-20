@@ -61,6 +61,7 @@ model users {
   bookmarks         Bookmark[]
   commentLikes      CommentLike[]
   internshipProject InternshipProject[]
+  internshipWeeks   InternshipWeek[] 
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -729,5 +730,25 @@ model InternshipProject {
   userId String
   user users @relation(fields: [userId], references: [id])
 
+  @@schema("public")
+}
+
+
+model InternshipWeek {
+  id                 String   @id @default(uuid())
+  userId             String   @map("user_id") @db.Uuid
+  weekNumber         Int      @map("week_number")
+  topic              String
+  projectTitle       String   @map("project_title")
+  projectDescription String   @map("project_description") @db.Text
+  problemTitle       String   @map("problem_title")
+  problemDescription String   @map("problem_description") @db.Text
+  createdAt          DateTime @default(now()) @map("created_at") 
+  updatedAt          DateTime @updatedAt      @map("updated_at")
+
+  user users @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekNumber])
+  @@map("internship_weeks")
   @@schema("public")
 }
