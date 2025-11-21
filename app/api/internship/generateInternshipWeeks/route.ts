@@ -13,13 +13,22 @@ interface GeneratedWeek {
   topics: string[];
 }
 
-function parseAIResponse(rawText: string): any {
-  let cleanText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+interface RawWeekData {
+  weekNumber?: number;
+  title?: string;
+  description?: string;
+  topics?: string[];
+}
+
+function parseAIResponse(rawText: string): unknown {
+  const cleanText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
 
   try {
     return JSON.parse(cleanText);
-  } catch (e) {
+  } catch {
+
   }
+  
   const firstBrace = cleanText.indexOf('{');
   const firstBracket = cleanText.indexOf('[');
   
@@ -73,30 +82,33 @@ async function generateInternshipWeeksOnly(userProfile: Profiles): Promise<Gener
       },
     });
 
-    console.log("Response from the AI: ",response)
+    console.log("Response from the AI: ", response);
 
     const text = response.text;
     if (!text) throw new Error("No text generated.");
 
     const parsedData = parseAIResponse(text);
 
-    let weeksArray: any[] = [];
+    let weeksArray: RawWeekData[] = [];
 
-    if (parsedData.weeks && Array.isArray(parsedData.weeks)) {
-      weeksArray = parsedData.weeks;
-    } else if (Array.isArray(parsedData)) {
-      weeksArray = parsedData;
+    const dataAsObject = parsedData as { weeks?: RawWeekData[] };
+    const dataAsArray = parsedData as RawWeekData[];
+
+    if (dataAsObject && dataAsObject.weeks && Array.isArray(dataAsObject.weeks)) {
+      weeksArray = dataAsObject.weeks;
+    } else if (Array.isArray(dataAsArray)) {
+      weeksArray = dataAsArray;
     } else {
       console.error("AI returned:", parsedData);
       throw new Error("AI returned valid JSON but invalid schema (missing 'weeks' array)");
     }
 
-    return weeksArray.slice(0, 12).map((w: any, index: number) => ({
+    return weeksArray.slice(0, 12).map((w, index) => ({
       weekNumber: w.weekNumber || index + 1,
       title: w.title || `Week ${index + 1}`,
       description: w.description || "",
       topics: w.topics || []
-    })) as GeneratedWeek[];
+    }));
 
   } catch (error) {
     console.error("AI Generation Error:", error);
