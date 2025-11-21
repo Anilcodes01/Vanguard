@@ -204,6 +204,9 @@ export async function POST(req: NextRequest) {
           walkthroughs: true
         }
       });
+    }, {
+      maxWait: 5000, 
+      timeout: 20000
     });
 
     if (result && result.walkthroughs) {
