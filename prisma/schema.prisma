@@ -60,8 +60,7 @@ model users {
   comments          Comment[]
   bookmarks         Bookmark[]
   commentLikes      CommentLike[]
-  internshipProject InternshipProject[]
-  internshipWeeks   InternshipWeek[] 
+  internshipWeeks InternshipWeek[]
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -720,35 +719,84 @@ model CommentLike {
   @@schema("public")
 }
 
-model InternshipProject {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  caseStudy   String
-  techStack   String[]
-  maxTime     String
-  userId String
-  user users @relation(fields: [userId], references: [id])
+
+enum CardType {
+  CASE_STUDY         @map("case_study")
+  PROBLEM_DEFINITION @map("problem_definition")
+  OBJECTIVE          @map("objective")
+  PREREQUISITES      @map("prerequisites")
+  DELIVERABLES       @map("deliverables")
+  RULES              @map("rules")
+  ACTION_PLAN        @map("action_plan")
 
   @@schema("public")
 }
 
-
 model InternshipWeek {
-  id                 String   @id @default(uuid())
-  userId             String   @map("user_id") @db.Uuid
-  weekNumber         Int      @map("week_number")
-  topic              String
-  projectTitle       String   @map("project_title")
-  projectDescription String   @map("project_description") @db.Text
-  problemTitle       String   @map("problem_title")
-  problemDescription String   @map("problem_description") @db.Text
-  createdAt          DateTime @default(now()) @map("created_at") 
-  updatedAt          DateTime @updatedAt      @map("updated_at")
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  weekNumber  Int?     @map("week_number")
+  topics      String[] 
+  userId String @map("user_id") @db.Uuid
+  user   users  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user users @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problems     InternshipProblem[]
+  projects     InternshipProject[]
+  walkthroughs WalkthroughCard[]
 
-  @@unique([userId, weekNumber])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+ @@unique([userId, weekNumber])
   @@map("internship_weeks")
+  @@schema("public")
+}
+
+model InternshipProblem {
+  id          String  @id @default(uuid())
+  title       String
+  description String
+  isCompleted Boolean @default(false) @map("is_completed")
+  internshipWeekId String         @map("internship_week_id")
+  internshipWeek   InternshipWeek @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("internship_problems")
+  @@schema("public")
+}
+
+model InternshipProject {
+  id          String  @id @default(uuid())
+  title       String
+  description String
+  isCompleted Boolean @default(false) @map("is_completed")
+  githubLink  String? @map("github_link")
+  liveLink    String? @map("live_link")
+  internshipWeekId String         @map("internship_week_id")
+  internshipWeek   InternshipWeek @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("internship_projects")
+  @@schema("public")
+}
+
+
+model WalkthroughCard {
+  id       String   @id @default(uuid())
+  cardType CardType @map("card_type")
+  title    String
+  content  String   @db.Text
+  internshipWeekId String         @map("internship_week_id")
+  internshipWeek   InternshipWeek @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("walkthrough_cards")
   @@schema("public")
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import InternshipWeekCard from "./InternshipWeekCard";
 import axios from "axios";
 
@@ -8,17 +8,13 @@ interface EnrolledUIProps {
   userName: string;
 }
 
+// Updated interface to match your new API response / Prisma Model
 interface InternshipWeekData {
-  week: string;
-  topic: string;
-  project: {
-    title: string;
-    description: string;
-  };
-  problem: {
-    title: string;
-    description: string;
-  };
+  id: string;
+  weekNumber: number;
+  title: string; // e.g., "React Fundamentals"
+  description: string;
+  topics: string[];
 }
 
 interface InternshipApiResponse {
@@ -32,12 +28,17 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+   const hasFetched = useRef(false);
+
   useEffect(() => {
     const fetchInternshipData = async () => {
+       if (hasFetched.current) return;
+      hasFetched.current = true;
+      
       try {
         setLoading(true);
         const response = await axios.get<InternshipApiResponse>(
-          "/api/internship/weeks"
+          "/api/internship/generateInternshipWeeks"
         );
         setInternshipWeeks(response.data.internship);
       } catch (err) {
@@ -56,7 +57,7 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-lg text-[#f59120]">
-        Loading internship curriculum...
+        Loading your personalized roadmap...
       </div>
     );
   }
@@ -80,26 +81,26 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
   return (
     <div className="flex flex-col gap-12 w-full min-h-screen items-center py-12 px-4 md:px-8 lg:px-16">
       <div className="text-center mb-16">
-          <h1 className="text-5xl sm:text-6xl font-bold text-black mb-4">
-            Welcome to Your{" "}
-            <span className="text-orange-500 relative">
-              12-Week Internship
-              <span className="absolute -bottom-2 left-0 w-full h-1 bg-orange-300 opacity-50"></span>
-            </span>
-          </h1>
-          <p className="text-xl text-gray-700 mt-6 max-w-3xl mx-auto">
-            A structured journey designed just for you. One project + one challenge per week to transform you into a job-ready developer.
-          </p>
-        </div>
+        <h1 className="text-5xl sm:text-6xl font-bold text-black mb-4">
+          Welcome to Your{" "}
+          <span className="text-orange-500 relative">
+            12-Week Internship
+            <span className="absolute -bottom-2 left-0 w-full h-1 bg-orange-300 opacity-50"></span>
+          </span>
+        </h1>
+        <p className="text-xl text-gray-700 mt-6 max-w-3xl mx-auto">
+          A structured journey designed just for you. Master a new concept every week.
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
-        {internshipWeeks.map((weekData, index) => (
+        {internshipWeeks.map((weekData) => (
           <InternshipWeekCard
-            key={index}
-            week={weekData.week}
-            topic={weekData.topic}
-            projectTitle={weekData.project.title}
-            problemTitle={weekData.problem.title}
+            key={weekData.id}
+            weekNumber={weekData.weekNumber}
+            title={weekData.title}
+            description={weekData.description}
+            topics={weekData.topics}
           />
         ))}
       </div>
