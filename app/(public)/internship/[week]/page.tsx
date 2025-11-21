@@ -42,7 +42,7 @@ interface InternshipWeekData {
   id: string;
   weekNumber: number;
   title: string;
-  topic: string;
+  topics: string[]; // --- FIX 1: Match Prisma Schema (Array, not string) ---
   description: string;
   projects: InternshipProject[];
   problems: InternshipProblem[];
@@ -96,6 +96,7 @@ export default function IndividualInternshipWeek() {
         });
 
         const jsonData = await res.json();
+        console.log('Data from api: ', jsonData)
 
         if (!res.ok) {
           throw new Error(jsonData.error || "Failed to load curriculum");
@@ -253,7 +254,8 @@ export default function IndividualInternshipWeek() {
               <h1 className="text-base font-bold text-gray-900 flex items-center gap-2">
                 Week {data.weekNumber} 
                 <span className="text-gray-300">|</span> 
-                <span className="text-orange-600">{data.topic}</span>
+                {/* --- FIX 2: Use data.topics[0] because topic is an array in DB --- */}
+                <span className="text-orange-600">{data.title}</span>
               </h1>
             </div>
           </div>

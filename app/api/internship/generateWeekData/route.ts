@@ -139,7 +139,9 @@ export async function POST(req: NextRequest) {
     const result = await prisma.$transaction(async (tx) => {
       const weekRecord = await tx.internshipWeek.upsert({
         where: { userId_weekNumber: { userId: user.id, weekNumber: weekInt } },
-        update: { title: `Week ${weekInt} - ${topic}`, topics: [topic] },
+        
+        update: {}, 
+        
         create: {
           userId: user.id,
           weekNumber: weekInt,
@@ -148,6 +150,7 @@ export async function POST(req: NextRequest) {
           topics: [topic],
         },
       });
+
 
       await tx.internshipProject.deleteMany({ where: { internshipWeekId: weekRecord.id }});
       await tx.internshipProject.create({
