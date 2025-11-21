@@ -82,8 +82,6 @@ async function generateInternshipWeeksOnly(userProfile: Profiles): Promise<Gener
       },
     });
 
-    console.log("Response from the AI: ", response);
-
     const text = response.text;
     if (!text) throw new Error("No text generated.");
 
