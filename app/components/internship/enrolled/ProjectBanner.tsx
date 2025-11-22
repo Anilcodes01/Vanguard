@@ -1,5 +1,6 @@
 import { Layers, ArrowLeft, BookOpen } from "lucide-react";
 import { InternshipProject } from "@/app/(public)/internship/types";
+ import { FaCheck } from 'react-icons/fa';
 
 interface ProjectBannerProps {
   project: InternshipProject;
@@ -39,7 +40,7 @@ export default function ProjectBanner({
             </p>
           </div>
 
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex flex-col gap-2">
             <button
               onClick={onToggle}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all shadow-lg hover:shadow-xl transform active:scale-95 ${
@@ -55,12 +56,19 @@ export default function ProjectBanner({
                 </>
               ) : (
                 <>
-                  <div className="flex gap-2 items-center justify-center">
+                 <div className=" flex flex-col  gap-2">
+                   <div className="flex gap-2 items-center justify-center">
                     <BookOpen className="w-4 h-4" />
                     View Project Specs
                   </div>
+                  
+                 </div>
                 </>
               )}
+            </button>
+            <button className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all shadow-lg hover:shadow-xl transform active:scale-95 bg-white text-gray-900 hover:bg-gray-50">
+              <FaCheck />
+              Submit Project
             </button>
           </div>
         </div>
