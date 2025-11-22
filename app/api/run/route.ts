@@ -91,10 +91,10 @@ export async function POST(request: NextRequest) {
         : null,
     };
 
-    if (languageId === 94) {
-      submissionData.compiler_options =
-        Buffer.from("--lib es2020,dom").toString("base64");
-    }
+    // if (languageId === 94) {
+    //   submissionData.compiler_options =
+    //     Buffer.from("--lib es2020,dom").toString("base64");
+    // }
 
     const options = {
       method: "POST",

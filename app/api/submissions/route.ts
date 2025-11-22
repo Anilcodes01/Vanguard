@@ -178,10 +178,10 @@ export async function POST(request: NextRequest) {
         expected_output: testCase.expected
           ? Buffer.from(testCase.expected).toString("base64")
           : null,
-        compiler_options:
-          languageId === 94
-            ? Buffer.from("--lib es2020,dom").toString("base64")
-            : undefined,
+        // compiler_options:
+        //   languageId === 94
+        //     ? Buffer.from("--lib es2020,dom").toString("base64")
+        //     : undefined,
       };
 
       const options = {
