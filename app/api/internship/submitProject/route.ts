@@ -1,3 +1,4 @@
+// Your existing code is fine; minor tweak for clarity
 import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -10,30 +11,31 @@ export async function POST(req: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json(
-        {
-          message: "Unauthorized",
-        },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+
     const body = await req.json();
 
-    const { title, description, githubLink, liveLink, projectId } = body;
+    const {
+      title,
+      description,
+      githubLink,
+      liveLink,
+      projectId,
+      overview,
+      screenshots = [], // Default empty array
+    } = body;
 
-    if (
-      !title ||
-      !description ||
-      !githubLink ||
-      !liveLink ||
-      !projectId
-    ) {
+    if (!githubLink || !liveLink || !projectId) {
       return NextResponse.json(
-        {
-          message: "All fields are required",
-        },
+        { message: "GitHub link, Live link, and Project ID are required" },
         { status: 400 }
       );
+    }
+
+    // Optional: Validate screenshots are valid URLs
+    if (!Array.isArray(screenshots) || screenshots.some(url => !url.startsWith('https://'))) {
+      return NextResponse.json({ message: "Invalid screenshots" }, { status: 400 });
     }
 
     const submitProject = await prisma.internshipProject.update({
@@ -43,9 +45,11 @@ export async function POST(req: NextRequest) {
       data: {
         isCompleted: true,
         title: title,
-        description: description,
+        description: description || '', // Add if needed
         githubLink: githubLink,
         liveLink: liveLink,
+        overview: overview || "",
+        screenshots: screenshots,
       },
     });
 

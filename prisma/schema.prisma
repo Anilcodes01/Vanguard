@@ -820,6 +820,9 @@ model InternshipProject {
   internshipWeekId String         @map("internship_week_id")
   internshipWeek   InternshipWeek @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
 
+  screenshots      String[]       @default([])
+  overview         String?        @db.Text
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

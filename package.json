@@ -28,6 +28,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "formdata-node": "^6.0.3",
+    "formidable": "^3.5.4",
     "framer-motion": "^12.23.24",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.544.0",
@@ -46,6 +48,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/formidable": "^3.4.6",
     "@types/node": "^20.19.18",
     "@types/pg": "^8.15.6",
     "@types/react": "^19.1.16",

@@ -85,7 +85,12 @@ export default function IndividualInternshipWeek() {
     });
   }, [data]);
 
-  const handleProjectSubmit = async (githubLink: string, liveLink: string) => {
+  const handleProjectSubmit = async (submissionData: {
+    githubLink: string;
+    liveLink: string;
+    overview: string;
+    screenshots: string[];
+  }) => {
     if (!data || !data.projects[0]) return;
 
     setIsSubmitting(true);
@@ -96,9 +101,10 @@ export default function IndividualInternshipWeek() {
         body: JSON.stringify({
           title: data.projects[0].title,
           description: data.projects[0].description,
-          githubLink,
-          liveLink,
-
+          githubLink: submissionData.githubLink,
+          liveLink: submissionData.liveLink,
+          overview: submissionData.overview,
+          screenshots: submissionData.screenshots,
           projectId: data.projects[0].id,
         }),
       });
@@ -108,12 +114,20 @@ export default function IndividualInternshipWeek() {
       if (!res.ok) {
         throw new Error(result.message || "Submission failed");
       }
+
       setData((prevData) => {
         if (!prevData) return null;
 
+        const targetId = data.projects[0].id;
+
         const updatedProjects = prevData.projects.map((proj) =>
-          proj.id === data.projects[0].id
-            ? { ...proj, isCompleted: true, githubLink, liveLink }
+          proj.id === targetId
+            ? {
+                ...proj,
+                isCompleted: true,
+                githubLink: submissionData.githubLink,
+                liveLink: submissionData.liveLink,
+              }
             : proj
         );
 
@@ -193,7 +207,6 @@ export default function IndividualInternshipWeek() {
         )}
       </main>
 
-      {}
       <SubmitProjectModal
         isOpen={isSubmitModalOpen}
         onClose={() => setIsSubmitModalOpen(false)}
