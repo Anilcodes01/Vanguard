@@ -18,7 +18,7 @@ const sidebarItems = [
   { key: "home", name: "Home", path: "/", icon: <Home className="h-5 w-5" /> },
   { key: "explore", name: "Explore", path: "/explore", icon: <Search className="h-5 w-5" /> },
   { key: "problems", name: "Problems", path: "/problems", icon: <Code className="h-5 w-5" /> },
-  {key: 'leaderboard', name: 'Leaderboard', path: '/leaderboard', icon: <ChartColumn className="h-5 w-5"/>},
+  { key: 'leaderboard', name: 'Leaderboard', path: '/leaderboard', icon: <ChartColumn className="h-5 w-5"/>},
   { key: "projects", name: "Projects", path: "/projects", icon: <Folder className="h-5 w-5" /> },
   { key: "discussions", name: "Discussions", path: "/discussions", icon: <MessageCircle className="h-5 w-5" /> },
   { key: "internlab", name: "Internlab", path: "/internship", icon: <Beaker className="h-5 w-5" /> },
@@ -45,7 +45,11 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
     >
       <nav className="flex-1 px-2 py-4 space-y-2">
         {sidebarItems.map((item) => {
-          const isActive = pathname === item.path;
+          // FIX: Check if path matches exactly OR is a sub-route (e.g., /internship/problems/...)
+          // We ensure item.path !== "/" for the startsWith check so 'Home' doesn't stay active on every page.
+          const isActive = 
+            pathname === item.path || 
+            (pathname?.startsWith(`${item.path}/`) && item.path !== "/");
 
           return (
             <Link
@@ -75,8 +79,6 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
               >
                 {item.name}
               </span>
-
-             
             </Link>
           );
         })}

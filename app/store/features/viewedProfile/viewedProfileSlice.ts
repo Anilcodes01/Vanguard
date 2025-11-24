@@ -5,11 +5,13 @@ export const fetchProfileByUsername = createAsyncThunk(
   'viewedProfile/fetchByUsername',
   async (username: string) => {
     const response = await fetch(`/api/profileData/${username}`);
+    console.log('response data: ', response)
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Failed to fetch profile data');
     }
     const result = await response.json();
+    console.log(result)
     return result.data as UserData;
   }
 );
