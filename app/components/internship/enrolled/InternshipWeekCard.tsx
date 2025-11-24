@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import React from 'react';
+import Link from "next/link";
+import React from "react";
 
 interface InternshipWeekProps {
   weekNumber: number;
@@ -14,18 +14,17 @@ export default function InternshipWeekCard({
   description,
   topics,
 }: InternshipWeekProps) {
-
   return (
     <div className="bg-white text-black rounded-lg shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-gray-100">
-      {/* Pass the week number directly to the URL */}
-      <Link 
+      {}
+      <Link
         href={{
-          pathname: `/internship/${weekNumber}`, // e.g., /internship/1
-          // We can pass query params if needed, but usually fetching by ID on the next page is safer
-          query: { 
-            title: title 
-          }
-        }} 
+          pathname: `/internship/${weekNumber}`,
+
+          query: {
+            title: title,
+          },
+        }}
       >
         <div className="p-6 flex flex-col h-full">
           <div className="flex justify-between items-center mb-3">
@@ -36,7 +35,7 @@ export default function InternshipWeekCard({
               Locked & Loaded
             </span>
           </div>
-          
+
           <h4 className="text-lg font-bold text-gray-800 mb-2 line-clamp-1">
             {title}
           </h4>
@@ -44,15 +43,15 @@ export default function InternshipWeekCard({
           <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-grow">
             {description}
           </p>
-          
+
           <div className="border-t border-gray-200 pt-4 mt-auto">
             <p className="text-xs text-gray-500 font-semibold mb-2 uppercase tracking-wide">
               Key Topics:
             </p>
             <div className="flex flex-wrap gap-2">
               {topics.slice(0, 3).map((topic, index) => (
-                <span 
-                  key={index} 
+                <span
+                  key={index}
                   className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md border border-gray-200"
                 >
                   {topic}

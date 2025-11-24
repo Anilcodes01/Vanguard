@@ -8,26 +8,35 @@ import WeekHeader from "@/app/components/internship/enrolled/WeekHeader";
 import ProjectBanner from "@/app/components/internship/enrolled/ProjectBanner";
 import ProblemGrid from "@/app/components/internship/enrolled/ProblemGrid";
 import ModuleCarousel from "@/app/components/internship/enrolled/ModuleCarousal";
+import SubmitProjectModal from "@/app/components/internship/enrolled/SubmitProjectModel";
 
 const CARD_ORDER = [
-  'case_study', 'problem_definition', 'objective', 'prerequisites', 
-  'deliverables', 'rules', 'action_plan'
+  "case_study",
+  "problem_definition",
+  "objective",
+  "prerequisites",
+  "deliverables",
+  "rules",
+  "action_plan",
 ];
 
 export default function IndividualInternshipWeek() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const weekNumberInt = parseInt(params.week as string);
   const topicParam = searchParams.get("topic");
   const projectTitleParam = searchParams.get("projectTitle");
-  
+
   const [data, setData] = useState<InternshipWeekData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showSpecs, setShowSpecs] = useState(false);
-  
+
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const hasFetched = useRef(false);
 
   useEffect(() => {
@@ -44,17 +53,20 @@ export default function IndividualInternshipWeek() {
             week: weekNumberInt,
             topic: topicParam || "Web Development",
             projectTitle: projectTitleParam || "Weekly Project",
-            projectDescription: "Focus on the core concepts and build the project.",
+            projectDescription:
+              "Focus on the core concepts and build the project.",
           }),
         });
 
         const jsonData = await res.json();
-        if (!res.ok) throw new Error(jsonData.error || "Failed to load curriculum");
+        if (!res.ok)
+          throw new Error(jsonData.error || "Failed to load curriculum");
         setData(jsonData.data || jsonData);
-
       } catch (err) {
         console.error(err);
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -69,15 +81,67 @@ export default function IndividualInternshipWeek() {
       const indexA = CARD_ORDER.indexOf(a.cardType);
       const indexB = CARD_ORDER.indexOf(b.cardType);
       if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-      return (indexA === -1) ? 1 : (indexB === -1) ? -1 : 0;
+      return indexA === -1 ? 1 : indexB === -1 ? -1 : 0;
     });
   }, [data]);
+
+  const handleProjectSubmit = async (githubLink: string, liveLink: string) => {
+    if (!data || !data.projects[0]) return;
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/internship/submitProject", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: data.projects[0].title,
+          description: data.projects[0].description,
+          githubLink,
+          liveLink,
+
+          projectId: data.projects[0].id,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Submission failed");
+      }
+      setData((prevData) => {
+        if (!prevData) return null;
+
+        const updatedProjects = prevData.projects.map((proj) =>
+          proj.id === data.projects[0].id
+            ? { ...proj, isCompleted: true, githubLink, liveLink }
+            : proj
+        );
+
+        return {
+          ...prevData,
+          projects: updatedProjects,
+        };
+      });
+
+      alert("Project submitted successfully!");
+      setIsSubmitModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      alert(
+        error instanceof Error ? error.message : "Failed to submit project"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 mb-4"></div>
-        <h2 className="text-lg font-medium text-gray-800">Generating Curriculum...</h2>
+        <h2 className="text-lg font-medium text-gray-800">
+          Generating Curriculum...
+        </h2>
       </div>
     );
   }
@@ -87,9 +151,14 @@ export default function IndividualInternshipWeek() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
         <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 max-w-md text-center">
           <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Unable to Load Week</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-2">
+            Unable to Load Week
+          </h2>
           <p className="text-sm text-gray-600 mb-6">{error}</p>
-          <button onClick={() => router.back()} className="px-4 py-2 bg-gray-900 text-white rounded-lg">
+          <button
+            onClick={() => router.back()}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg"
+          >
             Return to Dashboard
           </button>
         </div>
@@ -99,29 +168,38 @@ export default function IndividualInternshipWeek() {
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] text-gray-900 pb-20">
-      <WeekHeader 
-        weekNumber={data.weekNumber} 
-        title={data.title} 
-        totalProblems={data.problems.length} 
+      <WeekHeader
+        weekNumber={data.weekNumber}
+        title={data.title}
+        totalProblems={data.problems.length}
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {showSpecs ? (
-          <ModuleCarousel 
-            modules={sortedWalkthroughs} 
-            onClose={() => setShowSpecs(false)} 
+          <ModuleCarousel
+            modules={sortedWalkthroughs}
+            onClose={() => setShowSpecs(false)}
           />
         ) : (
           <div className="space-y-8 animate-in fade-in duration-300">
-            <ProjectBanner 
-              project={data.projects[0]} 
-              showSpecs={showSpecs} 
-              onToggle={() => setShowSpecs(true)} 
+            <ProjectBanner
+              project={data.projects[0]}
+              showSpecs={showSpecs}
+              onToggle={() => setShowSpecs(true)}
+              onOpenSubmitModal={() => setIsSubmitModalOpen(true)}
             />
             <ProblemGrid problems={data.problems} />
           </div>
         )}
       </main>
+
+      {}
+      <SubmitProjectModal
+        isOpen={isSubmitModalOpen}
+        onClose={() => setIsSubmitModalOpen(false)}
+        onSubmit={handleProjectSubmit}
+        isSubmitting={isSubmitting}
+      />
     </div>
   );
 }

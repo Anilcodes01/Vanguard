@@ -27,7 +27,7 @@ export default function Footer() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-        {/* Brand Section - Full Width on Mobile */}
+        {}
         <div className="mb-12 pb-8 border-b border-gray-200">
           <div className="flex items-center space-x-3 group cursor-pointer mb-6">
             <div className="p-2 rounded-xl bg-gradient-to-br from-[#f59120] to-orange-600 shadow-lg shadow-[#f59120]/30 group-hover:shadow-[#f59120]/50 transition-all duration-300 group-hover:scale-110">
@@ -71,9 +71,9 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Links Grid - 2 Columns on Mobile, 3 on Tablet, 4 on Desktop */}
+        {}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 mb-12">
-          {/* Product Section */}
+          {}
           <div>
             <h3 className="text-gray-900 font-bold text-base sm:text-lg mb-4 flex items-center gap-2">
               Product
@@ -128,7 +128,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Company Section */}
+          {}
           <div>
             <h3 className="text-gray-900 font-bold text-base sm:text-lg mb-4 flex items-center gap-2">
               Company
@@ -183,7 +183,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Legal Section */}
+          {}
           <div>
             <h3 className="text-gray-900 font-bold text-base sm:text-lg mb-4 flex items-center gap-2">
               Legal
@@ -220,7 +220,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Social Section */}
+          {}
           <div>
             <h3 className="text-gray-900 font-bold text-base sm:text-lg mb-4 flex items-center gap-2">
               Follow Us
@@ -255,7 +255,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Section */}
+        {}
         <div className="pt-8 mt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-500 text-center md:text-left">

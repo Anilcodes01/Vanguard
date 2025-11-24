@@ -1,19 +1,23 @@
-import { Layers, ArrowLeft, BookOpen } from "lucide-react";
+import { Layers, ArrowLeft, BookOpen, CheckCircle } from "lucide-react";
 import { InternshipProject } from "@/app/(public)/internship/types";
- import { FaCheck } from 'react-icons/fa';
+import { FaCheck } from "react-icons/fa";
 
 interface ProjectBannerProps {
   project: InternshipProject;
   showSpecs: boolean;
   onToggle: () => void;
+  onOpenSubmitModal: () => void;
 }
 
 export default function ProjectBanner({
   project,
   showSpecs,
   onToggle,
+  onOpenSubmitModal,
 }: ProjectBannerProps) {
   if (!project) return null;
+
+  const isSubmitted = project.isCompleted;
 
   return (
     <div className="bg-gradient-to-br from-gray-900 to-gray-800 text-white rounded-2xl p-8 shadow-xl relative overflow-hidden">
@@ -30,6 +34,13 @@ export default function ProjectBanner({
               <span className="text-xs font-bold uppercase tracking-widest text-orange-300">
                 Capstone Project
               </span>
+
+              {}
+              {isSubmitted && (
+                <span className="ml-2 px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-[10px] font-bold uppercase border border-green-500/30">
+                  Completed
+                </span>
+              )}
             </div>
 
             <h3 className="text-2xl md:text-3xl font-bold mb-3 text-white">
@@ -56,19 +67,37 @@ export default function ProjectBanner({
                 </>
               ) : (
                 <>
-                 <div className=" flex flex-col  gap-2">
-                   <div className="flex gap-2 items-center justify-center">
-                    <BookOpen className="w-4 h-4" />
-                    View Project Specs
+                  <div className=" flex flex-col  gap-2">
+                    <div className="flex gap-2 items-center justify-center">
+                      <BookOpen className="w-4 h-4" />
+                      View Project Specs
+                    </div>
                   </div>
-                  
-                 </div>
                 </>
               )}
             </button>
-            <button className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all shadow-lg hover:shadow-xl transform active:scale-95 bg-white text-gray-900 hover:bg-gray-50">
-              <FaCheck />
-              Submit Project
+
+            {}
+            <button
+              onClick={isSubmitted ? undefined : onOpenSubmitModal}
+              disabled={isSubmitted}
+              className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all shadow-lg transform ${
+                isSubmitted
+                  ? "bg-green-600 text-white cursor-default opacity-100" // Submitted State
+                  : "bg-white text-gray-900 hover:bg-gray-50 hover:shadow-xl active:scale-95" // Default State
+              }`}
+            >
+              {isSubmitted ? (
+                <>
+                  <CheckCircle className="w-4 h-4" />
+                  Project Submitted
+                </>
+              ) : (
+                <>
+                  <FaCheck />
+                  Submit Project
+                </>
+              )}
             </button>
           </div>
         </div>

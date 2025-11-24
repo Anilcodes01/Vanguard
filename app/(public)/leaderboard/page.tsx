@@ -100,9 +100,7 @@ export default function LeaderboardPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#ffffff] text-center p-4">
         <Trophy className="text-neutral-700 mb-4" size={40} />
-        <h2 className="text-lg font-semibold black mb-2">
-          Join a League
-        </h2>
+        <h2 className="text-lg font-semibold black mb-2">Join a League</h2>
         <p className="text-sm text-neutral-500 max-w-sm">{error}</p>
       </div>
     );

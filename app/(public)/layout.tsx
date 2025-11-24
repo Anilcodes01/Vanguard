@@ -21,15 +21,15 @@ export default function PublicLayout({
 
   const hasProfile = !!profile;
 
-  // --- FIX 1: Correct logic to detect individual internship pages ---
-  const isProblemPage = pathname?.startsWith("/problems/") && pathname !== "/problems";
-  // This checks if the URL starts with /internship/ (e.g., /internship/1), but keeps panel on main /internship list if desired
-  const isInternshipPage = pathname?.startsWith("/internship/"); 
+  const isProblemPage =
+    pathname?.startsWith("/problems/") && pathname !== "/problems";
+
+  const isInternshipPage = pathname?.startsWith("/internship/");
   const isFirstInternshipPage = pathname === "/internship";
   const isExplorePage = pathname === "/explore";
 
-  // Group pages where we want full width (No Right Panel)
-  const isFullWidthPage = isProblemPage || isInternshipPage || isFirstInternshipPage || isExplorePage;
+  const isFullWidthPage =
+    isProblemPage || isInternshipPage || isFirstInternshipPage || isExplorePage;
 
   const handleMouseEnter = useCallback(() => {
     if (hasProfile) setIsHovered(true);
@@ -83,7 +83,7 @@ export default function PublicLayout({
         onMouseLeave={handleMouseLeave}
       />
 
-      {/* --- FIX 2: Update className to expand width when panel is hidden --- */}
+      {}
       <main
         className={`overflow-auto w-full scrollbar-hide bg-white min-h-0 ${
           isFullWidthPage ? "flex-1" : "flex-1 lg"
@@ -92,15 +92,13 @@ export default function PublicLayout({
         {children}
       </main>
 
-      {/* --- FIX 3: The condition now correctly uses the updated variable --- */}
+      {}
       {!isFullWidthPage && <RightSidePanel />}
     </div>
   );
 
   const guestLayout = (
-    <main className="flex-1 overflow-y-auto bg-white min-h-0">
-      {children}
-    </main>
+    <main className="flex-1 overflow-y-auto bg-white min-h-0">{children}</main>
   );
 
   return (

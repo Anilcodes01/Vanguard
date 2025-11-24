@@ -8,11 +8,10 @@ interface EnrolledUIProps {
   userName: string;
 }
 
-// Updated interface to match your new API response / Prisma Model
 interface InternshipWeekData {
   id: string;
   weekNumber: number;
-  title: string; // e.g., "React Fundamentals"
+  title: string;
   description: string;
   topics: string[];
 }
@@ -28,13 +27,13 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-   const hasFetched = useRef(false);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     const fetchInternshipData = async () => {
-       if (hasFetched.current) return;
+      if (hasFetched.current) return;
       hasFetched.current = true;
-      
+
       try {
         setLoading(true);
         const response = await axios.get<InternshipApiResponse>(
@@ -89,7 +88,8 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
           </span>
         </h1>
         <p className="text-xl text-gray-700 mt-6 max-w-3xl mx-auto">
-          A structured journey designed just for you. Master a new concept every week.
+          A structured journey designed just for you. Master a new concept every
+          week.
         </p>
       </div>
 

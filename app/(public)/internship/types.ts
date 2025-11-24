@@ -1,4 +1,3 @@
-// types.ts
 export interface InternshipProblem {
   id: string;
   title: string;
@@ -26,7 +25,7 @@ export interface InternshipWeekData {
   id: string;
   weekNumber: number;
   title: string;
-  topics: string[]; 
+  topics: string[];
   description: string;
   projects: InternshipProject[];
   problems: InternshipProblem[];

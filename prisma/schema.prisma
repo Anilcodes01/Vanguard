@@ -60,7 +60,7 @@ model users {
   comments          Comment[]
   bookmarks         Bookmark[]
   commentLikes      CommentLike[]
-  internshipWeeks InternshipWeek[]
+  internshipWeeks   InternshipWeek[]
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -719,7 +719,6 @@ model CommentLike {
   @@schema("public")
 }
 
-
 enum CardType {
   CASE_STUDY         @map("case_study")
   PROBLEM_DEFINITION @map("problem_definition")
@@ -737,9 +736,9 @@ model InternshipWeek {
   title       String
   description String
   weekNumber  Int?     @map("week_number")
-  topics      String[] 
-  userId String @map("user_id") @db.Uuid
-  user   users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topics      String[]
+  userId      String   @map("user_id") @db.Uuid
+  user        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   problems     InternshipProblem[]
   projects     InternshipProject[]
@@ -748,33 +747,76 @@ model InternshipWeek {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
- @@unique([userId, weekNumber])
+  @@unique([userId, weekNumber])
   @@map("internship_weeks")
   @@schema("public")
 }
 
 model InternshipProblem {
-  id          String  @id @default(uuid())
-  title       String
-  description String
-  isCompleted Boolean @default(false) @map("is_completed")
+  id               String         @id @default(uuid())
+  title            String
+  description      String
+  isCompleted      Boolean        @default(false) @map("is_completed")
   internshipWeekId String         @map("internship_week_id")
   internshipWeek   InternshipWeek @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt                          DateTime                            @default(now()) @map("created_at")
+  updatedAt                          DateTime                            @updatedAt @map("updated_at")
+  internshipAlgoProblemDatas         InternshipAlgoProblemData[]
+  internshipAlgoProblemExamplesDatas InternshipAlgoProblemExamplesData[]
+  internshipAlgoProblemTestCases     InternshipAlgoProblemTestCase[]
 
   @@map("internship_problems")
   @@schema("public")
 }
 
-model InternshipProject {
+model InternshipAlgoProblemData {
+  id                 String       @id @default(uuid())
+  problemId          String       @map("problem_id")
+  language           String
+  languageId         Int          @map("language_id")
+  starterCode        String       @map("starter_code")
+  driverCodeTemplate String       @map("driver_code_template")
+  testStrategy       TestStrategy @map("test_strategy")
+
+  problem InternshipProblem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@map("internship_algo_problem_data")
+  @@schema("public")
+}
+
+model InternshipAlgoProblemExamplesData {
+  id        String  @id @default(uuid())
+  input     String?
+  output    String?
+  problemId String  @map("problem_id")
+
+  problem InternshipProblem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@map("internship_algo_problem_examples_data")
+  @@schema("public")
+}
+
+model InternshipAlgoProblemTestCase {
   id          String  @id @default(uuid())
-  title       String
-  description String
-  isCompleted Boolean @default(false) @map("is_completed")
-  githubLink  String? @map("github_link")
-  liveLink    String? @map("live_link")
+  input       String
+  expected    String
+  description String?
+  problemId   String  @map("problem_id")
+
+  problem InternshipProblem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@map("internship_algo_problem_test_cases")
+  @@schema("public")
+}
+
+model InternshipProject {
+  id               String         @id @default(uuid())
+  title            String
+  description      String
+  isCompleted      Boolean        @default(false) @map("is_completed")
+  githubLink       String?        @map("github_link")
+  liveLink         String?        @map("live_link")
   internshipWeekId String         @map("internship_week_id")
   internshipWeek   InternshipWeek @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
 
@@ -785,12 +827,11 @@ model InternshipProject {
   @@schema("public")
 }
 
-
 model WalkthroughCard {
-  id       String   @id @default(uuid())
-  cardType CardType @map("card_type")
-  title    String
-  content  String   @db.Text
+  id               String         @id @default(uuid())
+  cardType         CardType       @map("card_type")
+  title            String
+  content          String         @db.Text
   internshipWeekId String         @map("internship_week_id")
   internshipWeek   InternshipWeek @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
 

@@ -1,5 +1,3 @@
-// /app/api/internship/callAI/route.ts
-
 import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
@@ -20,16 +18,12 @@ export async function POST(request: Request) {
         id: user.id,
       },
     });
-    console.log('usr profile: ', userProfile)
+    console.log("usr profile: ", userProfile);
 
     if (!userProfile) {
-      return NextResponse.json(
-        { error: "Profile not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    // ... (Your fetch call to the local AI service remains the same)
     const response = await fetch("http://localhost:8000/chat", {
       method: "POST",
       headers: {
@@ -52,12 +46,8 @@ export async function POST(request: Request) {
 
     const text = await response.text();
 
-    // ✅ ***FIX IS HERE***
-    // Return BOTH the greeting and the profile data
     return NextResponse.json({ greeting: text, profileData: userProfile });
-
   } catch (error) {
-    // ... (error handling remains the same)
     console.error("Error in callAI route:", error);
     const message =
       error instanceof Error ? error.message : "An unexpected error occurred.";
