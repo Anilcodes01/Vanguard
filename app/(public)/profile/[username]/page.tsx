@@ -1,56 +1,34 @@
-"use client";
-
-import { use, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "@/app/store/store";
-import { fetchProfileByUsername } from "@/app/store/features/viewedProfile/viewedProfileSlice";
 import { CheckCircle, Code2, Target, Activity } from "lucide-react";
-import {
-  ProfilePanel,
-  ErrorDisplay,
-  LoadingSpinner,
-  StatCard,
-} from "@/app/components/Profile/ProfilePanel";
+import { ProfilePanel } from "@/app/components/Profile/ProfilePanel";
+import { ErrorDisplay } from "@/app/components/Profile/ProfilePanel";
 import SubmittedProjectsList from "@/app/components/Profile/SubmittedProjectsList";
+import { getProfileData } from "@/app/lib/data/profile";
+import { ProfileData } from "@/types";
+import { StatCard } from "@/app/components/Profile/StatCard";
 
-export default function ProfilePage({
+export default async function ProfilePage({
   params,
 }: {
   params: Promise<{ username: string }>;
 }) {
-  const { username } = use(params);
-  const dispatch: AppDispatch = useDispatch();
+  const { username } = await params;
 
-  const { profilesCache, status, error } = useSelector(
-    (state: RootState) => state.viewedProfile
-  );
+  const decodedUsername = decodeURIComponent(username);
+  console.log("Fetching profile for:", decodedUsername);
 
-  const profileData = profilesCache[username];
+  const data = await getProfileData(decodedUsername);
 
-  useEffect(() => {
-    if (!profileData && status !== "loading") {
-      dispatch(fetchProfileByUsername(username));
-    }
-  }, [username, profileData, dispatch, status]);
-
-  const isLoading = status === "loading" || !profileData;
-
-  if (isLoading) return <LoadingSpinner />;
-  if (status === "failed") return <ErrorDisplay message={error} />;
-  if (
-    !profileData ||
-    !profileData.profiles ||
-    profileData.profiles.length === 0
-  ) {
+  if (!data || !data.profile) {
     return <ErrorDisplay message="This user profile could not be found." />;
   }
 
-  const profile = profileData.profiles[0];
-  const solvedCount = profileData.problemSolutions.filter(
+  const { profile, submissions, problemSolutions, submittedProjects } = data;
+
+  const solvedCount = problemSolutions.filter(
     (s) => s.status === "Solved"
   ).length;
-  const attemptedCount = profileData.problemSolutions.length;
-  const totalSubmissions = profileData.submissions.length;
+  const attemptedCount = problemSolutions.length;
+  const totalSubmissions = submissions.length;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -61,6 +39,13 @@ export default function ProfilePage({
       default:
         return "text-yellow-400 bg-yellow-500/10";
     }
+  };
+
+  const profileForPanel = {
+    ...profile,
+    league: (profile as ProfileData).league
+      ? String((profile as ProfileData).league)
+      : "Unranked",
   };
 
   return (
@@ -96,14 +81,12 @@ export default function ProfilePage({
             </div>
 
             <div className="border text-black rounded-xl">
-              <div className="p-6 border-b ">
-                <h2 className="text-lg font-semibold ">
-                  Recent Submissions
-                </h2>
+              <div className="p-6 border-b">
+                <h2 className="text-lg font-semibold">Recent Submissions</h2>
               </div>
-              {profileData.submissions.length > 0 ? (
-                <div className="divide-y ">
-                  {profileData.submissions.slice(0, 5).map((submission) => (
+              {submissions.length > 0 ? (
+                <div className="divide-y">
+                  {submissions.slice(0, 5).map((submission) => (
                     <div
                       key={submission.id}
                       className="grid grid-cols-3 items-center p-4 gap-4 hover:bg-gray-200 transition-colors"
@@ -112,10 +95,11 @@ export default function ProfilePage({
                         {submission.problem.title}
                       </p>
                       <p className="hidden sm:block text-neutral-500 text-sm">
-                        {new Date(submission.createdAt).toLocaleDateString(
-                          "en-US",
-                          { year: "numeric", month: "short", day: "numeric" }
-                        )}
+                        {submission.createdAt.toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
                       </p>
                       <div className="flex justify-end">
                         <span
@@ -139,17 +123,18 @@ export default function ProfilePage({
               )}
             </div>
 
+            {}
             <SubmittedProjectsList
-              projects={profileData.submittedProjects ?? []}
+              projects={submittedProjects.map((p) => ({
+                ...p,
+
+                createdAt: p.createdAt.toISOString(),
+              }))}
             />
           </div>
 
           <div className="w-full lg:w-80 shrink-0">
-            {(() => {
-              const league =
-                "league" in profile ? String(profile.league) : "Unranked";
-              return <ProfilePanel user={{ ...profile, league }} />;
-            })()}
+            <ProfilePanel user={profileForPanel} />
           </div>
         </div>
       </div>

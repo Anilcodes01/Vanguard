@@ -7,7 +7,6 @@ import {
   Globe,
   Loader2,
   Upload,
-  Image as ImageIcon,
 } from "lucide-react";
 import { createClient } from "@/app/utils/supabase/client";
 import Image from "next/image";
@@ -227,6 +226,8 @@ export default function SubmitProjectModal({
                         <Image
                           src={src}
                           alt="Preview"
+                          width={300}
+                          height={300}
                           className="w-full h-full object-cover"
                         />
                         <button

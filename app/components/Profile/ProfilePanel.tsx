@@ -1,6 +1,6 @@
 "use client";
 
-import { ComponentType, useState } from "react";
+import {  useState } from "react";
 import {
   XCircle,
   Code2,
@@ -30,23 +30,7 @@ export const ErrorDisplay = ({ message }: { message: string | null }) => (
   </div>
 );
 
-export const StatCard = ({
-  icon: Icon,
-  value,
-  label,
-}: {
-  icon: ComponentType<{ size: number; className: string }>;
-  value: number | string;
-  label: string;
-}) => (
-  <div className=" border border-gray-200 rounded-xl p-5">
-    <div className="flex items-center gap-3 mb-3">
-      <Icon size={18} className="text-black" />
-      <h3 className="text-sm text-black">{label}</h3>
-    </div>
-    <p className="text-3xl font-bold text-black">{value}</p>
-  </div>
-);
+
 
 export const ProfilePanel = ({ user }: { user: ProfileData }) => {
   const [copied, setCopied] = useState(false);
