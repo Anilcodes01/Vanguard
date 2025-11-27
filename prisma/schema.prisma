@@ -62,6 +62,7 @@ model users {
   commentLikes      CommentLike[]
   internshipWeeks   InternshipWeek[]
   pushSubscriptions PushSubscription[]
+  journal Journal[]
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -875,5 +876,22 @@ model PushSubscription {
   createdAt DateTime @default(now()) @map("created_at")
   
   @@map("push_subscriptions")
+  @@schema("public")
+}
+
+model Journal {
+  id        String   @id @default(uuid())
+  title     String
+  description String
+  content   String   @db.Text
+  tags      String[] @default([])
+  
+  userId    String   @map("user_id") @db.Uuid
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("journals")
   @@schema("public")
 }
