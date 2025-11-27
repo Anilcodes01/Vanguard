@@ -61,6 +61,7 @@ export default function IndividualInternshipWeek() {
         const jsonData = await res.json();
         if (!res.ok)
           throw new Error(jsonData.error || "Failed to load curriculum");
+
         setData(jsonData.data || jsonData);
       } catch (err) {
         console.error(err);
@@ -118,17 +119,8 @@ export default function IndividualInternshipWeek() {
       setData((prevData) => {
         if (!prevData) return null;
 
-        const targetId = data.projects[0].id;
-
         const updatedProjects = prevData.projects.map((proj) =>
-          proj.id === targetId
-            ? {
-                ...proj,
-                isCompleted: true,
-                githubLink: submissionData.githubLink,
-                liveLink: submissionData.liveLink,
-              }
-            : proj
+          proj.id === result.project.id ? result.project : proj
         );
 
         return {
@@ -137,7 +129,7 @@ export default function IndividualInternshipWeek() {
         };
       });
 
-      alert("Project submitted successfully!");
+      alert("Project submitted successfully! AI is reviewing your code.");
       setIsSubmitModalOpen(false);
     } catch (error) {
       console.error(error);

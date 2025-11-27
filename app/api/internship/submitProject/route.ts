@@ -1,7 +1,10 @@
-// Your existing code is fine; minor tweak for clarity
 import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { fetchGithubRepo } from "@/app/lib/github-loader";
+import { generateCodeReview } from "@/app/lib/gemini-reviewer";
+
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,7 +26,7 @@ export async function POST(req: NextRequest) {
       liveLink,
       projectId,
       overview,
-      screenshots = [], // Default empty array
+      screenshots = [],
     } = body;
 
     if (!githubLink || !liveLink || !projectId) {
@@ -33,29 +36,47 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Optional: Validate screenshots are valid URLs
-    if (!Array.isArray(screenshots) || screenshots.some(url => !url.startsWith('https://'))) {
-      return NextResponse.json({ message: "Invalid screenshots" }, { status: 400 });
-    }
+    await prisma.internshipProject.update({
+      where: { id: projectId },
+      data: {
+        isCompleted: true,
+        title: title,
+        description: description || "",
+        githubLink: githubLink,
+        liveLink: liveLink,
+        overview: overview || "",
+        screenshots: screenshots,
+        aiReviewStatus: "PROCESSING",
+      },
+    });
+
+    const codeContext = await fetchGithubRepo(githubLink);
+
+    const reviewData = await generateCodeReview(
+      title,
+      description || "Internship Project",
+      overview,
+      codeContext
+    );
+
+    const reviewAvailableAt = new Date(Date.now() + 30 * 60 * 1000);
 
     const submitProject = await prisma.internshipProject.update({
       where: {
         id: projectId,
       },
       data: {
-        isCompleted: true,
-        title: title,
-        description: description || '', // Add if needed
-        githubLink: githubLink,
-        liveLink: liveLink,
-        overview: overview || "",
-        screenshots: screenshots,
+        aiReviewStatus: reviewData ? "COMPLETED" : "FAILED",
+        aiScore: reviewData?.score ?? null,
+        aiFeedback: reviewData?.summary ?? null,
+        aiImprovements: reviewData?.improvements ?? [],
+        reviewAvailableAt: reviewAvailableAt,
       },
     });
 
     return NextResponse.json(
       {
-        message: "Project submitted successfully",
+        message: "Project submitted successfully. Review will be available in 30 minutes.",
         project: submitProject,
       },
       { status: 200 }

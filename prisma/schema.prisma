@@ -823,6 +823,12 @@ model InternshipProject {
   screenshots      String[]       @default([])
   overview         String?        @db.Text
 
+  aiReviewStatus    ReviewStatus @default(PENDING) @map("ai_review_status")
+  aiScore           Int?         @map("ai_score")
+  aiFeedback        String?      @db.Text @map("ai_feedback")
+  aiImprovements    String[]     @map("ai_improvements")
+  reviewAvailableAt DateTime?    @db.Timestamptz(6) @map("review_available_at")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -842,5 +848,16 @@ model WalkthroughCard {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("walkthrough_cards")
+  @@schema("public")
+}
+
+
+enum ReviewStatus {
+  PENDING
+  QUEUED      // Optional: If you use background jobs later
+  PROCESSING  // The AI is currently analyzing
+  COMPLETED
+  FAILED
+
   @@schema("public")
 }
