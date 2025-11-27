@@ -7,6 +7,10 @@ self.addEventListener("push", function (event) {
       icon: "/final.png",
       badge: "/final.png",
       vibrate: [100, 50, 100],
+      silent: false,
+      renotify: true,
+      tag: "ai-review",
+      requireInteraction: true,
       data: {
         url: data.url,
       },
