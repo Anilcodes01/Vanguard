@@ -125,6 +125,14 @@ export async function GET() {
 
     const existingWeeks = await prisma.internshipWeek.findMany({
       where: { userId: user.id },
+      include: {
+        problems: {
+          select: { isCompleted: true }
+        },
+        projects: {
+          select: { isCompleted: true }
+        }
+      },
       orderBy: { weekNumber: "asc" },
     });
 

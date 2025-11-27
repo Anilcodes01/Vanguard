@@ -88,6 +88,27 @@ const { isSubscribed, subscribeToNotifications } = usePushNotifications();
     });
   }, [data]);
 
+  const progressStats = useMemo(() => {
+    if (!data) return { completed: 0, total: 0, percentage: 0 };
+
+    // 1 Project + N Problems
+    const totalProblems = data.problems.length;
+    const totalItems = totalProblems + 1; // +1 for the project
+
+    const completedProblems = data.problems.filter((p) => p.isCompleted).length;
+    const isProjectCompleted = data.projects[0]?.isCompleted ? 1 : 0;
+
+    const completedCount = completedProblems + isProjectCompleted;
+    const percentage = (completedCount / totalItems) * 100;
+
+    return {
+      completed: completedCount,
+      total: totalItems,
+      percentage: percentage,
+    };
+  }, [data]);
+
+
   const handleProjectSubmit = async (submissionData: {
     githubLink: string;
     liveLink: string;
@@ -179,16 +200,20 @@ const { isSubscribed, subscribeToNotifications } = usePushNotifications();
       {!isSubscribed && (
   <button 
     onClick={subscribeToNotifications}
-    className="fixed bottom-4 right-4 bg-blue-600 text-white p-4 rounded-full shadow-lg z-50 flex items-center gap-2 hover:bg-blue-700 transition-all"
+    className="fixed bottom-4 right-4 cursor-pointer bg-[#e16024] text-white p-2 rounded-full shadow-lg z-50 flex items-center gap-2 hover:bg-[#f35221] transition-all"
   >
     <Bell className="w-5 h-5" />
-    Enable Notifications
+    
   </button>
 )}
       <WeekHeader
         weekNumber={data.weekNumber}
         title={data.title}
-        totalProblems={data.problems.length}
+        completedCount={progressStats.completed}
+        totalCount={progressStats.total}
+        progressPercentage={progressStats.percentage}
+        isSubscribed={isSubscribed}
+        onSubscribe={subscribeToNotifications}
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

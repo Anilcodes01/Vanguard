@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import InternshipWeekCard from "./InternshipWeekCard";
 import axios from "axios";
 
@@ -14,6 +14,8 @@ interface InternshipWeekData {
   title: string;
   description: string;
   topics: string[];
+  problems: { isCompleted: boolean }[];
+  projects: { isCompleted: boolean }[];
 }
 
 interface InternshipApiResponse {
@@ -26,7 +28,6 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const hasFetched = useRef(false);
 
   useEffect(() => {
@@ -42,9 +43,7 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
         setInternshipWeeks(response.data.internship);
       } catch (err) {
         console.error("Failed to fetch internship data:", err);
-        setError(
-          "Failed to load internship curriculum. Please try again later."
-        );
+        setError("Could not load curriculum.");
       } finally {
         setLoading(false);
       }
@@ -53,56 +52,119 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
     fetchInternshipData();
   }, []);
 
+  const { overallProgress, completedWeeksCount, totalTasksCompleted } =
+    useMemo(() => {
+      if (!internshipWeeks.length)
+        return {
+          overallProgress: 0,
+          completedWeeksCount: 0,
+          totalTasksCompleted: 0,
+        };
+
+      let totalProgressSum = 0;
+      let weeksFullyDone = 0;
+      let tasksDone = 0;
+
+      internshipWeeks.forEach((week) => {
+        const problems = week.problems || [];
+        const projects = week.projects || [];
+        const totalItems = problems.length + projects.length;
+        const completedItems =
+          problems.filter((p) => p.isCompleted).length +
+          projects.filter((p) => p.isCompleted).length;
+
+        tasksDone += completedItems;
+
+        if (totalItems > 0) {
+          const ratio = completedItems / totalItems;
+          totalProgressSum += ratio;
+          if (ratio === 1) weeksFullyDone++;
+        }
+      });
+
+      return {
+        overallProgress: Math.min((totalProgressSum / 12) * 100, 100),
+        completedWeeksCount: weeksFullyDone,
+        totalTasksCompleted: tasksDone,
+      };
+    }, [internshipWeeks]);
+
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-lg text-[#f59120]">
-        Loading your personalized roadmap...
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-red-500 text-lg">
-        Error: {error}
-      </div>
-    );
-  }
-
-  if (internshipWeeks.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-lg text-gray-500">
-        No internship curriculum found for {userName}.
+      <div className="min-h-screen flex items-center justify-center bg-white text-sm text-red-600">
+        {error}
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-12 w-full min-h-screen items-center py-12 px-4 md:px-8 lg:px-16">
-      <div className="text-center mb-16">
-        <h1 className="text-5xl sm:text-6xl font-bold text-black mb-4">
-          Welcome to Your{" "}
-          <span className="text-orange-500 relative">
-            12-Week Internship
-            <span className="absolute -bottom-2 left-0 w-full h-1 bg-orange-300 opacity-50"></span>
-          </span>
-        </h1>
-        <p className="text-xl text-gray-700 mt-6 max-w-3xl mx-auto">
-          A structured journey designed just for you. Master a new concept every
-          week.
-        </p>
-      </div>
+    <div className="min-h-screen bg-white text-gray-900 px-6 py-12 md:px-12 max-w-7xl mx-auto font-sans">
+      {}
+      <header className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-10">
+        <div className="space-y-2">
+          <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">
+            {userName} / Internship
+          </p>
+          <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-gray-900">
+            12-Week Roadmap
+          </h1>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
-        {internshipWeeks.map((weekData) => (
-          <InternshipWeekCard
-            key={weekData.id}
-            weekNumber={weekData.weekNumber}
-            title={weekData.title}
-            description={weekData.description}
-            topics={weekData.topics}
-          />
-        ))}
+        {}
+        <div className="w-full md:w-64 space-y-3">
+          <div className="flex justify-between items-baseline text-sm">
+            <span className="text-gray-500">Completion</span>
+            <span className="font-mono font-medium">
+              {Math.round(overallProgress)}%
+            </span>
+          </div>
+
+          <div className="h-[2px] w-full bg-gray-100">
+            <div
+              className="h-full bg-gray-900 transition-all duration-700 ease-out"
+              style={{ width: `${overallProgress}%` }}
+            />
+          </div>
+
+          <div className="flex justify-between text-xs text-gray-400 font-mono">
+            <span>{completedWeeksCount}/12 Weeks</span>
+            <span>{totalTasksCompleted} Tasks</span>
+          </div>
+        </div>
+      </header>
+
+      {}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+        {internshipWeeks.map((weekData) => {
+          const totalProblems = weekData.problems?.length || 0;
+          const totalProjects = weekData.projects?.length || 0;
+          const totalItems = totalProblems + totalProjects;
+          const completedProblems =
+            weekData.problems?.filter((p) => p.isCompleted).length || 0;
+          const completedProjects =
+            weekData.projects?.filter((p) => p.isCompleted).length || 0;
+          const completedCount = completedProblems + completedProjects;
+
+          return (
+            <InternshipWeekCard
+              key={weekData.id}
+              weekNumber={weekData.weekNumber}
+              title={weekData.title}
+              description={weekData.description}
+              topics={weekData.topics}
+              completedCount={completedCount}
+              totalCount={totalItems}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -21,6 +21,7 @@ export interface InternshipWeekData {
   projects: InternshipProject[];
   problems: InternshipProblem[];
   walkthroughs: WalkthroughCardData[];
+  
 }
 
 export interface InternshipProject {
