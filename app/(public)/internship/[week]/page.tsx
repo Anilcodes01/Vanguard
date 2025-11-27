@@ -9,6 +9,8 @@ import ProjectBanner from "@/app/components/internship/enrolled/ProjectBanner";
 import ProblemGrid from "@/app/components/internship/enrolled/ProblemGrid";
 import ModuleCarousel from "@/app/components/internship/enrolled/ModuleCarousal";
 import SubmitProjectModal from "@/app/components/internship/enrolled/SubmitProjectModel";
+import { usePushNotifications } from "@/app/hooks/usePushNotifications";
+import { Bell } from "lucide-react";
 
 const CARD_ORDER = [
   "case_study",
@@ -24,7 +26,7 @@ export default function IndividualInternshipWeek() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
-
+const { isSubscribed, subscribeToNotifications } = usePushNotifications();
   const weekNumberInt = parseInt(params.week as string);
   const topicParam = searchParams.get("topic");
   const projectTitleParam = searchParams.get("projectTitle");
@@ -174,6 +176,15 @@ export default function IndividualInternshipWeek() {
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] text-gray-900 pb-20">
+      {!isSubscribed && (
+  <button 
+    onClick={subscribeToNotifications}
+    className="fixed bottom-4 right-4 bg-blue-600 text-white p-4 rounded-full shadow-lg z-50 flex items-center gap-2 hover:bg-blue-700 transition-all"
+  >
+    <Bell className="w-5 h-5" />
+    Enable Notifications
+  </button>
+)}
       <WeekHeader
         weekNumber={data.weekNumber}
         title={data.title}

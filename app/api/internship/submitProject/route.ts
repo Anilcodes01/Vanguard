@@ -3,6 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { fetchGithubRepo } from "@/app/lib/github-loader";
 import { generateCodeReview } from "@/app/lib/gemini-reviewer";
+import { Client } from "@upstash/qstash";
+
+const qstash = new Client({
+  token: process.env.QSTASH_TOKEN!,
+  baseUrl: process.env.QSTASH_URL || undefined,
+});
 
 export const maxDuration = 60;
 
@@ -40,18 +46,17 @@ export async function POST(req: NextRequest) {
       where: { id: projectId },
       data: {
         isCompleted: true,
-        title: title,
-        description: description || "",
-        githubLink: githubLink,
-        liveLink: liveLink,
-        overview: overview || "",
-        screenshots: screenshots,
+        title,
+        description,
+        githubLink,
+        liveLink,
+        overview,
+        screenshots,
         aiReviewStatus: "PROCESSING",
       },
     });
 
     const codeContext = await fetchGithubRepo(githubLink);
-
     const reviewData = await generateCodeReview(
       title,
       description || "Internship Project",
@@ -59,12 +64,10 @@ export async function POST(req: NextRequest) {
       codeContext
     );
 
-    const reviewAvailableAt = new Date(Date.now() + 30 * 60 * 1000);
+    const reviewAvailableAt = new Date(Date.now() + 1 * 60 * 1000);
 
     const submitProject = await prisma.internshipProject.update({
-      where: {
-        id: projectId,
-      },
+      where: { id: projectId },
       data: {
         aiReviewStatus: reviewData ? "COMPLETED" : "FAILED",
         aiScore: reviewData?.score ?? null,
@@ -74,19 +77,41 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    try {
+      const delaySeconds = 1 * 60;
+
+      const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/notifications/send-scheduled`;
+
+      console.log(`🚀 Scheduling notification to: ${callbackUrl}`);
+
+      await qstash.publishJSON({
+        url: callbackUrl,
+        body: {
+          userId: user.id,
+          title: title,
+          weekNumber: body.weekNumber || 1,
+        },
+        headers: {
+          "x-vercel-protection-bypass": process.env.VERCEL_BYPASS_SECRET!,
+        },
+        delay: delaySeconds,
+      });
+
+      console.log(`✅ Scheduled successfully for ${delaySeconds}s later.`);
+    } catch (qstashError) {
+      console.error("Failed to schedule QStash notification:", qstashError);
+    }
+
     return NextResponse.json(
       {
-        message: "Project submitted successfully. Review will be available in 30 minutes.",
+        message:
+          "Project submitted successfully. Review will be available in 1 minutes.",
         project: submitProject,
       },
       { status: 200 }
     );
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("An error occurred:", error.message);
-    } else {
-      console.error("An unknown error occurred:", error);
-    }
+    console.error("Submit Error:", error);
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

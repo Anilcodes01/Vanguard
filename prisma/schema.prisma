@@ -61,6 +61,7 @@ model users {
   bookmarks         Bookmark[]
   commentLikes      CommentLike[]
   internshipWeeks   InternshipWeek[]
+  pushSubscriptions PushSubscription[]
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -859,5 +860,20 @@ enum ReviewStatus {
   COMPLETED
   FAILED
 
+  @@schema("public")
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id") @db.Uuid
+  endpoint  String   @unique 
+  p256dh    String
+  auth      String
+  
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@map("push_subscriptions")
   @@schema("public")
 }
