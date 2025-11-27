@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
       codeContext
     );
 
-    const reviewAvailableAt = new Date(Date.now() + 1 * 60 * 1000);
+    const reviewAvailableAt = new Date(Date.now() + 30 * 60 * 1000);
 
     const submitProject = await prisma.internshipProject.update({
       where: { id: projectId },
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
     });
 
     try {
-      const delaySeconds = 1 * 60;
+      const delaySeconds = 30 * 60;
 
       const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/notifications/send-scheduled`;
 
@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         message:
-          "Project submitted successfully. Review will be available in 1 minutes.",
+          "Project submitted successfully. Review will be available in 30 minutes.",
         project: submitProject,
       },
       { status: 200 }
