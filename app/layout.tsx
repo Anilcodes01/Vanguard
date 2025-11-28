@@ -44,6 +44,11 @@ export default function RootLayout({
                 },
                 success: {
                   duration: 3000,
+
+                  iconTheme: {
+                    primary: "#f59120",
+                    secondary: "#fff",
+                  },
                 },
                 error: {
                   duration: 5000,
@@ -54,7 +59,7 @@ export default function RootLayout({
             <SpeedInsights />
           </StoreProvider>
         </Providers>
-      </body>
+    </body>
     </html>
   );
 }

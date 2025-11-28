@@ -59,7 +59,7 @@ export default function SignUpPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* ... your form inputs remain the same ... */}
+          {}
           <div className="relative">
             <input
               id="name"
