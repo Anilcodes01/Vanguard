@@ -84,7 +84,6 @@ export default function PublicLayout({
         onMouseLeave={handleMouseLeave}
       />
 
-      {}
       <main
         className={`overflow-auto w-full scrollbar-hide bg-white min-h-0 ${
           isFullWidthPage ? "flex-1" : "flex-1 lg"
@@ -93,8 +92,9 @@ export default function PublicLayout({
         {children}
       </main>
 
-      {}
-      {!isFullWidthPage && <RightSidePanel />}
+      <div className={isFullWidthPage ? "hidden" : "block"}>
+        <RightSidePanel />
+      </div>
     </div>
   );
 
