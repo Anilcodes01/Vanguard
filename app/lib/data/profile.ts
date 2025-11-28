@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { cache } from "react";
+import { Difficulty, SubmissionStatus } from "@prisma/client";
 
 export const getProfileData = cache(async (username: string) => {
   const profile = await prisma.profiles.findUnique({
@@ -16,63 +17,86 @@ export const getProfileData = cache(async (username: string) => {
     totalProjectsCount,
     internshipProjects,
     totalInternshipProjectsCount,
+
+    allProblems,
+    allUserSubmissions,
   ] = await Promise.all([
     prisma.submission.findMany({
       where: { userId: profile.id },
       orderBy: { createdAt: "desc" },
       take: 5,
-      include: {
-        problem: { select: { title: true } },
-      },
+      include: { problem: { select: { title: true } } },
     }),
-
-    prisma.submission.count({
-      where: { userId: profile.id },
-    }),
-
+    prisma.submission.count({ where: { userId: profile.id } }),
     prisma.problemSolution.findMany({
       where: { userId: profile.id },
+      include: { problem: { select: { difficulty: true } } },
     }),
-
     prisma.submittedProjects.findMany({
       where: { userId: profile.id },
       orderBy: { createdAt: "desc" },
       take: 5,
-      include: {
-        project: { select: { name: true } },
-      },
+      include: { project: { select: { name: true } } },
     }),
-
-    prisma.submittedProjects.count({
-      where: { userId: profile.id },
-    }),
-
+    prisma.submittedProjects.count({ where: { userId: profile.id } }),
     prisma.internshipProject.findMany({
-      where: {
-        internshipWeek: {
-          userId: profile.id,
-        },
-        isCompleted: true,
-      },
+      where: { internshipWeek: { userId: profile.id }, isCompleted: true },
       orderBy: { updatedAt: "desc" },
       take: 5,
       include: {
-        internshipWeek: {
-          select: {
-            title: true,
-            weekNumber: true,
-          },
-        },
+        internshipWeek: { select: { title: true, weekNumber: true } },
       },
+    }),
+    prisma.internshipProject.count({
+      where: { internshipWeek: { userId: profile.id }, isCompleted: true },
     }),
 
-    prisma.internshipProject.count({
-      where: {
-        internshipWeek: { userId: profile.id },
-        isCompleted: true,
-      },
+    prisma.problem.findMany({
+      select: { id: true, difficulty: true },
+    }),
+
+    prisma.submission.findMany({
+      where: { userId: profile.id },
+      select: { status: true, problem: { select: { difficulty: true } } },
     }),
   ]);
+
+  const createStat = () => ({
+    total: 0,
+    solved: 0,
+    submissions: 0,
+    acceptedSubmissions: 0,
+  });
+
+  const stats = {
+    all: createStat(),
+    Beginner: createStat(),
+    Intermediate: createStat(),
+    Advanced: createStat(),
+  };
+
+  allProblems.forEach((p) => {
+    stats[p.difficulty].total++;
+    stats.all.total++;
+  });
+
+  problemSolutions.forEach((sol) => {
+    const diff = sol.problem.difficulty;
+    stats[diff].solved++;
+    stats.all.solved++;
+  });
+
+  allUserSubmissions.forEach((sub) => {
+    const diff = sub.problem.difficulty;
+
+    stats[diff].submissions++;
+    stats.all.submissions++;
+
+    if (sub.status === "Accepted") {
+      stats[diff].acceptedSubmissions++;
+      stats.all.acceptedSubmissions++;
+    }
+  });
 
   return {
     profile,
@@ -83,5 +107,7 @@ export const getProfileData = cache(async (username: string) => {
     totalProjectsCount,
     internshipProjects,
     totalInternshipProjectsCount,
+
+    difficultyStats: stats,
   };
 });

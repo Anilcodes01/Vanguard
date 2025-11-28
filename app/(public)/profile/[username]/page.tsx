@@ -1,11 +1,10 @@
-import { CheckCircle, Target, Activity } from "lucide-react";
 import {
   ProfilePanel,
   ErrorDisplay,
 } from "@/app/components/Profile/ProfilePanel";
 import ActivityTabs from "@/app/components/Profile/ActivityTab";
+import ProblemSolvingOverview from "@/app/components/Profile/ProblemSolvingOverview";
 import { getProfileData } from "@/app/lib/data/profile";
-import { StatCard } from "@/app/components/Profile/StatCard";
 import { ProfileData } from "@/types";
 
 export default async function ProfilePage({
@@ -26,18 +25,12 @@ export default async function ProfilePage({
     profile,
     submissions,
     totalSubmissionsCount,
-    problemSolutions,
     submittedProjects,
     internshipProjects,
     totalProjectsCount,
     totalInternshipProjectsCount,
+    difficultyStats,
   } = data;
-
-  const solvedCount = problemSolutions.filter(
-    (s) => s.status === "Solved"
-  ).length;
-  const attemptedCount = problemSolutions.length;
-  const totalSubmissionsStat = totalSubmissionsCount;
 
   const combinedTotalProjects =
     totalProjectsCount + (totalInternshipProjectsCount || 0);
@@ -67,7 +60,6 @@ export default async function ProfilePage({
 
   const formattedInternship = (internshipProjects || []).map((p) => ({
     id: p.id,
-
     title: `Week ${p.internshipWeek.weekNumber}: ${p.internshipWeek.title}`,
     githubUrl: p.githubLink,
     liveUrl: p.liveLink,
@@ -92,19 +84,8 @@ export default async function ProfilePage({
 
         <div className="flex flex-col-reverse lg:flex-row gap-6 items-start">
           <div className="flex-1 space-y-6 w-full">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <StatCard icon={CheckCircle} value={solvedCount} label="Solved" />
-              <StatCard
-                icon={Target}
-                value={attemptedCount}
-                label="Attempted"
-              />
-              <StatCard
-                icon={Activity}
-                value={totalSubmissionsStat}
-                label="Submissions"
-              />
-            </div>
+            {}
+            <ProblemSolvingOverview stats={difficultyStats} />
 
             <ActivityTabs
               initialSubmissions={formattedSubmissions}
