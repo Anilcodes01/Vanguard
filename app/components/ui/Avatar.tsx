@@ -84,7 +84,7 @@ export default function UserAvatar({ user, onDropdownItemClick }: UserAvatarProp
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group h-10 w-10 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-sky-500 transition-colors hover:border-sky-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-sky-500"
+        className="group h-8 w-8 cursor-pointer rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-orange-500 transition-colors hover:border-orange-500 "
       >
         {user.avatar_url ? (
           <Image
