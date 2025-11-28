@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import InternshipWeekCard from "./InternshipWeekCard";
 import axios from "axios";
+import { LoadingSpinner } from "../../Profile/ProfilePanel";
 
 interface EnrolledUIProps {
   userName: string;
@@ -92,7 +93,7 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
+        <LoadingSpinner />
       </div>
     );
   }

@@ -62,7 +62,8 @@ model users {
   commentLikes      CommentLike[]
   internshipWeeks   InternshipWeek[]
   pushSubscriptions PushSubscription[]
-  journal Journal[]
+  journal           Journal[]
+  notes             Note[]
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -745,6 +746,7 @@ model InternshipWeek {
   problems     InternshipProblem[]
   projects     InternshipProject[]
   walkthroughs WalkthroughCard[]
+  notes        Note[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -755,13 +757,13 @@ model InternshipWeek {
 }
 
 model InternshipProblem {
-  id               String         @id @default(uuid())
-  title            String
-  description      String
-  isCompleted      Boolean        @default(false) @map("is_completed")
-  internshipWeekId String         @map("internship_week_id")
-  internshipWeek   InternshipWeek @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
-
+  id                                 String                              @id @default(uuid())
+  title                              String
+  description                        String
+  isCompleted                        Boolean                             @default(false) @map("is_completed")
+  internshipWeekId                   String                              @map("internship_week_id")
+  internshipWeek                     InternshipWeek                      @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
+  notes                              Note[]
   createdAt                          DateTime                            @default(now()) @map("created_at")
   updatedAt                          DateTime                            @updatedAt @map("updated_at")
   internshipAlgoProblemDatas         InternshipAlgoProblemData[]
@@ -821,15 +823,15 @@ model InternshipProject {
   liveLink         String?        @map("live_link")
   internshipWeekId String         @map("internship_week_id")
   internshipWeek   InternshipWeek @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
-
+  notes            Note[]
   screenshots      String[]       @default([])
   overview         String?        @db.Text
 
   aiReviewStatus    ReviewStatus @default(PENDING) @map("ai_review_status")
   aiScore           Int?         @map("ai_score")
-  aiFeedback        String?      @db.Text @map("ai_feedback")
+  aiFeedback        String?      @map("ai_feedback") @db.Text
   aiImprovements    String[]     @map("ai_improvements")
-  reviewAvailableAt DateTime?    @db.Timestamptz(6) @map("review_available_at")
+  reviewAvailableAt DateTime?    @map("review_available_at") @db.Timestamptz(6)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -853,11 +855,10 @@ model WalkthroughCard {
   @@schema("public")
 }
 
-
 enum ReviewStatus {
   PENDING
-  QUEUED      // Optional: If you use background jobs later
-  PROCESSING  // The AI is currently analyzing
+  QUEUED // Optional: If you use background jobs later
+  PROCESSING // The AI is currently analyzing
   COMPLETED
   FAILED
 
@@ -865,33 +866,56 @@ enum ReviewStatus {
 }
 
 model PushSubscription {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id") @db.Uuid
-  endpoint  String   @unique 
-  p256dh    String
-  auth      String
-  
-  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id       String @id @default(uuid())
+  userId   String @map("user_id") @db.Uuid
+  endpoint String @unique
+  p256dh   String
+  auth     String
+
+  user users @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
-  
+
   @@map("push_subscriptions")
   @@schema("public")
 }
 
 model Journal {
-  id        String   @id @default(uuid())
-  title     String
+  id          String   @id @default(uuid())
+  title       String
   description String
-  content   String   @db.Text
-  tags      String[] @default([])
-  
-  userId    String   @map("user_id") @db.Uuid
-  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content     String   @db.Text
+  tags        String[] @default([])
+
+  userId String @map("user_id") @db.Uuid
+  user   users  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("journals")
+  @@schema("public")
+}
+
+model Note {
+  id      String @id @default(uuid())
+  content String @db.Text
+
+  userId String @map("user_id") @db.Uuid
+  user   users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  internshipWeekId    String             @map("internship_week_id")
+  internshipWeek      InternshipWeek     @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
+  internshipProblemId String?            @map("internship_problem_id") @db.Uuid
+  problem             InternshipProblem? @relation(fields: [internshipProblemId], references: [id], onDelete: Cascade)
+  internshipProjectId String?            @map("internship_project_id") @db.Uuid
+  project             InternshipProject? @relation(fields: [internshipProjectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, internshipProblemId])
+  @@unique([userId, internshipProjectId])
+  @@map("notes")
   @@schema("public")
 }

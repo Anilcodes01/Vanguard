@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, CheckCircle, Bell } from "lucide-react";
+import { ArrowLeft, CheckCircle, NotebookPen } from "lucide-react";
 
 interface WeekHeaderProps {
   weekNumber: number;
@@ -7,8 +7,7 @@ interface WeekHeaderProps {
   completedCount: number;
   totalCount: number;
   progressPercentage: number;
-  isSubscribed: boolean;
-  onSubscribe: () => void;
+  onOpenNotes: () => void;
 }
 
 export default function WeekHeader({
@@ -17,14 +16,12 @@ export default function WeekHeader({
   completedCount,
   totalCount,
   progressPercentage,
-  isSubscribed,
-  onSubscribe,
+  onOpenNotes,
 }: WeekHeaderProps) {
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        
-        {/* Left Side: Back & Title */}
+        {}
         <div className="flex items-center gap-4">
           <Link
             href="/internship"
@@ -43,22 +40,27 @@ export default function WeekHeader({
           </div>
         </div>
 
-        {/* Right Side: Progress & Actions */}
+        {}
         <div className="flex items-center gap-4 md:gap-6">
-          
-          {/* Progress Section */}
+          {}
           <div className="flex flex-col items-end gap-1">
             <div className="flex items-center gap-2 text-xs font-medium text-gray-600">
               <span className="hidden sm:inline">Progress</span>
-              <span className={progressPercentage === 100 ? "text-green-600" : "text-gray-900"}>
+              <span
+                className={
+                  progressPercentage === 100
+                    ? "text-green-600"
+                    : "text-gray-900"
+                }
+              >
                 {Math.round(progressPercentage)}%
               </span>
             </div>
-            {/* Visual Progress Bar */}
+            {}
             <div className="w-24 md:w-32 h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div 
+              <div
                 className={`h-full rounded-full transition-all duration-500 ease-out ${
-                    progressPercentage === 100 ? "bg-green-500" : "bg-orange-500"
+                  progressPercentage === 100 ? "bg-green-500" : "bg-orange-500"
                 }`}
                 style={{ width: `${progressPercentage}%` }}
               />
@@ -67,25 +69,28 @@ export default function WeekHeader({
 
           <div className="h-8 w-[1px] bg-gray-200 hidden sm:block"></div>
 
-          {/* Stats Badge */}
+          {}
           <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg text-xs font-semibold border border-gray-200">
-            <CheckCircle className={`w-3.5 h-3.5 ${completedCount === totalCount ? "text-green-500" : "text-gray-400"}`} />
+            <CheckCircle
+              className={`w-3.5 h-3.5 ${
+                completedCount === totalCount
+                  ? "text-green-500"
+                  : "text-gray-400"
+              }`}
+            />
             <span>
               {completedCount}/{totalCount}
             </span>
           </div>
 
-          {/* Notification Button (Relocated) */}
-          {!isSubscribed && (
-            <button
-              onClick={onSubscribe}
-              className="p-2 text-orange-600 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-full transition-all relative group"
-              title="Enable Notifications"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
-            </button>
-          )}
+          {}
+          <button
+            onClick={onOpenNotes}
+            className="p-2 text-gray-600 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full transition-all group flex items-center justify-center relative"
+            title="Weekly Journal"
+          >
+            <NotebookPen className="w-5 h-5 group-hover:text-orange-600 transition-colors" />
+          </button>
         </div>
       </div>
     </header>

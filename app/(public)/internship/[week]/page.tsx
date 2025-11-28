@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Bell } from "lucide-react";
 import { InternshipWeekData } from "../types";
 import WeekHeader from "@/app/components/internship/enrolled/WeekHeader";
 import ProjectBanner from "@/app/components/internship/enrolled/ProjectBanner";
 import ProblemGrid from "@/app/components/internship/enrolled/ProblemGrid";
 import ModuleCarousel from "@/app/components/internship/enrolled/ModuleCarousal";
 import SubmitProjectModal from "@/app/components/internship/enrolled/SubmitProjectModel";
+import WeekJournalModal from "@/app/components/internship/enrolled/WeekJournalModal";
 import { usePushNotifications } from "@/app/hooks/usePushNotifications";
-import { Bell } from "lucide-react";
 
 const CARD_ORDER = [
   "case_study",
@@ -22,11 +22,18 @@ const CARD_ORDER = [
   "action_plan",
 ];
 
+interface NoteEntry {
+  id: string;
+  content: string;
+  internshipProblemId?: string | null;
+  internshipProjectId?: string | null;
+}
+
 export default function IndividualInternshipWeek() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
-const { isSubscribed, subscribeToNotifications } = usePushNotifications();
+  const { isSubscribed, subscribeToNotifications } = usePushNotifications();
   const weekNumberInt = parseInt(params.week as string);
   const topicParam = searchParams.get("topic");
   const projectTitleParam = searchParams.get("projectTitle");
@@ -36,8 +43,13 @@ const { isSubscribed, subscribeToNotifications } = usePushNotifications();
   const [error, setError] = useState<string | null>(null);
   const [showSpecs, setShowSpecs] = useState(false);
 
+  const [fetchedNotes, setFetchedNotes] = useState<NoteEntry[]>([]);
+
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [isJournalOpen, setIsJournalOpen] = useState(false);
+  const [isFetchingJournal, setIsFetchingJournal] = useState(false);
 
   const hasFetched = useRef(false);
 
@@ -78,6 +90,56 @@ const { isSubscribed, subscribeToNotifications } = usePushNotifications();
     if (weekNumberInt) fetchData();
   }, [weekNumberInt, topicParam, projectTitleParam]);
 
+  const handleOpenJournal = async () => {
+    setIsJournalOpen(true);
+    if (!data) return;
+
+    try {
+      setIsFetchingJournal(true);
+      const res = await fetch(`/api/notes?weekNumber=${weekNumberInt}`);
+
+      if (res.ok) {
+        const json = await res.json();
+        setFetchedNotes(json.notes || []);
+      }
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+    } finally {
+      setIsFetchingJournal(false);
+    }
+  };
+
+  const handleSaveJournal = async (
+    content: string,
+    type: "general" | "problem" | "project",
+    entityId?: string
+  ) => {
+    try {
+      const res = await fetch("/api/notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          weekNumber: weekNumberInt,
+          content,
+          type,
+          entityId,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) throw new Error("Failed to save");
+
+      setFetchedNotes((prev) => {
+        const filtered = prev.filter((n) => n.id !== result.note.id);
+        return [...filtered, result.note];
+      });
+    } catch (error) {
+      console.error(error);
+      alert("Failed to save note.");
+    }
+  };
+
   const sortedWalkthroughs = useMemo(() => {
     if (!data?.walkthroughs) return [];
     return [...data.walkthroughs].sort((a, b) => {
@@ -91,9 +153,8 @@ const { isSubscribed, subscribeToNotifications } = usePushNotifications();
   const progressStats = useMemo(() => {
     if (!data) return { completed: 0, total: 0, percentage: 0 };
 
-    // 1 Project + N Problems
     const totalProblems = data.problems.length;
-    const totalItems = totalProblems + 1; // +1 for the project
+    const totalItems = totalProblems + 1;
 
     const completedProblems = data.problems.filter((p) => p.isCompleted).length;
     const isProjectCompleted = data.projects[0]?.isCompleted ? 1 : 0;
@@ -107,7 +168,6 @@ const { isSubscribed, subscribeToNotifications } = usePushNotifications();
       percentage: percentage,
     };
   }, [data]);
-
 
   const handleProjectSubmit = async (submissionData: {
     githubLink: string;
@@ -198,22 +258,21 @@ const { isSubscribed, subscribeToNotifications } = usePushNotifications();
   return (
     <div className="min-h-screen bg-[#F9FAFB] text-gray-900 pb-20">
       {!isSubscribed && (
-  <button 
-    onClick={subscribeToNotifications}
-    className="fixed bottom-4 right-4 cursor-pointer bg-[#e16024] text-white p-2 rounded-full shadow-lg z-50 flex items-center gap-2 hover:bg-[#f35221] transition-all"
-  >
-    <Bell className="w-5 h-5" />
-    
-  </button>
-)}
+        <button
+          onClick={subscribeToNotifications}
+          className="fixed bottom-4 right-4 cursor-pointer bg-[#e16024] text-white p-2 rounded-full shadow-lg z-50 flex items-center gap-2 hover:bg-[#f35221] transition-all"
+        >
+          <Bell className="w-5 h-5" />
+        </button>
+      )}
+
       <WeekHeader
-        weekNumber={data.weekNumber}
+        weekNumber={data.weekNumber || weekNumberInt}
         title={data.title}
         completedCount={progressStats.completed}
         totalCount={progressStats.total}
         progressPercentage={progressStats.percentage}
-        isSubscribed={isSubscribed}
-        onSubscribe={subscribeToNotifications}
+        onOpenNotes={handleOpenJournal}
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -240,6 +299,21 @@ const { isSubscribed, subscribeToNotifications } = usePushNotifications();
         onClose={() => setIsSubmitModalOpen(false)}
         onSubmit={handleProjectSubmit}
         isSubmitting={isSubmitting}
+      />
+
+      <WeekJournalModal
+        isOpen={isJournalOpen}
+        onClose={() => setIsJournalOpen(false)}
+        weekNumber={weekNumberInt}
+        isLoading={isFetchingJournal}
+        availableProblems={
+          data?.problems.map((p) => ({ id: p.id, title: p.title })) || []
+        }
+        availableProjects={
+          data?.projects.map((p) => ({ id: p.id, title: p.title })) || []
+        }
+        fetchedNotes={fetchedNotes}
+        onSave={handleSaveJournal}
       />
     </div>
   );

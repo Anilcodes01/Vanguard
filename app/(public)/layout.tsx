@@ -27,9 +27,10 @@ export default function PublicLayout({
   const isInternshipPage = pathname?.startsWith("/internship/");
   const isFirstInternshipPage = pathname === "/internship";
   const isExplorePage = pathname === "/explore";
+  const isProfilePage = pathname?.startsWith("/profile/")
 
   const isFullWidthPage =
-    isProblemPage || isInternshipPage || isFirstInternshipPage || isExplorePage;
+    isProblemPage || isInternshipPage || isFirstInternshipPage || isExplorePage || isProfilePage;
 
   const handleMouseEnter = useCallback(() => {
     if (hasProfile) setIsHovered(true);

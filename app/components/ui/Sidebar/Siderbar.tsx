@@ -11,19 +11,67 @@ import {
   Beaker,
   BookOpen,
   Plus,
-  ChartColumn
+  ChartColumn,
+  Group,
 } from "lucide-react";
 
 const sidebarItems = [
   { key: "home", name: "Home", path: "/", icon: <Home className="h-5 w-5" /> },
-  { key: "explore", name: "Explore", path: "/explore", icon: <Search className="h-5 w-5" /> },
-  { key: "problems", name: "Problems", path: "/problems", icon: <Code className="h-5 w-5" /> },
-  { key: 'leaderboard', name: 'Leaderboard', path: '/leaderboard', icon: <ChartColumn className="h-5 w-5"/>},
-  { key: "projects", name: "Projects", path: "/projects", icon: <Folder className="h-5 w-5" /> },
-  { key: "discussions", name: "Discussions", path: "/discussions", icon: <MessageCircle className="h-5 w-5" /> },
-  { key: "internlab", name: "Internlab", path: "/internship", icon: <Beaker className="h-5 w-5" /> },
-  { key: "hellipad", name: "Hellipad", path: "/hellipad", icon: <BookOpen className="h-5 w-5" /> },
-  { key: "journal", name: "Journal", path: "/journal", icon: <Plus className="h-5 w-5" /> },
+  {
+    key: "explore",
+    name: "Explore",
+    path: "/explore",
+    icon: <Search className="h-5 w-5" />,
+  },
+  {
+    key: "problems",
+    name: "Problems",
+    path: "/problems",
+    icon: <Code className="h-5 w-5" />,
+  },
+  {
+    key: "leaderboard",
+    name: "Leaderboard",
+    path: "/leaderboard",
+    icon: <ChartColumn className="h-5 w-5" />,
+  },
+
+  {
+    key: "community",
+    name: "Community",
+    path: "/community",
+    icon: <Group className="h-5 w-5" />,
+  },
+  {
+    key: "projects",
+    name: "Projects",
+    path: "/projects",
+    icon: <Folder className="h-5 w-5" />,
+  },
+  {
+    key: "discussions",
+    name: "Discussions",
+    path: "/discussions",
+    icon: <MessageCircle className="h-5 w-5" />,
+  },
+  {
+    key: "internlab",
+    name: "Internlab",
+    path: "/internship",
+    icon: <Beaker className="h-5 w-5" />,
+  },
+  {
+    key: "hellipad",
+    name: "Hellipad",
+    path: "/hellipad",
+    icon: <BookOpen className="h-5 w-5" />,
+  },
+  {
+    key: "journal",
+    name: "Journal",
+    path: "/journal",
+    icon: <Plus className="h-5 w-5" />,
+  },
 ];
 
 interface SidebarProps {
@@ -32,7 +80,11 @@ interface SidebarProps {
   onMouseLeave: () => void;
 }
 
-export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: SidebarProps) {
+export default function Sidebar({
+  collapsed,
+  onMouseEnter,
+  onMouseLeave,
+}: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -45,10 +97,8 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
     >
       <nav className="flex-1 px-2 py-4 space-y-2">
         {sidebarItems.map((item) => {
-          // FIX: Check if path matches exactly OR is a sub-route (e.g., /internship/problems/...)
-          // We ensure item.path !== "/" for the startsWith check so 'Home' doesn't stay active on every page.
-          const isActive = 
-            pathname === item.path || 
+          const isActive =
+            pathname === item.path ||
             (pathname?.startsWith(`${item.path}/`) && item.path !== "/");
 
           return (
@@ -58,9 +108,10 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
               className={`
                 group relative flex items-center gap-4
                 h-10 px-3 rounded-lg transition-all duration-200
-                ${isActive
-                  ? "bg-[#f59120] text-white font-medium shadow-sm"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                ${
+                  isActive
+                    ? "bg-[#f59120] text-white font-medium shadow-sm"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 }
               `}
             >
@@ -71,9 +122,10 @@ export default function Sidebar({ collapsed, onMouseEnter, onMouseLeave }: Sideb
               <span
                 className={`
                   text-sm font-medium origin-left transition-all duration-300
-                  ${collapsed 
-                    ? "scale-0 opacity-0 w-0" 
-                    : "scale-100 opacity-100"
+                  ${
+                    collapsed
+                      ? "scale-0 opacity-0 w-0"
+                      : "scale-100 opacity-100"
                   }
                 `}
               >
