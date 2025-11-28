@@ -6,7 +6,6 @@ import {
   Briefcase,
   FolderGit2,
   Link as LinkIcon,
-  ChevronDown,
   Loader2,
 } from "lucide-react";
 import {
@@ -18,7 +17,10 @@ interface SubmissionItem {
   id: string;
   status: string;
   createdAt: string;
-  problem: { title: string };
+  problem: { 
+    title: string;
+    difficulty: string; 
+  };
 }
 
 interface ProjectItem {
@@ -45,15 +47,10 @@ export default function ActivityTabs({
   totalProjectsCount,
   userId,
 }: ActivityTabsProps) {
-  const [activeTab, setActiveTab] = useState<"problems" | "projects">(
-    "problems"
-  );
-
-  const [submissions, setSubmissions] =
-    useState<SubmissionItem[]>(initialSubmissions);
+  const [activeTab, setActiveTab] = useState<"problems" | "projects">("problems");
+  const [submissions, setSubmissions] = useState<SubmissionItem[]>(initialSubmissions);
   const [submissionsPage, setSubmissionsPage] = useState(1);
   const [isLoadingSubmissions, setIsLoadingSubmissions] = useState(false);
-
   const [projects] = useState<ProjectItem[]>(initialProjects);
 
   const formatDate = (dateString: string) => {
@@ -88,6 +85,32 @@ export default function ActivityTabs({
           </span>
         );
     }
+  };
+
+  const getDifficultyBadge = (difficulty: string) => {
+    let colorClass = "bg-gray-100 text-gray-600";
+    let label = difficulty;
+
+    switch (difficulty) {
+      case "Beginner":
+        colorClass = "bg-emerald-50 text-emerald-700";
+        label = "Easy";
+        break;
+      case "Intermediate":
+        colorClass = "bg-amber-50 text-amber-700";
+        label = "Med";
+        break;
+      case "Advanced":
+        colorClass = "bg-rose-50 text-rose-700";
+        label = "Hard";
+        break;
+    }
+
+    return (
+      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${colorClass}`}>
+        {label}
+      </span>
+    );
   };
 
   const handleLoadMoreSubmissions = async () => {
@@ -145,9 +168,12 @@ export default function ActivityTabs({
                     className="flex items-center justify-between p-4 sm:px-6 hover:bg-gray-50/50 transition-colors"
                   >
                     <div className="flex flex-col gap-1">
-                      <p className="text-gray-900 text-sm font-medium truncate max-w-[200px] sm:max-w-md">
-                        {submission.problem.title}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-gray-900 text-sm font-medium truncate max-w-[150px] sm:max-w-md">
+                          {submission.problem.title}
+                        </p>
+                        {getDifficultyBadge(submission.problem.difficulty)}
+                      </div>
                       <p className="text-gray-400 text-xs">
                         {formatDate(submission.createdAt)}
                       </p>
@@ -166,11 +192,7 @@ export default function ActivityTabs({
                     disabled={isLoadingSubmissions}
                     className="text-xs font-medium text-gray-500 hover:text-black transition-colors"
                   >
-                    {isLoadingSubmissions ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      "Load More"
-                    )}
+                    {isLoadingSubmissions ? <Loader2 className="animate-spin" /> : "Load More"}
                   </button>
                 </div>
               )}
@@ -194,7 +216,6 @@ export default function ActivityTabs({
                       <p className="text-gray-900 text-sm font-medium truncate max-w-[150px] sm:max-w-md">
                         {item.title}
                       </p>
-                      {}
                       <span
                         className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
                           item.type === "Internship"
@@ -238,7 +259,6 @@ export default function ActivityTabs({
               ))}
             </div>
 
-            {}
             {projects.length === 0 && (
               <div className="flex-1 flex flex-col items-center justify-center py-12 text-gray-400">
                 <Briefcase size={24} className="mb-2 opacity-50" />

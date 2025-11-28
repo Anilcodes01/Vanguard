@@ -13,7 +13,7 @@ export async function fetchMoreSubmissions(userId: string, page: number) {
     skip: skip,
     take: ITEMS_PER_PAGE,
     include: {
-      problem: { select: { title: true } },
+      problem: { select: { title: true, difficulty: true } },
     },
   });
 

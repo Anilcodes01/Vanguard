@@ -46,7 +46,7 @@ export default async function ProfilePage({
     id: s.id,
     status: s.status,
     createdAt: s.createdAt.toISOString(),
-    problem: { title: s.problem.title },
+    problem: { title: s.problem.title,  difficulty: s.problem.difficulty },
   }));
 
   const formattedStandalone = submittedProjects.map((p) => ({

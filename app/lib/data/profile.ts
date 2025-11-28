@@ -25,7 +25,7 @@ export const getProfileData = cache(async (username: string) => {
       where: { userId: profile.id },
       orderBy: { createdAt: "desc" },
       take: 5,
-      include: { problem: { select: { title: true } } },
+      include: { problem: { select: { title: true, difficulty: true } } },
     }),
     prisma.submission.count({ where: { userId: profile.id } }),
     prisma.problemSolution.findMany({
