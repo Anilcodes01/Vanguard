@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import toast from "react-hot-toast";
 import {
   X,
   Save,
@@ -107,8 +108,18 @@ export default function WeekJournalModal({
   }, [isOpen, fetchedNotes, availableProblems, availableProjects]);
 
   const handleSaveCurrent = async () => {
-    setIsSaving(true);
     const currentContent = contentMap[activeTab] || "";
+
+    const strippedContent = currentContent.replace(/<[^>]*>/g, "").trim();
+
+    const hasImage = currentContent.includes("<img");
+
+    if (!strippedContent && !hasImage) {
+      toast.error("Cannot save an empty note.");
+      return;
+    }
+
+    setIsSaving(true);
 
     try {
       let type: "general" | "problem" | "project" = "general";
@@ -123,8 +134,12 @@ export default function WeekJournalModal({
       }
 
       await onSave(currentContent, type, entityId);
+
+      toast.success("Note saved successfully!");
     } catch (error) {
       console.error("Failed to save", error);
+
+      toast.error("Failed to save note. Please try again.");
     } finally {
       setIsSaving(false);
     }
@@ -208,7 +223,9 @@ export default function WeekJournalModal({
                     >
                       <FolderGit2 className="w-4 h-4 shrink-0" />
                       <span className="truncate">{proj.title}</span>
-                      {contentMap[`project-${proj.id}`]?.length > 20 && (
+                      {contentMap[`project-${proj.id}`]
+                        ?.replace(/<[^>]*>/g, "")
+                        .trim().length > 0 && (
                         <span className="w-1.5 h-1.5 rounded-full bg-orange-500 ml-auto"></span>
                       )}
                     </div>
@@ -238,7 +255,9 @@ export default function WeekJournalModal({
                     >
                       <Code className="w-4 h-4 shrink-0" />
                       <span className="truncate">{prob.title}</span>
-                      {contentMap[`problem-${prob.id}`]?.length > 20 && (
+                      {contentMap[`problem-${prob.id}`]
+                        ?.replace(/<[^>]*>/g, "")
+                        .trim().length > 0 && (
                         <span className="w-1.5 h-1.5 rounded-full bg-orange-500 ml-auto"></span>
                       )}
                     </div>
@@ -301,7 +320,7 @@ export default function WeekJournalModal({
             <button
               onClick={handleSaveCurrent}
               disabled={isSaving || isLoading}
-              className="px-6 py-2 text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 rounded-lg flex items-center gap-2 transition-all shadow-sm"
+              className="px-6 py-2 text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 rounded-lg flex items-center gap-2 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSaving ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
