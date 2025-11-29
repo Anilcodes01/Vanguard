@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/client";
-import { Bookmark, LogOut, User as UserIcon } from "lucide-react";
+import { Bookmark, LogOut, NotebookPen, User as UserIcon } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/store/store";
 import { logout } from "@/app/store/features/auth/authSlice";
@@ -151,6 +151,15 @@ export default function UserAvatar({
           >
             <Bookmark size={16} />
             <span>Bookmarks</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              router.push("/notes");
+              setIsOpen(false);
+            }}
+          >
+            <NotebookPen size={16} />
+            <span>Notes</span>
           </DropdownMenuItem>
         </div>
 
