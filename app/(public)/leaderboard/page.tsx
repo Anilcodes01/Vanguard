@@ -35,7 +35,7 @@ const LeaderboardRow = ({
   return (
     <div
       className={`flex items-center gap-3 py-3 border-b  transition-colors ${
-        isCurrentUser ? "text-sky-400" : "text-neutral-300 hover:text-white"
+        isCurrentUser ? "text-orange-500" : "text-black "
       }`}
     >
       <div className="w-4 flex items-center justify-center">
@@ -46,7 +46,7 @@ const LeaderboardRow = ({
           <ArrowDown size={16} className="text-red-500" />
         )}
       </div>
-      <span className="text-sm font-medium text-neutral-500 w-8">{rank}</span>
+      <span className="text-sm font-medium text-black w-8">{rank}</span>
       <Image
         src={
           entry.avatar_url ||
@@ -91,7 +91,7 @@ export default function LeaderboardPage() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-[#ffffff]">
-        <Loader2 className="w-10 h-10 animate-spin text-white" />
+        <Loader2 className="w-10 h-10 animate-spin text-orange-500" />
       </div>
     );
   }
@@ -107,7 +107,7 @@ export default function LeaderboardPage() {
   }
 
   return (
-    <div className="bg-[#ffffff] text-white min-h-screen p-4 sm:p-8">
+    <div className="bg-[#ffffff] text-black min-h-screen p-4 sm:p-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8 pb-6 border-b flex items-center gap-2">
           {leagueImage && (
