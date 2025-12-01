@@ -29,7 +29,10 @@ export default function ProblemsList({
 
   const [problems, setProblems] = useState(initialProblems);
   const [page, setPage] = useState(2);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const activeFilter = (searchParams.get("difficulty") as FilterType) || "All";
   const hasMore = problems.length < initialTotalCount;
@@ -37,80 +40,102 @@ export default function ProblemsList({
   useEffect(() => {
     setProblems(initialProblems);
     setPage(2);
+
+    setIsFiltering(false);
   }, [initialProblems]);
 
   const handleFilterChange = (newFilter: FilterType) => {
     if (newFilter === activeFilter) return;
+
+    setIsFiltering(true);
+
     router.push(`/problems?difficulty=${newFilter}`);
   };
 
   const loadMoreProblems = async () => {
-    if (isLoading || !hasMore) return;
+    if (isLoadingMore || !hasMore) return;
 
-    setIsLoading(true);
+    setIsLoadingMore(true);
     const newProblems = await fetchMoreProblems({
       page,
       difficulty: activeFilter,
     });
     setProblems((prev) => [...prev, ...newProblems]);
     setPage((prev) => prev + 1);
-    setIsLoading(false);
+    setIsLoadingMore(false);
   };
 
   return (
     <>
+      {}
       <div className="flex items-center justify-center gap-2 mb-10">
         {difficultyFilters.map((filter) => (
           <button
             key={filter}
             onClick={() => handleFilterChange(filter)}
+            disabled={isFiltering}
             className={`px-4 py-2 rounded-lg text-sm cursor-pointer font-semibold transition-colors duration-200 ${
               activeFilter === filter
                 ? "bg-[#f59120] text-white shadow-lg shadow-[#f59120]/10"
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900"
-            }`}
+            } ${isFiltering ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             {filter}
           </button>
         ))}
       </div>
 
-      {initialProblems.length === 0 ? (
-        <div className="text-center py-10">
-          <p className="text-gray-600">No problems found for this filter.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {problems.map((problem) => (
-            <ProblemCard key={problem.id} problem={problem} />
-          ))}
-        </div>
-      )}
-
-      {hasMore && !isLoading && (
-        <div className="flex justify-center mt-12">
-          <button
-            onClick={loadMoreProblems}
-            disabled={isLoading}
-            className="px-6 py-2 cursor-pointer bg-[#f59120] text-white font-semibold rounded-lg transition-all duration-300 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Load More
-          </button>
-        </div>
-      )}
-
-      {isLoading && (
-        <div className="flex justify-center items-center py-10">
-          <div className="w-8 h-8 border-4 border-gray-300 border-t-[#f59120] rounded-full animate-spin"></div>
-        </div>
-      )}
-
-      {!hasMore && problems.length > 0 && (
-        <div className="text-center mt-12">
-          <p className="text-gray-600 text-sm">
-            ✨ You&apos;ve reached the end ✨
+      {}
+      {isFiltering ? (
+        <div className="flex flex-col justify-center items-center py-12 min-h-[400px]">
+          <div className="w-8 h-8 border-4 border-gray-200 border-t-[#f59120] rounded-full animate-spin"></div>
+          <p className="text-gray-500 mt-4 animate-pulse">
+            Fetching problems...
           </p>
         </div>
+      ) : (
+        <>
+          {problems.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-gray-600">
+                No problems found for this filter.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {problems.map((problem) => (
+                <ProblemCard key={problem.id} problem={problem} />
+              ))}
+            </div>
+          )}
+
+          {}
+          {hasMore && !isLoadingMore && (
+            <div className="flex justify-center mt-12">
+              <button
+                onClick={loadMoreProblems}
+                disabled={isLoadingMore}
+                className="px-6 py-2 cursor-pointer bg-[#f59120] text-white font-semibold rounded-lg transition-all duration-300 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Load More
+              </button>
+            </div>
+          )}
+
+          {isLoadingMore && (
+            <div className="flex justify-center items-center py-10">
+              <div className="w-8 h-8 border-4 border-gray-300 border-t-[#f59120] rounded-full animate-spin"></div>
+            </div>
+          )}
+
+          {!hasMore && problems.length > 0 && (
+            <div className="text-center mt-12">
+              <p className="text-gray-600 text-sm">
+                ✨ You&apos;ve reached the end ✨
+              </p>
+            </div>
+          )}
+        </>
       )}
     </>
   );
