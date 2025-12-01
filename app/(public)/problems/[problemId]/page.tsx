@@ -186,7 +186,7 @@ export default function ProblemPage() {
     }, 150);
 
     try {
-      const response = await axios.post("/api/submissions", {
+      const response = await axios.post("/api/submissions/batch", {
         problemId,
         code,
         startTime,

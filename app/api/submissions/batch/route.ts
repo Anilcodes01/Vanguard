@@ -11,6 +11,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { getWeekStartDateUTC } from "@/lib/dateUtils";
 
 const LEADERBOARD_GROUP_SIZE = 30;
+const MAX_POLL_ATTEMPTS = 10;
+const POLL_INTERVAL_MS = 1000;
+
+type Judge0SubmissionResult = {
+  stdout: string | null;
+  stderr: string | null;
+  compile_output: string | null;
+  message: string | null;
+  time: string;
+  memory: number;
+  status: { id: number; description: string };
+  token: string;
+};
+
+type TestCaseResult = {
+  testCaseId: string;
+  status: string;
+};
 
 async function assignUserToLeaderboardGroup(
   userId: string,
@@ -64,16 +82,6 @@ async function assignUserToLeaderboardGroup(
   });
 }
 
-type Judge0Submission = {
-  stdout: string | null;
-  stderr: string | null;
-  compile_output: string | null;
-  message: string | null;
-  time: string;
-  memory: number;
-  status: { id: number; description: string };
-};
-
 function mapJudge0StatusToEnum(description: string): SubmissionStatus {
   const mapping: { [key: string]: SubmissionStatus } = {
     Accepted: SubmissionStatus.Accepted,
@@ -85,11 +93,6 @@ function mapJudge0StatusToEnum(description: string): SubmissionStatus {
   };
   return mapping[description] || SubmissionStatus.InternalError;
 }
-
-type TestCaseResult = {
-  testCaseId: string;
-  status: string;
-};
 
 export async function POST(request: NextRequest) {
   try {
@@ -105,13 +108,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { problemId, code, startTime, languageId } = await request.json();
+    const body = await request.json();
+    const { problemId, code, startTime, languageId } = body;
 
     if (!problemId || !code || !startTime || !languageId) {
       return NextResponse.json(
-        {
-          message: "Problem ID, code, startTime, and languageId are required.",
-        },
+        { message: "Missing required fields." },
         { status: 400 }
       );
     }
@@ -139,29 +141,18 @@ export async function POST(request: NextRequest) {
 
     if (!languageDetail) {
       return NextResponse.json(
-        { message: "The selected language is not supported for this problem." },
+        { message: "Language not supported for this problem." },
         { status: 400 }
       );
     }
 
-    let allTestsPassed = true;
-    let firstFailedResult: Judge0Submission | null = null;
-    let firstFailedTestCaseData: {
-      input: string | null;
-      expected: string | null;
-    } | null = null;
-    let lastResult: Judge0Submission | null = null;
-    const testCaseResults: TestCaseResult[] = [];
-
-    for (const testCase of problem.testCases) {
+    const submissions = problem.testCases.map((testCase) => {
       let source_code = code;
       let stdin: string | undefined = undefined;
 
       if (problem.testStrategy === "DRIVER_CODE") {
         if (!languageDetail.driverCodeTemplate) {
-          throw new Error(
-            `Problem ${problemId} is misconfigured for language ${languageDetail.language}: missing driver code template.`
-          );
+          throw new Error("Missing driver code template.");
         }
         source_code = languageDetail.driverCodeTemplate
           .replace("{{USER_CODE}}", code.trim())
@@ -171,33 +162,97 @@ export async function POST(request: NextRequest) {
         stdin = testCase.input || undefined;
       }
 
-      const submissionData = {
+      return {
         language_id: languageId,
         source_code: Buffer.from(source_code).toString("base64"),
         stdin: stdin ? Buffer.from(stdin).toString("base64") : undefined,
         expected_output: testCase.expected
           ? Buffer.from(testCase.expected).toString("base64")
           : null,
-        // compiler_options:
-        //   languageId === 94
-        //     ? Buffer.from("--lib es2020,dom").toString("base64")
-        //     : undefined,
+        cpu_time_limit: problem.maxTime ? problem.maxTime : 5,
       };
+    });
 
-      const options = {
-        method: "POST",
-        url: `${process.env.JUDGE0_API_URL}/submissions`,
+    const judgeBaseUrl = process.env.JUDGE0_API_URL;
+    const judgeResponse = await axios.post(
+      `${judgeBaseUrl}/submissions/batch`,
+      { submissions },
+      {
         params: { base64_encoded: "true", wait: "true", fields: "*" },
-        headers: {
-          "content-type": "application/json",
-          "X-RapidAPI-Key": process.env.JUDGE0_API_KEY,
-          "X-RapidAPI-Host": process.env.JUDGE0_API_HOST,
-        },
-        data: submissionData,
-      };
+        headers: { "Content-Type": "application/json" },
+      }
+    );
 
-      const judgeResponse = await axios.request(options);
-      const result: Judge0Submission = judgeResponse.data;
+    let results = judgeResponse.data;
+
+    if (Array.isArray(results) && results.length > 0 && !results[0].status) {
+      const tokens = results.map((r: any) => r.token).join(",");
+
+      let attempts = 0;
+      let isComplete = false;
+
+      while (attempts < MAX_POLL_ATTEMPTS && !isComplete) {
+        attempts++;
+
+        await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+
+        const pollResponse = await axios.get(
+          `${judgeBaseUrl}/submissions/batch`,
+          {
+            params: {
+              tokens: tokens,
+              base64_encoded: "true",
+              fields: "*",
+            },
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        const pollData = pollResponse.data;
+        if (pollData && pollData.submissions) {
+          results = pollData.submissions;
+        } else {
+          results = pollData;
+        }
+
+        const allFinished = results.every(
+          (r: any) => r.status && r.status.id !== 1 && r.status.id !== 2
+        );
+
+        if (allFinished) {
+          isComplete = true;
+        }
+      }
+    }
+
+    if (
+      !Array.isArray(results) ||
+      results.length !== problem.testCases.length
+    ) {
+      throw new Error("Invalid response from execution engine.");
+    }
+
+    let allTestsPassed = true;
+    let maxExecutionTime = 0;
+    let maxMemory = 0;
+
+    let firstFailedResult: Judge0SubmissionResult | null = null;
+    let firstFailedIndex = -1;
+
+    const testCaseResults: TestCaseResult[] = [];
+
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+      const testCase = problem.testCases[i];
+
+      if (!result || !result.status) {
+        testCaseResults.push({
+          testCaseId: testCase.id.toString(),
+          status: "Internal Error",
+        });
+        allTestsPassed = false;
+        continue;
+      }
 
       result.stdout = result.stdout
         ? Buffer.from(result.stdout, "base64").toString("utf-8")
@@ -209,39 +264,41 @@ export async function POST(request: NextRequest) {
         ? Buffer.from(result.compile_output, "base64").toString("utf-8")
         : null;
 
-      lastResult = result;
-      testCaseResults.push({
-        testCaseId: testCase.id.toString(),
-        status: result.status.description,
-      });
+      const time = parseFloat(result.time) || 0;
+      const memory = result.memory || 0;
+      if (time > maxExecutionTime) maxExecutionTime = time;
+      if (memory > maxMemory) maxMemory = memory;
 
-      if (result.status.id !== 3) {
+      const isAccepted = result.status.id === 3;
+
+      if (!isAccepted && allTestsPassed) {
         allTestsPassed = false;
         firstFailedResult = result;
-        firstFailedTestCaseData = {
-          input: testCase.input,
-          expected: testCase.expected,
-        };
-        break;
+        firstFailedIndex = i;
       }
+
+      testCaseResults.push({
+        testCaseId: testCase.id.toString(),
+        status: result.status.description || "Unknown",
+      });
     }
 
-    if (!lastResult) {
-      throw new Error("Code execution failed to produce a result.");
-    }
+    const finalStatusDescription = allTestsPassed
+      ? "Accepted"
+      : firstFailedResult?.status?.description || "Internal Error";
+
+    let xpEarned = 0;
+    let starsEarned = 0;
+    let isFirstSolve = false;
 
     const existingSolution = await prisma.problemSolution.findUnique({
       where: { userId_problemId: { userId: user.id, problemId: problem.id } },
     });
+    const previouslySolved =
+      existingSolution && existingSolution.status === SolutionStatus.Solved;
 
-    const isFirstSolve =
-      allTestsPassed &&
-      (!existingSolution || existingSolution.status !== SolutionStatus.Solved);
-
-    let xpEarned = 0;
-    let starsEarned = 0;
-
-    if (isFirstSolve) {
+    if (allTestsPassed && !previouslySolved) {
+      isFirstSolve = true;
       switch (problem.difficulty) {
         case Difficulty.Beginner:
           xpEarned = 100;
@@ -255,16 +312,11 @@ export async function POST(request: NextRequest) {
       }
 
       const solveTime = Date.now();
-      const solveDurationInSeconds = (solveTime - startTime) / 1000;
-      const maxTimeInSeconds = problem.maxTime * 60;
-
-      if (solveDurationInSeconds <= maxTimeInSeconds / 2) {
-        starsEarned = 3;
-      } else if (solveDurationInSeconds <= maxTimeInSeconds) {
-        starsEarned = 2;
-      } else {
-        starsEarned = 1;
-      }
+      const solveDuration = (solveTime - startTime) / 1000;
+      const maxTime = problem.maxTime * 60;
+      if (solveDuration <= maxTime / 2) starsEarned = 3;
+      else if (solveDuration <= maxTime) starsEarned = 2;
+      else starsEarned = 1;
     }
 
     await prisma.$transaction(async (tx) => {
@@ -276,9 +328,9 @@ export async function POST(request: NextRequest) {
           problemId: problem.id,
           code: code,
           languageId: languageId,
-          status: mapJudge0StatusToEnum(lastResult!.status.description),
-          executionTime: parseFloat(lastResult!.time) || null,
-          executionMemory: lastResult!.memory || null,
+          status: mapJudge0StatusToEnum(finalStatusDescription),
+          executionTime: maxExecutionTime,
+          executionMemory: maxMemory,
         },
       });
 
@@ -309,55 +361,48 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      const profileUpdateData: {
-        xp?: { increment: number };
-        stars?: { increment: number };
-      } = {};
-
-      if (xpEarned > 0) {
-        profileUpdateData.xp = { increment: xpEarned };
-      }
-      if (starsEarned > 0) {
-        profileUpdateData.stars = { increment: starsEarned };
-      }
-
-      if (Object.keys(profileUpdateData).length > 0) {
+      if (xpEarned > 0 || starsEarned > 0) {
         await tx.profiles.update({
           where: { id: user.id },
-          data: profileUpdateData,
+          data: {
+            xp: { increment: xpEarned },
+            stars: { increment: starsEarned },
+          },
         });
       }
     });
-
-    const executionTime = parseFloat(lastResult.time) || 0;
-    const executionMemory = lastResult.memory || 0;
 
     if (allTestsPassed) {
       return NextResponse.json({
         status: "Accepted",
         xpEarned: isFirstSolve ? xpEarned : 0,
         starsEarned: isFirstSolve ? starsEarned : 0,
-        executionTime,
-        executionMemory,
+        executionTime: maxExecutionTime,
+        executionMemory: maxMemory,
         testCaseResults,
       });
     } else {
+      const failedCaseData =
+        firstFailedIndex !== -1 ? problem.testCases[firstFailedIndex] : null;
       return NextResponse.json({
-        status: firstFailedResult!.status.description,
-        input: firstFailedTestCaseData?.input,
-        userOutput: firstFailedResult!.stdout,
-        expectedOutput: firstFailedTestCaseData?.expected,
-        executionTime,
-        executionMemory,
+        status: firstFailedResult?.status?.description || "Error",
+        input: failedCaseData?.input,
+        userOutput: firstFailedResult?.stdout,
+        message:
+          firstFailedResult?.compile_output ||
+          firstFailedResult?.stderr ||
+          firstFailedResult?.message,
+        expectedOutput: failedCaseData?.expected,
+        executionTime: maxExecutionTime,
+        executionMemory: maxMemory,
         testCaseResults,
       });
     }
   } catch (error) {
     console.error("Submission failed:", error);
-    let errorMessage = "An unknown error occurred during submission.";
-    if (axios.isAxiosError(error) && error.response) {
-      errorMessage =
-        error.response.data?.message || "Error connecting to execution engine.";
+    let errorMessage = "An unknown error occurred.";
+    if (axios.isAxiosError(error)) {
+      errorMessage = error.response?.data?.message || error.message;
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
