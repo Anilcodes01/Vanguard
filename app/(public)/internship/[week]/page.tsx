@@ -3,14 +3,17 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { AlertCircle, Bell } from "lucide-react";
+import dynamic from "next/dynamic";
 import { InternshipWeekData } from "../types";
 import WeekHeader from "@/app/components/internship/enrolled/WeekHeader";
 import ProjectBanner from "@/app/components/internship/enrolled/ProjectBanner";
 import ProblemGrid from "@/app/components/internship/enrolled/ProblemGrid";
 import ModuleCarousel from "@/app/components/internship/enrolled/ModuleCarousal";
 import SubmitProjectModal from "@/app/components/internship/enrolled/SubmitProjectModel";
-import WeekJournalModal from "@/app/components/internship/enrolled/WeekJournalModal";
 import { usePushNotifications } from "@/app/hooks/usePushNotifications";
+const WeekJournalModal = dynamic(() => import("@/app/components/internship/enrolled/WeekJournalModal"), {
+  ssr: false
+});
 
 const CARD_ORDER = [
   "case_study",

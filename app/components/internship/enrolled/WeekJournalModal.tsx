@@ -12,9 +12,12 @@ import {
   FolderGit2,
   FileText,
 } from "lucide-react";
-
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
-import "react-quill-new/dist/quill.snow.css";
+const TextEditor = dynamic(() => import("../../journal/TextEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-full w-full bg-gray-50 animate-pulse rounded-md" />
+  ),
+});
 
 interface SimpleItem {
   id: string;
@@ -297,7 +300,8 @@ export default function WeekJournalModal({
 
           <div className="flex-1 overflow-hidden flex flex-col relative">
             <div className="absolute inset-0 p-6 overflow-y-auto">
-              <ReactQuill
+              {/* CHANGE 3: Use the wrapper component */}
+              <TextEditor
                 key={activeTab}
                 theme="snow"
                 value={contentMap[activeTab] || ""}
