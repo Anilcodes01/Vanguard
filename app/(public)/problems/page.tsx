@@ -2,6 +2,7 @@ import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { Difficulty } from "@prisma/client";
 import ProblemsList from "@/app/components/Problems/ProblemsList.tsx/ProblemsList";
+import { unstable_cache } from "next/cache";
 
 const PAGE_SIZE = 12;
 const VALID_DIFFICULTIES: Difficulty[] = [
@@ -23,52 +24,87 @@ const getXpForDifficulty = (difficulty: Difficulty): number => {
   }
 };
 
+const getCachedProblemData = unstable_cache(
+  async (difficulty: Difficulty | "All", page: number) => {
+    const skip = (page - 1) * PAGE_SIZE;
+    const whereCondition: { difficulty?: Difficulty } = {};
+
+    if (difficulty !== "All" && VALID_DIFFICULTIES.includes(difficulty)) {
+      whereCondition.difficulty = difficulty;
+    }
+
+    try {
+      const [problems, totalCount] = await prisma.$transaction([
+        prisma.problem.findMany({
+          where: whereCondition,
+          skip: skip,
+          take: PAGE_SIZE,
+          select: {
+            id: true,
+            title: true,
+            difficulty: true,
+            maxTime: true,
+            topic: true,
+          },
+          orderBy: { id: "asc" },
+        }),
+        prisma.problem.count({ where: whereCondition }),
+      ]);
+
+      return { problems, totalCount };
+    } catch (error) {
+      console.error("Prisma cached query error:", error);
+      return { problems: [], totalCount: 0 };
+    }
+  },
+  ["problems-list-data"],
+  {
+    revalidate: 3600,
+    tags: ["problems-list"],
+  }
+);
+
 async function getProblems(difficulty: Difficulty | "All", page: number) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const skip = (page - 1) * PAGE_SIZE;
-  const whereCondition: { difficulty?: Difficulty } = {};
-  if (difficulty !== "All" && VALID_DIFFICULTIES.includes(difficulty)) {
-    whereCondition.difficulty = difficulty;
+
+  const { problems: rawProblems, totalCount } = await getCachedProblemData(
+    difficulty,
+    page
+  );
+
+  let solvedProblemIds = new Set<string>();
+
+  if (user && rawProblems.length > 0) {
+    const problemIds = rawProblems.map((p) => p.id);
+
+    const userSolutions = await prisma.problemSolution.findMany({
+      where: {
+        userId: user.id,
+        problemId: { in: problemIds },
+        status: "Solved",
+      },
+      select: {
+        problemId: true,
+      },
+    });
+
+    solvedProblemIds = new Set(userSolutions.map((s) => s.problemId));
   }
-  try {
-    const [problemsData, totalCount] = await prisma.$transaction([
-      prisma.problem.findMany({
-        where: whereCondition,
-        skip: skip,
-        take: PAGE_SIZE,
-        select: {
-          id: true,
-          title: true,
-          difficulty: true,
-          maxTime: true,
-          topic: true,
-          _count: {
-            select: {
-              solutions: { where: { userId: user?.id, status: "Solved" } },
-            },
-          },
-        },
-        orderBy: { id: "asc" },
-      }),
-      prisma.problem.count({ where: whereCondition }),
-    ]);
-    const problems = problemsData.map((p) => ({
-      id: p.id,
-      title: p.title,
-      difficulty: p.difficulty,
-      maxTime: p.maxTime,
-      xp: getXpForDifficulty(p.difficulty),
-      topic: p.topic,
-      solved: p._count.solutions > 0,
-    }));
-    return { problems, totalCount };
-  } catch (error) {
-    console.error("Prisma query error:", error);
-    return { problems: [], totalCount: 0 };
-  }
+
+  const problems = rawProblems.map((p) => ({
+    id: p.id,
+    title: p.title,
+    difficulty: p.difficulty,
+    maxTime: p.maxTime,
+    xp: getXpForDifficulty(p.difficulty),
+    topic: p.topic,
+    solved: solvedProblemIds.has(p.id),
+  }));
+
+  return { problems, totalCount };
 }
 
 export default async function ProblemsPage({
@@ -78,7 +114,9 @@ export default async function ProblemsPage({
 }) {
   const resolvedSearchParams = await searchParams;
   const difficulty = resolvedSearchParams.difficulty || "All";
+
   const initialData = await getProblems(difficulty, 1);
+
   return (
     <div className="bg-white min-h-screen">
       <div className="w-full max-w-6xl mx-auto px-4 py-12 md:px-8 md:py-16">

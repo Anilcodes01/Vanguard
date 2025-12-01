@@ -14,7 +14,6 @@
     "@google/genai": "^1.29.1",
     "@heroicons/react": "^2.2.0",
     "@monaco-editor/react": "^4.7.0",
-    "@next/bundle-analyzer": "^16.0.1",
     "@prisma/client": "^6.19.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
@@ -51,6 +50,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^16.0.6",
     "@tailwindcss/postcss": "^4",
     "@types/formidable": "^3.4.6",
     "@types/node": "^20.19.18",
@@ -58,6 +58,7 @@
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19",
     "@types/web-push": "^3.6.4",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
     "prisma": "^6.19.0",
