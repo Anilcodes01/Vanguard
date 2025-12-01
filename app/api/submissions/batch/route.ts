@@ -183,10 +183,12 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    let results = judgeResponse.data;
+    let results: Judge0SubmissionResult[] = judgeResponse.data;
 
     if (Array.isArray(results) && results.length > 0 && !results[0].status) {
-      const tokens = results.map((r: any) => r.token).join(",");
+      const tokens = results
+        .map((r: Judge0SubmissionResult) => r.token)
+        .join(",");
 
       let attempts = 0;
       let isComplete = false;
@@ -216,7 +218,8 @@ export async function POST(request: NextRequest) {
         }
 
         const allFinished = results.every(
-          (r: any) => r.status && r.status.id !== 1 && r.status.id !== 2
+          (r: Judge0SubmissionResult) =>
+            r.status && r.status.id !== 1 && r.status.id !== 2
         );
 
         if (allFinished) {
