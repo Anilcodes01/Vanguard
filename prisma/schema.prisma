@@ -818,6 +818,11 @@ model InternshipProject {
   id               String         @id @default(uuid())
   title            String
   description      String
+
+   customTitle      String?        @map("custom_title")      // Student's custom name
+  shortDescription String?        @map("short_description") // Student's one-liner
+  tags        String[]       @default([]) @map("tags") 
+
   isCompleted      Boolean        @default(false) @map("is_completed")
   githubLink       String?        @map("github_link")
   liveLink         String?        @map("live_link")

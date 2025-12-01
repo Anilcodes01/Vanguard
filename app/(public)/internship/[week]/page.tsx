@@ -170,6 +170,9 @@ export default function IndividualInternshipWeek() {
   }, [data]);
 
   const handleProjectSubmit = async (submissionData: {
+    customTitle: string;
+    shortDescription: string;
+    tags: string[];
     githubLink: string;
     liveLink: string;
     overview: string;
@@ -183,13 +186,20 @@ export default function IndividualInternshipWeek() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: data.projects[0].title,
-          description: data.projects[0].description,
+          projectId: data.projects[0].id,
+
+          title: submissionData.customTitle,
+
+          shortDescription: submissionData.shortDescription,
+
+          tags: submissionData.tags,
+
           githubLink: submissionData.githubLink,
           liveLink: submissionData.liveLink,
           overview: submissionData.overview,
           screenshots: submissionData.screenshots,
-          projectId: data.projects[0].id,
+
+          weekNumber: data.weekNumber || weekNumberInt,
         }),
       });
 
@@ -206,10 +216,7 @@ export default function IndividualInternshipWeek() {
           proj.id === result.project.id ? result.project : proj
         );
 
-        return {
-          ...prevData,
-          projects: updatedProjects,
-        };
+        return { ...prevData, projects: updatedProjects };
       });
 
       alert("Project submitted successfully! AI is reviewing your code.");

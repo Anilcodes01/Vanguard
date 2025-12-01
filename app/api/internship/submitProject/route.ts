@@ -26,18 +26,22 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     const {
+      projectId,
       title,
-      description,
+      shortDescription,
+      tags,
       githubLink,
       liveLink,
-      projectId,
       overview,
       screenshots = [],
     } = body;
 
-    if (!githubLink || !liveLink || !projectId) {
+    if (!githubLink || !liveLink || !projectId || !title) {
       return NextResponse.json(
-        { message: "GitHub link, Live link, and Project ID are required" },
+        {
+          message:
+            "Project Name, GitHub link, Live link, and Project ID are required",
+        },
         { status: 400 }
       );
     }
@@ -46,11 +50,12 @@ export async function POST(req: NextRequest) {
       where: { id: projectId },
       data: {
         isCompleted: true,
-        title,
-        description,
+        customTitle: title,
+        shortDescription: shortDescription,
+        tags: tags || [],
+        overview: overview,
         githubLink,
         liveLink,
-        overview,
         screenshots,
         aiReviewStatus: "PROCESSING",
       },
@@ -59,7 +64,7 @@ export async function POST(req: NextRequest) {
     const codeContext = await fetchGithubRepo(githubLink);
     const reviewData = await generateCodeReview(
       title,
-      description || "Internship Project",
+      overview || shortDescription || "Internship Project",
       overview,
       codeContext
     );
@@ -79,10 +84,7 @@ export async function POST(req: NextRequest) {
 
     try {
       const delaySeconds = 30 * 60;
-
       const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/notifications/send-scheduled`;
-
-      console.log(`🚀 Scheduling notification to: ${callbackUrl}`);
 
       await qstash.publishJSON({
         url: callbackUrl,
@@ -96,8 +98,6 @@ export async function POST(req: NextRequest) {
         },
         delay: delaySeconds,
       });
-
-      console.log(`✅ Scheduled successfully for ${delaySeconds}s later.`);
     } catch (qstashError) {
       console.error("Failed to schedule QStash notification:", qstashError);
     }
