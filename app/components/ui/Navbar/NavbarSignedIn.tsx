@@ -13,7 +13,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, Zap, Menu, X } from "lucide-react";
 import { LeaderboardImagesData } from "@/lib/data/leaderboardImagesData";
-import { motion, AnimatePresence } from "framer-motion";
+
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 
 interface NavbarSignedInProps {
   initialProfile: UserProfile | null;
@@ -94,76 +95,80 @@ export default function NavbarSignedIn({
         </button>
       </div>
 
-      <AnimatePresence>
-        {isMenuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/50 z-10 lg:hidden"
-              onClick={() => setIsMenuOpen(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="absolute top-full left-0 w-full bg-black lg:hidden z-20 shadow-lg border-t border-neutral-700"
-            >
-              <div className="flex flex-col items-center gap-3 py-4 px-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex flex-col items-center gap-3 mt-2 border-t border-neutral-700 pt-4 w-full"
-                >
-                  {leagueImage && (
-                    <button
-                      onClick={() => handleMobileNavClick("/leaderboard")}
-                      className="flex items-center gap-2 bg-neutral-700/50 border border-neutral-600/60 p-2.5 rounded-full text-sm hover:bg-neutral-700 transition-colors"
-                    >
-                      <Image
-                        src={leagueImage.imagePath}
-                        alt={`${leagueImage.name} league`}
-                        width={20}
-                        height={20}
-                        className="w-5 h-5"
+      {}
+      <LazyMotion features={domAnimation}>
+        <AnimatePresence>
+          {isMenuOpen && (
+            <>
+              {}
+              <m.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 bg-black/50 z-10 lg:hidden"
+                onClick={() => setIsMenuOpen(false)}
+              />
+              <m.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="absolute top-full left-0 w-full bg-black lg:hidden z-20 shadow-lg border-t border-neutral-700"
+              >
+                <div className="flex flex-col items-center gap-3 py-4 px-4">
+                  <m.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex flex-col items-center gap-3 mt-2 border-t border-neutral-700 pt-4 w-full"
+                  >
+                    {leagueImage && (
+                      <button
+                        onClick={() => handleMobileNavClick("/leaderboard")}
+                        className="flex items-center gap-2 bg-neutral-700/50 border border-neutral-600/60 p-2.5 rounded-full text-sm hover:bg-neutral-700 transition-colors"
+                      >
+                        <Image
+                          src={leagueImage.imagePath}
+                          alt={`${leagueImage.name} league`}
+                          width={20}
+                          height={20}
+                          className="w-5 h-5"
+                        />
+                        <span className="text-white font-medium">
+                          {displayProfile.league} League
+                        </span>
+                      </button>
+                    )}
+                    <div className="flex items-center gap-2 bg-[#f59120]/10 border border-[#f59120]/20 px-4 py-2 rounded-full text-sm">
+                      <Star
+                        size={16}
+                        className="text-orange-400"
+                        fill="currentColor"
                       />
-                      <span className="text-white font-medium">
-                        {displayProfile.league} League
+                      <span className="font-bold text-white">
+                        {displayProfile.stars}
                       </span>
-                    </button>
-                  )}
-                  <div className="flex items-center gap-2 bg-[#f59120]/10 border border-[#f59120]/20 px-4 py-2 rounded-full text-sm">
-                    <Star
-                      size={16}
-                      className="text-orange-400"
-                      fill="currentColor"
+                      <span className="text-gray-400">Stars</span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-orange-600/10 border border-orange-600/20 px-4 py-2 rounded-full text-sm">
+                      <Zap size={16} className="text-[#f59120]" />
+                      <span className="font-bold text-white">
+                        {displayProfile.xp}
+                      </span>
+                      <span className="text-gray-400">XP</span>
+                    </div>
+                    <UserAvatar
+                      user={displayProfile}
+                      onDropdownItemClick={() => setIsMenuOpen(false)}
                     />
-                    <span className="font-bold text-white">
-                      {displayProfile.stars}
-                    </span>
-                    <span className="text-gray-400">Stars</span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-orange-600/10 border border-orange-600/20 px-4 py-2 rounded-full text-sm">
-                    <Zap size={16} className="text-[#f59120]" />
-                    <span className="font-bold text-white">
-                      {displayProfile.xp}
-                    </span>
-                    <span className="text-gray-400">XP</span>
-                  </div>
-                  <UserAvatar
-                    user={displayProfile}
-                    onDropdownItemClick={() => setIsMenuOpen(false)}
-                  />
-                </motion.div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+                  </m.div>
+                </div>
+              </m.div>
+            </>
+          )}
+        </AnimatePresence>
+      </LazyMotion>
     </>
   );
 }
