@@ -10,9 +10,23 @@ import { createClient } from "@/app/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { getWeekStartDateUTC } from "@/lib/dateUtils";
 
+// Constants
 const LEADERBOARD_GROUP_SIZE = 30;
 const MAX_POLL_ATTEMPTS = 10;
 const POLL_INTERVAL_MS = 1000;
+const DEFAULT_CPU_TIME_LIMIT = 5; // Seconds (since maxTime was removed from DB)
+
+// Map string languages to Judge0 IDs
+const JUDGE0_LANGUAGE_IDS: Record<string, number> = {
+  javascript: 63, // Node.js
+  typescript: 74,
+  python: 71,     // Python 3
+  java: 62,       // OpenJDK 13
+  cpp: 54,        // GCC 9
+  c: 50,          // GCC 9
+  go: 60,
+  // Add others as needed
+};
 
 type Judge0SubmissionResult = {
   stdout: string | null;
@@ -30,6 +44,7 @@ type TestCaseResult = {
   status: string;
 };
 
+// --- Leaderboard Logic ---
 async function assignUserToLeaderboardGroup(
   userId: string,
   tx: Prisma.TransactionClient
@@ -43,6 +58,7 @@ async function assignUserToLeaderboardGroup(
 
   const weekStartDate = getWeekStartDateUTC();
 
+  // If already assigned to this week's group, return
   if (
     userProfile.currentGroup &&
     userProfile.currentGroup.weekStartDate.getTime() === weekStartDate.getTime()
@@ -50,6 +66,7 @@ async function assignUserToLeaderboardGroup(
     return;
   }
 
+  // Find available group
   const availableGroups = await tx.leaderboardGroup.findMany({
     where: {
       league: userProfile.league,
@@ -109,18 +126,33 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { problemId, code, startTime, languageId } = body;
+    // Changed: 'language' (string) instead of 'languageId'
+    const { problemId, code, startTime, language } = body;
 
-    if (!problemId || !code || !startTime || !languageId) {
+    if (!problemId || !code || !startTime || !language) {
       return NextResponse.json(
         { message: "Missing required fields." },
         { status: 400 }
       );
     }
 
+    // Resolve Judge0 ID
+    const judge0LanguageId = JUDGE0_LANGUAGE_IDS[language.toLowerCase()];
+    if (!judge0LanguageId) {
+      return NextResponse.json(
+        { message: "Unsupported language." },
+        { status: 400 }
+      );
+    }
+
+    // Fetch Problem & Test Cases
     const problem = await prisma.problem.findUnique({
       where: { id: problemId },
-      include: { testCases: true },
+      include: { 
+        testCases: {
+          orderBy: { order: 'asc' } // Ensure deterministic order
+        } 
+      },
     });
 
     if (!problem || !problem.testCases || problem.testCases.length === 0) {
@@ -130,50 +162,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const languageDetail = await prisma.problemLanguageDetails.findUnique({
-      where: {
-        problemId_languageId: {
-          problemId: problemId,
-          languageId: languageId,
-        },
-      },
+    // Verify Language is enabled for this problem
+    const starterTemplate = await prisma.codingProblemStarterTemplate.findUnique({
+        where: {
+            problemId_language: {
+                problemId,
+                language
+            }
+        }
     });
 
-    if (!languageDetail) {
-      return NextResponse.json(
-        { message: "Language not supported for this problem." },
-        { status: 400 }
-      );
+    if (!starterTemplate) {
+        return NextResponse.json(
+            { message: "Language not enabled for this problem." },
+            { status: 400 }
+        );
     }
 
+    // Prepare Submissions for Judge0 Batch
     const submissions = problem.testCases.map((testCase) => {
-      let source_code = code;
-      let stdin: string | undefined = undefined;
-
-      if (problem.testStrategy === "DRIVER_CODE") {
-        if (!languageDetail.driverCodeTemplate) {
-          throw new Error("Missing driver code template.");
-        }
-        source_code = languageDetail.driverCodeTemplate
-          .replace("{{USER_CODE}}", code.trim())
-          .replace("{{RAW_TEST_INPUT}}", testCase.input || "");
-      } else {
-        source_code = code;
-        stdin = testCase.input || undefined;
-      }
+      // Standard Execution Strategy (STDIN -> STDOUT)
+      const source_code = code;
+      const stdin = testCase.input || undefined;
 
       return {
-        language_id: languageId,
+        language_id: judge0LanguageId,
         source_code: Buffer.from(source_code).toString("base64"),
         stdin: stdin ? Buffer.from(stdin).toString("base64") : undefined,
-        expected_output: testCase.expected
-          ? Buffer.from(testCase.expected).toString("base64")
+        // Update: 'expected' changed to 'expectedOutput'
+        expected_output: testCase.expectedOutput
+          ? Buffer.from(testCase.expectedOutput).toString("base64")
           : null,
-        cpu_time_limit: problem.maxTime ? problem.maxTime : 5,
+        cpu_time_limit: DEFAULT_CPU_TIME_LIMIT, 
       };
     });
 
     const judgeBaseUrl = process.env.JUDGE0_API_URL;
+    
+    // --- Send Batch to Judge0 ---
     const judgeResponse = await axios.post(
       `${judgeBaseUrl}/submissions/batch`,
       { submissions },
@@ -185,6 +211,7 @@ export async function POST(request: NextRequest) {
 
     let results: Judge0SubmissionResult[] = judgeResponse.data;
 
+    // --- Polling Logic (if wait=true didn't finish) ---
     if (Array.isArray(results) && results.length > 0 && !results[0].status) {
       const tokens = results
         .map((r: Judge0SubmissionResult) => r.token)
@@ -195,7 +222,6 @@ export async function POST(request: NextRequest) {
 
       while (attempts < MAX_POLL_ATTEMPTS && !isComplete) {
         attempts++;
-
         await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
 
         const pollResponse = await axios.get(
@@ -228,17 +254,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (
-      !Array.isArray(results) ||
-      results.length !== problem.testCases.length
-    ) {
+    if (!Array.isArray(results) || results.length !== problem.testCases.length) {
       throw new Error("Invalid response from execution engine.");
     }
 
+    // --- Process Results ---
     let allTestsPassed = true;
     let maxExecutionTime = 0;
     let maxMemory = 0;
-
     let firstFailedResult: Judge0SubmissionResult | null = null;
     let firstFailedIndex = -1;
 
@@ -257,6 +280,7 @@ export async function POST(request: NextRequest) {
         continue;
       }
 
+      // Decode base64 fields
       result.stdout = result.stdout
         ? Buffer.from(result.stdout, "base64").toString("utf-8")
         : null;
@@ -272,7 +296,7 @@ export async function POST(request: NextRequest) {
       if (time > maxExecutionTime) maxExecutionTime = time;
       if (memory > maxMemory) maxMemory = memory;
 
-      const isAccepted = result.status.id === 3;
+      const isAccepted = result.status.id === 3; // 3 = Accepted in Judge0
 
       if (!isAccepted && allTestsPassed) {
         allTestsPassed = false;
@@ -290,6 +314,7 @@ export async function POST(request: NextRequest) {
       ? "Accepted"
       : firstFailedResult?.status?.description || "Internal Error";
 
+    // --- Calculate Rewards ---
     let xpEarned = 0;
     let starsEarned = 0;
     let isFirstSolve = false;
@@ -302,26 +327,31 @@ export async function POST(request: NextRequest) {
 
     if (allTestsPassed && !previouslySolved) {
       isFirstSolve = true;
+      // Updated Enums
       switch (problem.difficulty) {
-        case Difficulty.Beginner:
+        case Difficulty.Easy:
           xpEarned = 100;
           break;
-        case Difficulty.Intermediate:
-          xpEarned = 150;
+        case Difficulty.Medium:
+          xpEarned = 250;
           break;
-        case Difficulty.Advanced:
-          xpEarned = 200;
+        case Difficulty.Hard:
+          xpEarned = 500;
           break;
       }
 
+      // Stars Logic (Defaulting to simple logic since maxTime removed)
       const solveTime = Date.now();
       const solveDuration = (solveTime - startTime) / 1000;
-      const maxTime = problem.maxTime * 60;
-      if (solveDuration <= maxTime / 2) starsEarned = 3;
-      else if (solveDuration <= maxTime) starsEarned = 2;
+      // Assume 20 mins (1200s) is standard for now
+      const benchmarkTime = 1200; 
+      
+      if (solveDuration <= benchmarkTime / 2) starsEarned = 3;
+      else if (solveDuration <= benchmarkTime) starsEarned = 2;
       else starsEarned = 1;
     }
 
+    // --- Database Transaction ---
     await prisma.$transaction(async (tx) => {
       await assignUserToLeaderboardGroup(user.id, tx);
 
@@ -330,7 +360,7 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           problemId: problem.id,
           code: code,
-          languageId: languageId,
+          language: language, // Using String now
           status: mapJudge0StatusToEnum(finalStatusDescription),
           executionTime: maxExecutionTime,
           executionMemory: maxMemory,
@@ -375,6 +405,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    // --- Return Response ---
     if (allTestsPassed) {
       return NextResponse.json({
         status: "Accepted",
@@ -387,6 +418,7 @@ export async function POST(request: NextRequest) {
     } else {
       const failedCaseData =
         firstFailedIndex !== -1 ? problem.testCases[firstFailedIndex] : null;
+      
       return NextResponse.json({
         status: firstFailedResult?.status?.description || "Error",
         input: failedCaseData?.input,
@@ -395,7 +427,7 @@ export async function POST(request: NextRequest) {
           firstFailedResult?.compile_output ||
           firstFailedResult?.stderr ||
           firstFailedResult?.message,
-        expectedOutput: failedCaseData?.expected,
+        expectedOutput: failedCaseData?.expectedOutput, // Updated field
         executionTime: maxExecutionTime,
         executionMemory: maxMemory,
         testCaseResults,

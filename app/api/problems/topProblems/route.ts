@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient, SolutionStatus } from '@prisma/client';
+import { NextResponse } from "next/server";
+import { PrismaClient, SolutionStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -8,12 +8,12 @@ export async function GET() {
     const topProblems = await prisma.problem.findMany({
       take: 3,
       orderBy: {
-        solutions: {
-          _count: 'desc',
+        userProgress: {
+          _count: "desc",
         },
       },
       where: {
-        solutions: {
+        userProgress: {
           some: {
             status: SolutionStatus.Solved,
           },
@@ -22,7 +22,7 @@ export async function GET() {
       include: {
         _count: {
           select: {
-            solutions: {
+            userProgress: {
               where: { status: SolutionStatus.Solved },
             },
           },
@@ -32,10 +32,10 @@ export async function GET() {
 
     return NextResponse.json(topProblems);
   } catch (error) {
-    console.error('Failed to fetch top problems:', error);
+    console.error("Failed to fetch top problems:", error);
     return new NextResponse(
-      JSON.stringify({ message: 'Internal Server Error', error }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ message: "Internal Server Error", error }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { cache } from "react";
-import { Difficulty, SubmissionStatus } from "@prisma/client";
+// Remove unused import if present, though needed for logic check
+import { Difficulty } from "@prisma/client";
 
 export const getProfileData = cache(async (username: string) => {
   const profile = await prisma.profiles.findUnique({
@@ -17,7 +18,6 @@ export const getProfileData = cache(async (username: string) => {
     totalProjectsCount,
     internshipProjects,
     totalInternshipProjectsCount,
-
     allProblems,
     allUserSubmissions,
   ] = await Promise.all([
@@ -25,11 +25,13 @@ export const getProfileData = cache(async (username: string) => {
       where: { userId: profile.id },
       orderBy: { createdAt: "desc" },
       take: 5,
-      include: { problem: { select: { title: true, difficulty: true } } },
+      include: {
+        problem: { select: { title: true, difficulty: true, tags: true } },
+      },
     }),
     prisma.submission.count({ where: { userId: profile.id } }),
     prisma.problemSolution.findMany({
-      where: { userId: profile.id },
+      where: { userId: profile.id, status: "Solved" },
       include: { problem: { select: { difficulty: true } } },
     }),
     prisma.submittedProjects.findMany({
@@ -50,11 +52,9 @@ export const getProfileData = cache(async (username: string) => {
     prisma.internshipProject.count({
       where: { internshipWeek: { userId: profile.id }, isCompleted: true },
     }),
-
     prisma.problem.findMany({
       select: { id: true, difficulty: true },
     }),
-
     prisma.submission.findMany({
       where: { userId: profile.id },
       select: { status: true, problem: { select: { difficulty: true } } },
@@ -68,33 +68,40 @@ export const getProfileData = cache(async (username: string) => {
     acceptedSubmissions: 0,
   });
 
+  // Explicitly structure this to match DifficultyStats expected by the UI
   const stats = {
     all: createStat(),
-    Beginner: createStat(),
-    Intermediate: createStat(),
-    Advanced: createStat(),
+    Easy: createStat(),
+    Medium: createStat(),
+    Hard: createStat(),
   };
 
   allProblems.forEach((p) => {
-    stats[p.difficulty].total++;
-    stats.all.total++;
+    // p.difficulty is "Easy" | "Medium" | "Hard" from Prisma
+    if (stats[p.difficulty]) {
+      stats[p.difficulty].total++;
+      stats.all.total++;
+    }
   });
 
   problemSolutions.forEach((sol) => {
     const diff = sol.problem.difficulty;
-    stats[diff].solved++;
-    stats.all.solved++;
+    if (stats[diff]) {
+      stats[diff].solved++;
+      stats.all.solved++;
+    }
   });
 
   allUserSubmissions.forEach((sub) => {
     const diff = sub.problem.difficulty;
+    if (stats[diff]) {
+      stats[diff].submissions++;
+      stats.all.submissions++;
 
-    stats[diff].submissions++;
-    stats.all.submissions++;
-
-    if (sub.status === "Accepted") {
-      stats[diff].acceptedSubmissions++;
-      stats.all.acceptedSubmissions++;
+      if (sub.status === "Accepted") {
+        stats[diff].acceptedSubmissions++;
+        stats.all.acceptedSubmissions++;
+      }
     }
   });
 
@@ -107,7 +114,6 @@ export const getProfileData = cache(async (username: string) => {
     totalProjectsCount,
     internshipProjects,
     totalInternshipProjectsCount,
-
     difficultyStats: stats,
   };
 });

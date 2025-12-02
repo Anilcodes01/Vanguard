@@ -41,14 +41,14 @@ async function getTopProblems() {
   return prisma.problem.findMany({
     take: 3,
     orderBy: {
-      solutions: {
+      userProgress: {
         _count: "desc",
       },
     },
     include: {
       _count: {
         select: {
-          solutions: true,
+          userProgress: true,
         },
       },
     },

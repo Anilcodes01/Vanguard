@@ -41,6 +41,7 @@ const sidebarItems = [
     name: "Community",
     path: "/community",
     icon: <Group className="h-5 w-5" />,
+    isBeta: true
   },
   {
     key: "projects",
@@ -53,18 +54,21 @@ const sidebarItems = [
     name: "Discussions",
     path: "/discussions",
     icon: <MessageCircle className="h-5 w-5" />,
+    isBeta: true,
   },
   {
     key: "internlab",
     name: "Internlab",
     path: "/internship",
     icon: <Beaker className="h-5 w-5" />,
+    isBeta: true,
   },
   {
     key: "hellipad",
     name: "Hellipad",
     path: "/hellipad",
     icon: <BookOpen className="h-5 w-5" />,
+    isBeta: true,
   },
   {
     key: "journal",
@@ -119,18 +123,31 @@ export default function Sidebar({
                 {item.icon}
               </div>
 
-              <span
+              <div
                 className={`
-                  text-sm font-medium origin-left transition-all duration-300
+                  flex items-center text-sm font-medium origin-left transition-all duration-300 overflow-hidden whitespace-nowrap
                   ${
                     collapsed
                       ? "scale-0 opacity-0 w-0"
-                      : "scale-100 opacity-100"
+                      : "scale-100 opacity-100 w-full"
                   }
                 `}
               >
-                {item.name}
-              </span>
+                <span>{item.name}</span>
+
+                {}
+                {item.isBeta && (
+                  <span
+                    className={`ml-2 text-[10px] px-1.5 py-0.5 rounded leading-none border ${
+                      isActive
+                        ? "border-white/30 bg-white/20 text-white"
+                        : "border-gray-200 bg-gray-100 text-gray-500"
+                    }`}
+                  >
+                    Beta
+                  </span>
+                )}
+              </div>
             </Link>
           );
         })}

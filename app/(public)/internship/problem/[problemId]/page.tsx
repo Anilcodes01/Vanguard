@@ -12,6 +12,7 @@ import {
   SubmissionResult,
   ProblemLanguageDetail,
   ProblemDetails,
+  ProblemStarterTemplate,
 } from "@/types";
 
 const DynamicCodeEditorPanel = dynamic(
@@ -230,42 +231,34 @@ export default function IndividualInternshipProblemPage() {
     }
   };
 
-  const mappedProblemDetails: ProblemDetails | null = data
+  const mappedStarterTemplate: ProblemStarterTemplate | null = data
     ? {
-        id: data.algoData.problem.id,
-        title: data.algoData.problem.title,
-        description: data.algoData.problem.description,
-        slug: data.algoData.problem.id,
-        starterCode: data.algoData.starterCode,
-        difficulty: "Intermediate",
-        solutionStatus: "Attempted",
-        examples: data.examples.map((ex, i) => ({
-          id: i,
-          input: ex.input,
-          output: ex.output,
-        })),
-        topic: data.algoData.problem.topics || ["Internship"],
-        testCases: data.testCases.map((tc, i) => ({
-          id: i,
-          input: tc.input,
-          expected: tc.expected,
-          description: null,
-        })),
-        maxTime: 10,
-        problemLanguageDetails: [],
+        id: "generated-id",
+        language: data.algoData.language,
+        code: data.algoData.starterCode,
       }
     : null;
 
-  const mappedLanguage: ProblemLanguageDetail | null = data
-    ? {
-        id: "generated-id",
-        problemId: data.algoData.problem.id,
-        language: data.algoData.language,
-        languageId: data.algoData.languageId,
-        starterCode: data.algoData.starterCode,
-        driverCodeTemplate: null,
-      }
-    : null;
+  const mappedProblemDetails: ProblemDetails | null =
+    data && mappedStarterTemplate
+      ? {
+          id: data.algoData.problem.id,
+          title: data.algoData.problem.title,
+          description: data.algoData.problem.description,
+          slug: data.algoData.problem.id,
+          difficulty: "MEDIUM",
+          tags: data.algoData.problem.topics || ["Internship"],
+          acceptanceRate: 0,
+          starterTemplates: [mappedStarterTemplate],
+          testCases: data.testCases.map((tc, i) => ({
+            id: i.toString(),
+            input: tc.input,
+            expectedOutput: tc.expected,
+            isHidden: false,
+          })),
+          solutionStatus: "Attempted",
+        }
+      : null;
 
   if (isLoading) {
     return (
@@ -278,7 +271,7 @@ export default function IndividualInternshipProblemPage() {
     );
   }
 
-  if (error || !data || !mappedProblemDetails || !mappedLanguage) {
+  if (error || !data || !mappedProblemDetails || !mappedStarterTemplate) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-4">
         <div className="text-center">
@@ -302,7 +295,7 @@ export default function IndividualInternshipProblemPage() {
 
   return (
     <div className="flex flex-col lg:flex-row lg:h-screen p-2 gap-2 text-black lg:overflow-hidden bg-white">
-      {}
+      {/* Problem Details Panel */}
       <div
         className={`lg:w-1/2 lg:block ${
           isMobileDetailsVisible ? "block" : "hidden"
@@ -311,11 +304,10 @@ export default function IndividualInternshipProblemPage() {
         <ProblemDetailsPanel problem={mappedProblemDetails} />
       </div>
 
-      {}
+      {/* Code Editor Panel */}
       <div className="w-full lg:w-1/2 flex-grow">
         <DynamicCodeEditorPanel
           problemId={mappedProblemDetails.id}
-          maxTimeInMinutes={mappedProblemDetails.maxTime}
           code={code}
           setCode={setCode}
           handleSubmit={handleSubmit}
@@ -325,12 +317,13 @@ export default function IndividualInternshipProblemPage() {
           submissionResult={submissionResult}
           runResult={runResult}
           testCases={data.examples.map((ex, i) => ({
-            id: i,
+            id: i.toString(),
             input: ex.input,
-            expected: ex.output,
+            expectedOutput: ex.output,
+            isHidden: false,
           }))}
-          availableLanguages={[mappedLanguage]}
-          selectedLanguage={mappedLanguage}
+          starterTemplates={mappedProblemDetails.starterTemplates}
+          selectedLanguage={mappedStarterTemplate}
           onLanguageChange={() => {}}
           submissionProgress={submissionProgress}
           testCaseStatuses={testCaseStatuses}

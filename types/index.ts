@@ -13,6 +13,33 @@ export type SubmissionResult = {
   starsEarned?: number;
 };
 
+// types.ts (Ensure these match your new schema)
+export interface ProblemStarterTemplate {
+  id: string;
+  language: string;
+  code: string;
+}
+
+export interface ProblemTestCase {
+  id: string;
+  input: string | null;
+  expectedOutput: string | null;
+  isHidden: boolean;
+}
+
+export interface ProblemDetails {
+  id: string;
+  title: string;
+  description: string;
+  slug: string;
+  difficulty: "EASY" | "MEDIUM" | "HARD";
+  tags: string[];
+  acceptanceRate: number;
+  starterTemplates: ProblemStarterTemplate[];
+  testCases: ProblemTestCase[];
+  solutionStatus?: "Solved" | "Attempted" | null;
+}
+
 export interface UserProfile {
   id: string;
   name: string | null;
@@ -55,20 +82,20 @@ export type Example = {
   output: string;
 };
 
-export type ProblemDetails = {
-  id: string;
-  slug: string;
-  title: string;
-  maxTime: number;
-  description: string;
-  difficulty: "Beginner" | "Intermediate" | "Advanced";
-  starterCode: string;
-  examples: Example[];
-  testCases: TestCase[];
-  topic: string[];
-  solutionStatus?: "Solved" | "Attempted" | null;
-  problemLanguageDetails: ProblemLanguageDetail[];
-};
+// export type ProblemDetails = {
+//   id: string;
+//   slug: string;
+//   title: string;
+//   maxTime: number;
+//   description: string;
+//   difficulty: "Beginner" | "Intermediate" | "Advanced";
+//   starterCode: string;
+//   examples: Example[];
+//   testCases: TestCase[];
+//   topic: string[];
+//   solutionStatus?: "Solved" | "Attempted" | null;
+//   problemLanguageDetails: ProblemLanguageDetail[];
+// };
 
 export type RewardData = {
   xpEarned: number;
@@ -175,8 +202,8 @@ export type DailyProblem = {
   slug: string | null;
   title: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
-  maxTime: number;
-  topic: string[];
+  acceptanceRate: number; // Replaced maxTime
+  tags: string[];   
 };
 
 export type User = {

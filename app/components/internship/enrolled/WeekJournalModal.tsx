@@ -300,7 +300,7 @@ export default function WeekJournalModal({
 
           <div className="flex-1 overflow-hidden flex flex-col relative">
             <div className="absolute inset-0 p-6 overflow-y-auto">
-              {/* CHANGE 3: Use the wrapper component */}
+              {}
               <TextEditor
                 key={activeTab}
                 theme="snow"

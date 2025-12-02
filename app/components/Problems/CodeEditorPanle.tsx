@@ -1,26 +1,18 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { BsCheck2Circle } from "react-icons/bs";
-import {
-  ChevronUp,
-  Maximize,
-  Plus,
-  X,
-  Loader2,
-  ChevronDown,
-} from "lucide-react";
+import { ChevronUp, Maximize, Loader2, ChevronDown, X } from "lucide-react";
 import { EditorHeader } from "./CodeEditor/EditorHeader";
 import { RenderOutput } from "./CodeEditor/RenderOutput";
 import { TestCaseInput } from "./CodeEditor/TestCaseInput";
 import { mapLanguageToMonaco } from "@/lib/languageMappings";
-import { SubmissionResult, ProblemLanguageDetail } from "@/types";
+import { SubmissionResult, ProblemStarterTemplate } from "@/types";
 
 type TestCaseStatus = "pending" | "running" | "passed" | "failed";
 
 interface CodeEditorPanelProps {
   problemId: string;
   code: string;
-  maxTimeInMinutes: number;
   setCode: (code: string) => void;
   handleSubmit: (startTime: number | null) => void;
   handleRunCode: (activeCaseIndex: number) => void;
@@ -28,10 +20,16 @@ interface CodeEditorPanelProps {
   isCodeRunning: boolean;
   submissionResult: SubmissionResult | null;
   runResult: SubmissionResult | null;
-  testCases: { id: number; input: string | null; expected: string | null }[];
-  availableLanguages: ProblemLanguageDetail[];
-  selectedLanguage: ProblemLanguageDetail;
-  onLanguageChange: (language: ProblemLanguageDetail) => void;
+
+  testCases: {
+    id: string;
+    input: string | null;
+    expectedOutput: string | null;
+    isHidden: boolean;
+  }[];
+  starterTemplates: ProblemStarterTemplate[];
+  selectedLanguage: ProblemStarterTemplate;
+  onLanguageChange: (language: ProblemStarterTemplate) => void;
   submissionProgress: number;
   testCaseStatuses: TestCaseStatus[];
   problemTitle: string;
@@ -41,7 +39,6 @@ interface CodeEditorPanelProps {
 
 export default function CodeEditorPanel({
   code,
-  maxTimeInMinutes,
   setCode,
   handleSubmit,
   handleRunCode,
@@ -50,7 +47,7 @@ export default function CodeEditorPanel({
   submissionResult,
   runResult,
   testCases,
-  availableLanguages,
+  starterTemplates,
   selectedLanguage,
   onLanguageChange,
   submissionProgress,
@@ -61,10 +58,10 @@ export default function CodeEditorPanel({
 }: CodeEditorPanelProps) {
   const [activeTab, setActiveTab] = useState<"testcase" | "result">("testcase");
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
+
   const [isStarted, setIsStarted] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
-  const maxTimeInSeconds = maxTimeInMinutes * 60;
   const [isResizing, setIsResizing] = useState(false);
   const [editorHeight, setEditorHeight] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -137,31 +134,6 @@ export default function CodeEditorPanel({
     }
   }, [runResult, submissionResult]);
 
-  const formatTime = (elapsedSeconds: number): string => {
-    if (elapsedSeconds <= maxTimeInSeconds) {
-      const remainingSeconds = maxTimeInSeconds - elapsedSeconds;
-      const min = Math.floor(remainingSeconds / 60);
-      const sec = remainingSeconds % 60;
-      return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
-    } else {
-      const extraSeconds = elapsedSeconds - maxTimeInSeconds;
-      const min = Math.floor(extraSeconds / 60);
-      const sec = extraSeconds % 60;
-      return `+${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
-    }
-  };
-
-  const getTimerColor = (elapsedSeconds: number): string => {
-    if (elapsedSeconds > maxTimeInSeconds) {
-      return "text-red-500";
-    }
-    const remainingSeconds = maxTimeInSeconds - elapsedSeconds;
-    if (remainingSeconds <= 60) {
-      return "text-orange-400";
-    }
-    return "text-gray-600";
-  };
-
   const getTestCaseStatusStyle = (status: TestCaseStatus) => {
     switch (status) {
       case "running":
@@ -189,6 +161,7 @@ export default function CodeEditorPanel({
   };
 
   const displayResult = submissionResult || runResult;
+  const visibleTestCases = testCases;
 
   return (
     <div ref={containerRef} className=" flex flex-col h-full">
@@ -211,32 +184,18 @@ export default function CodeEditorPanel({
         style={{ height: editorHeight ? `${editorHeight}px` : "60%" }}
       >
         <EditorHeader
-          onStart={handleStart}
           onRun={() => handleRunCode(activeCaseIndex)}
           onSubmit={() => handleSubmit(startTime)}
-          isStarted={isStarted}
           isRunning={isCodeRunning && !isSubmitting}
           isSubmitting={isSubmitting}
-          displayTime={formatTime(elapsedTime)}
-          timerColor={getTimerColor(elapsedTime)}
-          availableLanguages={availableLanguages}
+          starterTemplates={starterTemplates}
           selectedLanguage={selectedLanguage}
           onLanguageChange={onLanguageChange}
-          maxTimeInMinutes={maxTimeInMinutes}
           submissionProgress={submissionProgress}
         />
 
         <div className="flex-grow relative">
-          {!isStarted && (
-            <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center">
-              <div className="text-center">
-                <p className="text-gray-300 font-semibold">Editor is locked.</p>
-                <p className="text-gray-400 text-sm">
-                  Click &quot;Start&quot; to begin coding.
-                </p>
-              </div>
-            </div>
-          )}
+          {}
           <Editor
             height="100%"
             language={mapLanguageToMonaco(selectedLanguage.language)}
@@ -244,17 +203,17 @@ export default function CodeEditorPanel({
             value={code}
             onChange={(value) => setCode(value || "")}
             options={{
-              readOnly: !isStarted,
+              readOnly: false,
               fontSize: 14,
               minimap: { enabled: false },
               scrollBeyondLastLine: false,
               padding: { top: 10 },
-              contextmenu: !isStarted,
+              contextmenu: true,
             }}
           />
         </div>
         <div className="flex justify-between items-center px-4 py-1 bg-gray-100 border-t border-gray-200 text-xs text-gray-600">
-          <span>{isStarted ? "In Progress" : "Not Started"}</span>
+          <span>{isStarted ? "Timer Running" : "Timer Stopped"}</span>
           <span>Ln 1, Col 1</span>
         </div>
       </div>
@@ -306,7 +265,7 @@ export default function CodeEditorPanel({
           {activeTab === "testcase" && (
             <div>
               <div className="flex items-center gap-2 px-4 pt-2 flex-wrap">
-                {testCases.map((_, index) => (
+                {visibleTestCases.map((tc, index) => (
                   <button
                     key={index}
                     onClick={() => setActiveCaseIndex(index)}
@@ -320,16 +279,19 @@ export default function CodeEditorPanel({
                   >
                     {getTestCaseStatusIcon(testCaseStatuses[index])}
                     <span>Case {index + 1}</span>
+                    {tc.isHidden && (
+                      <span className="text-xs text-gray-400 ml-1">
+                        (Hidden)
+                      </span>
+                    )}
                   </button>
                 ))}
-                <button
-                  className="p-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200"
-                  disabled={isCodeRunning}
-                >
-                  <Plus size={16} />
-                </button>
               </div>
-              <TestCaseInput input={testCases[activeCaseIndex]?.input} />
+              <TestCaseInput
+                input={
+                  visibleTestCases[activeCaseIndex]?.input || "Hidden Input"
+                }
+              />
             </div>
           )}
           {activeTab === "result" && <RenderOutput result={displayResult} />}

@@ -9,11 +9,12 @@ type StatDetail = {
   acceptedSubmissions: number;
 };
 
+// Updated to match Prisma Enum
 type DifficultyStats = {
   all: StatDetail;
-  Beginner: StatDetail;
-  Intermediate: StatDetail;
-  Advanced: StatDetail;
+  Easy: StatDetail;
+  Medium: StatDetail;
+  Hard: StatDetail;
 };
 
 interface Props {
@@ -21,9 +22,10 @@ interface Props {
 }
 
 export default function ProblemSolvingOverview({ stats }: Props) {
-  const [hovered, setHovered] = useState<
-    "Beginner" | "Intermediate" | "Advanced" | null
-  >(null);
+  // Updated state type
+  const [hovered, setHovered] = useState<"Easy" | "Medium" | "Hard" | null>(
+    null
+  );
 
   const activeData = hovered ? stats[hovered] : stats.all;
 
@@ -52,13 +54,13 @@ export default function ProblemSolvingOverview({ stats }: Props) {
       </div>
 
       <div className="flex items-center justify-between gap-6">
-        {}
+        {/* Chart Section */}
         <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
           <svg
             className="w-full h-full transform -rotate-90"
             viewBox="0 0 100 100"
           >
-            {}
+            {/* Background Circle */}
             <circle
               cx="50"
               cy="50"
@@ -67,7 +69,7 @@ export default function ProblemSolvingOverview({ stats }: Props) {
               stroke="#f9fafb"
               strokeWidth="5"
             />
-            {}
+            {/* Progress Circle */}
             <circle
               cx="50"
               cy="50"
@@ -82,11 +84,10 @@ export default function ProblemSolvingOverview({ stats }: Props) {
             />
           </svg>
 
-          {}
+          {/* Center Text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             {hovered ? (
               <div className="flex flex-col items-center animate-in fade-in zoom-in duration-200">
-                {}
                 <div className="flex items-baseline -mb-1">
                   <span className="text-xl font-bold text-gray-900 tracking-tight">
                     {acceptanceRate}
@@ -112,39 +113,39 @@ export default function ProblemSolvingOverview({ stats }: Props) {
           </div>
         </div>
 
-        {}
+        {/* Legend / Stats Rows */}
         <div className="flex-1 space-y-1">
           <DifficultyRow
             label="Easy"
-            count={stats.Beginner.solved}
-            total={stats.Beginner.total}
+            count={stats.Easy.solved}
+            total={stats.Easy.total}
             activeColor="bg-emerald-500"
             hoverTextColor="text-emerald-600"
-            onEnter={() => setHovered("Beginner")}
+            onEnter={() => setHovered("Easy")}
             onLeave={() => setHovered(null)}
-            isHovered={hovered === "Beginner"}
+            isHovered={hovered === "Easy"}
           />
 
           <DifficultyRow
             label="Medium"
-            count={stats.Intermediate.solved}
-            total={stats.Intermediate.total}
+            count={stats.Medium.solved}
+            total={stats.Medium.total}
             activeColor="bg-amber-500"
             hoverTextColor="text-amber-600"
-            onEnter={() => setHovered("Intermediate")}
+            onEnter={() => setHovered("Medium")}
             onLeave={() => setHovered(null)}
-            isHovered={hovered === "Intermediate"}
+            isHovered={hovered === "Medium"}
           />
 
           <DifficultyRow
             label="Hard"
-            count={stats.Advanced.solved}
-            total={stats.Advanced.total}
+            count={stats.Hard.solved}
+            total={stats.Hard.total}
             activeColor="bg-rose-500"
             hoverTextColor="text-rose-600"
-            onEnter={() => setHovered("Advanced")}
+            onEnter={() => setHovered("Hard")}
             onLeave={() => setHovered(null)}
-            isHovered={hovered === "Advanced"}
+            isHovered={hovered === "Hard"}
           />
         </div>
       </div>
@@ -178,7 +179,7 @@ function DifficultyRow({
       className="group flex items-center justify-between py-2 px-2 cursor-default rounded-md transition-colors"
     >
       <div className="flex items-center gap-3">
-        {}
+        {/* Dot Indicator */}
         <div
           className={`w-2 h-2 rounded-full transition-colors duration-200 ${
             isHovered ? activeColor : "bg-gray-200"
@@ -208,15 +209,16 @@ function DifficultyRow({
   );
 }
 
-function getHoverColor(difficulty: string) {
+// Updated Helper for Enum Keys
+function getHoverColor(difficulty: "Easy" | "Medium" | "Hard") {
   switch (difficulty) {
-    case "Beginner":
-      return "#10b981";
-    case "Intermediate":
-      return "#f59e0b";
-    case "Advanced":
-      return "#f43f5e";
+    case "Easy":
+      return "#10b981"; // Emerald
+    case "Medium":
+      return "#f59e0b"; // Amber
+    case "Hard":
+      return "#f43f5e"; // Rose
     default:
-      return "#f59120";
+      return "#f59120"; // Brand Orange
   }
 }

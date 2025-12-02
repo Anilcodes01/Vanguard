@@ -4,16 +4,13 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProblemCard from "@/app/components/Problems/ProblemCard";
 import { fetchMoreProblems } from "@/app/(public)/problems/action";
+import { Difficulty } from "@prisma/client";
 
 type Problem = Awaited<ReturnType<typeof fetchMoreProblems>>[0];
-type FilterType = "All" | "Beginner" | "Intermediate" | "Advanced";
 
-const difficultyFilters: FilterType[] = [
-  "All",
-  "Beginner",
-  "Intermediate",
-  "Advanced",
-];
+type FilterType = "All" | "Easy" | "Medium" | "Hard";
+
+const difficultyFilters: FilterType[] = ["All", "Easy", "Medium", "Hard"];
 
 interface ProblemsListProps {
   initialProblems: Problem[];
@@ -31,24 +28,27 @@ export default function ProblemsList({
   const [page, setPage] = useState(2);
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-
   const [isFiltering, setIsFiltering] = useState(false);
 
-  const activeFilter = (searchParams.get("difficulty") as FilterType) || "All";
+  const paramDifficulty = searchParams.get("difficulty");
+
+  const activeFilter = (
+    difficultyFilters.includes(paramDifficulty as FilterType)
+      ? paramDifficulty
+      : "All"
+  ) as FilterType;
+
   const hasMore = problems.length < initialTotalCount;
 
   useEffect(() => {
     setProblems(initialProblems);
     setPage(2);
-
     setIsFiltering(false);
   }, [initialProblems]);
 
   const handleFilterChange = (newFilter: FilterType) => {
     if (newFilter === activeFilter) return;
-
     setIsFiltering(true);
-
     router.push(`/problems?difficulty=${newFilter}`);
   };
 
@@ -56,19 +56,33 @@ export default function ProblemsList({
     if (isLoadingMore || !hasMore) return;
 
     setIsLoadingMore(true);
-    const newProblems = await fetchMoreProblems({
-      page,
-      difficulty: activeFilter,
-    });
-    setProblems((prev) => [...prev, ...newProblems]);
-    setPage((prev) => prev + 1);
-    setIsLoadingMore(false);
+
+    let difficultyForServer: Difficulty | "All";
+
+    if (activeFilter === "All") {
+      difficultyForServer = "All";
+    } else {
+      difficultyForServer = activeFilter.toUpperCase() as Difficulty;
+    }
+
+    try {
+      const newProblems = await fetchMoreProblems({
+        page,
+        difficulty: difficultyForServer,
+      });
+      setProblems((prev) => [...prev, ...newProblems]);
+      setPage((prev) => prev + 1);
+    } catch (error) {
+      console.error("Failed to fetch more problems:", error);
+    } finally {
+      setIsLoadingMore(false);
+    }
   };
 
   return (
     <>
       {}
-      <div className="flex items-center justify-center gap-2 mb-10">
+      <div className="flex items-center justify-center gap-2 mb-10 flex-wrap">
         {difficultyFilters.map((filter) => (
           <button
             key={filter}

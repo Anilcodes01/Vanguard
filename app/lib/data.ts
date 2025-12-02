@@ -35,8 +35,7 @@ export async function fetchDashboardData() {
         slug: true,
         title: true,
         difficulty: true,
-        topic: true,
-        maxTime: true,
+        tags: true,
       },
     });
 

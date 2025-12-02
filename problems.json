@@ -21,7 +21,7 @@
       { "input": "'12345'", "expected": "\"54321\"" }
     ]
   },
-  {
+{
     "slug": "JS-002",
     "title": "The Sum of All Numbers",
     "description": "Create a function `sumArray(arr)` that calculates and returns the sum of all the numbers in an array. The array may contain positive and negative numbers. If the array is empty, it should return 0.",

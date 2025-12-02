@@ -1,24 +1,22 @@
-
-
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/app/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { Difficulty } from "@prisma/client"; 
+import { Difficulty } from "@prisma/client";
 
 const PAGE_SIZE = 12;
 
-const VALID_DIFFICULTIES: Difficulty[] = [
-  "Beginner",
-  "Intermediate",
-  "Advanced",
-];
+const VALID_DIFFICULTIES: Difficulty[] = ["Easy", "Medium", "Hard"];
 
 const getXpForDifficulty = (difficulty: Difficulty): number => {
   switch (difficulty) {
-    case "Beginner": return 100;
-    case "Intermediate": return 250;
-    case "Advanced": return 500;
-    default: return 0;
+    case "Easy":
+      return 100;
+    case "Medium":
+      return 250;
+    case "Hard":
+      return 500;
+    default:
+      return 0;
   }
 };
 
@@ -42,6 +40,7 @@ export async function GET(request: NextRequest) {
   const skip = (page - 1) * PAGE_SIZE;
 
   const whereCondition: { difficulty?: Difficulty } = {};
+
   if (difficulty && VALID_DIFFICULTIES.includes(difficulty as Difficulty)) {
     whereCondition.difficulty = difficulty as Difficulty;
   }
@@ -56,11 +55,12 @@ export async function GET(request: NextRequest) {
           id: true,
           title: true,
           difficulty: true,
-          maxTime: true, 
-          topic: true,
+          acceptanceRate: true,
+          tags: true,
+          slug: true,
           _count: {
             select: {
-              solutions: {
+              userProgress: {
                 where: {
                   userId: user?.id,
                   status: "Solved",
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
           },
         },
         orderBy: {
-          id: "asc",
+          createdAt: "desc",
         },
       }),
       prisma.problem.count({
@@ -81,11 +81,13 @@ export async function GET(request: NextRequest) {
     const problems = problemsData.map((p) => ({
       id: p.id,
       title: p.title,
+      slug: p.slug,
       difficulty: p.difficulty,
-      maxTime: p.maxTime, 
+      acceptanceRate: p.acceptanceRate,
+      tags: p.tags,
       xp: getXpForDifficulty(p.difficulty),
-       topic: p.topic,
-      solved: p._count.solutions > 0,
+
+      solved: p._count.userProgress > 0,
     }));
 
     return NextResponse.json({

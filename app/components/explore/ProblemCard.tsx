@@ -8,19 +8,19 @@ type Problem = {
   id: string;
   title: string;
   difficulty: Difficulty;
-  topic: string[];
+  tags: string[];
   _count: {
-    solutions: number;
+    userProgress: number;
   };
 };
 
 const getDifficultyClass = (difficulty: Difficulty) => {
   switch (difficulty) {
-    case "Beginner":
+    case "Easy":
       return "bg-green-500/20 text-green-400 border-green-500/30";
-    case "Intermediate":
+    case "Medium":
       return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-    case "Advanced":
+    case "Hard":
       return "bg-red-500/20 text-red-400 border-red-500/30";
     default:
       return "bg-gray-500/20 text-gray-400 border-gray-500/30";
@@ -56,7 +56,7 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
         <div className="flex items-center gap-2 mb-4">
           <Book size={16} className="text-gray-600" />
           <p className="text-sm text-gray-600 truncate">
-            {problem.topic.join(", ")}
+            {problem.tags.join(", ")}
           </p>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
       <div className="mt-auto pt-4 border-t border-gray-200 flex justify-between items-center text-xs text-gray-600">
         <span className="inline-flex items-center gap-2 font-medium">
           <Users size={16} className="text-orange-400" />
-          {problem._count.solutions} Solves
+          {problem._count.userProgress} Solves
         </span>
         <span className="text-[#f59120] font-semibold group-hover:underline">
           View Problem →

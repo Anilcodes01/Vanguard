@@ -1,11 +1,4 @@
-import {
-  Clock,
-  Play,
-  ShieldCheck,
-  ChevronDown,
-  Rocket,
-  Loader2,
-} from "lucide-react";
+import { Play, ChevronDown, Rocket, Loader2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,42 +7,33 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ProblemLanguageDetail } from "@/types";
+import { ProblemStarterTemplate } from "@/types";
 
 interface EditorHeaderProps {
-  onStart: () => void;
   onRun: () => void;
   onSubmit: () => void;
-  isStarted: boolean;
   isRunning: boolean;
   isSubmitting: boolean;
-  displayTime: string;
-  timerColor: string;
-  availableLanguages: ProblemLanguageDetail[];
-  selectedLanguage: ProblemLanguageDetail;
-  onLanguageChange: (language: ProblemLanguageDetail) => void;
-  maxTimeInMinutes: number;
+  starterTemplates: ProblemStarterTemplate[];
+  selectedLanguage: ProblemStarterTemplate;
+  onLanguageChange: (language: ProblemStarterTemplate) => void;
   submissionProgress: number;
 }
 
 export const EditorHeader = ({
-  onStart,
   onRun,
   onSubmit,
-  isStarted,
   isRunning,
   isSubmitting,
-  displayTime,
-  timerColor,
-  availableLanguages,
+  starterTemplates,
   selectedLanguage,
   onLanguageChange,
-  maxTimeInMinutes,
   submissionProgress,
 }: EditorHeaderProps) => (
   <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-2.5 bg-gray-50 border-b border-gray-200">
     <DropdownMenu>
-      <DropdownMenuTrigger asChild disabled={isStarted}>
+      {}
+      <DropdownMenuTrigger asChild disabled={isRunning || isSubmitting}>
         <Button
           variant="ghost"
           className="inline-flex items-center gap-1.5 rounded-md px-3 py-1 text-sm font-medium text-gray-600 hover:text-black hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[#f59120] disabled:opacity-50 transition-colors h-auto"
@@ -63,18 +47,18 @@ export const EditorHeader = ({
         align="start"
       >
         <DropdownMenuRadioGroup
-          value={selectedLanguage.languageId.toString()}
+          value={selectedLanguage.language}
           onValueChange={(value) => {
-            const newLang = availableLanguages.find(
-              (lang) => lang.languageId.toString() === value
+            const newLang = starterTemplates.find(
+              (lang) => lang.language === value
             );
             if (newLang) onLanguageChange(newLang);
           }}
         >
-          {availableLanguages.map((lang) => (
+          {starterTemplates.map((lang) => (
             <DropdownMenuRadioItem
-              key={lang.languageId}
-              value={lang.languageId.toString()}
+              key={lang.id}
+              value={lang.language}
               className="focus:bg-[#f59120]/10 focus:text-orange-300 cursor-pointer"
             >
               {lang.language}
@@ -84,34 +68,11 @@ export const EditorHeader = ({
       </DropdownMenuContent>
     </DropdownMenu>
 
-    {isStarted ? (
-      <div
-        className={`flex items-center gap-2 font-mono font-semibold text-base ${timerColor}`}
-      >
-        <Clock size={16} />
-        <span>{displayTime}</span>
-      </div>
-    ) : (
-      <div className="flex items-center gap-2 text-sm text-gray-500">
-        <Clock size={15} />
-        <span>{maxTimeInMinutes} min</span>
-      </div>
-    )}
-
     <div className="flex items-center gap-3">
-      {!isStarted && (
-        <Button
-          onClick={onStart}
-          className="bg-[#f59120] text-white hover:bg-orange-600 h-auto px-4 py-1.5"
-        >
-          <ShieldCheck size={16} className="mr-2" />
-          Start
-        </Button>
-      )}
       <Button
         onClick={onRun}
         variant="secondary"
-        disabled={!isStarted || isRunning || isSubmitting}
+        disabled={isRunning || isSubmitting}
         className="bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50 h-auto px-4 py-1.5 flex justify-center items-center"
       >
         {isRunning ? (
@@ -128,7 +89,7 @@ export const EditorHeader = ({
       </Button>
       <Button
         onClick={onSubmit}
-        disabled={!isStarted || isRunning || isSubmitting}
+        disabled={isRunning || isSubmitting}
         className="relative overflow-hidden bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-50 h-auto px-4 py-1.5"
       >
         <div

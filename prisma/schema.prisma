@@ -454,70 +454,102 @@ model LeaderboardGroup {
 }
 
 enum Difficulty {
-  Beginner
-  Intermediate
-  Advanced
+  Easy
+  Medium
+  Hard
 
   @@schema("public")
 }
 
 model Problem {
-  id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title                  String
-  description            String
-  difficulty             Difficulty
-  minTime                Int                      @map("min_time")
-  maxTime                Int                      @map("max_time")
-  slug                   String?                  @unique
-  testStrategy           TestStrategy             @map("test_strategy")
-  topic                  String[]
-  problemLanguageDetails ProblemLanguageDetails[]
+  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title            String
+  slug             String     @unique
+  description      String     @db.Text
+  difficulty       Difficulty
+  constraints      String?    @db.Text
+  tags             String[]   @default([])
+  totalSubmissions Int        @default(0) @map("total_submissions")
+  acceptanceRate   Float      @default(0.0) @map("acceptance_rate")
+  isLocked         Boolean    @default(false) @map("is_locked")
+  askedByCompanies String[]   @default([]) @map("asked_by_companies")
+  editorialNotes   String?    @map("editorial_notes") @db.Text
 
-  examples    Example[]
-  testCases   TestCase[]
-  submissions Submission[]
-  solutions   ProblemSolution[]
+  createdAt        DateTime                       @default(now()) @map("created_at")
+  updatedAt        DateTime                       @updatedAt @map("updated_at")
+  testCases        CodingProblemTestCase[]
+  hints            CodingProblemHint[]
+  starterTemplates CodingProblemStarterTemplate[]
+  solutions        CodingProblemSolution[]
+
+  submissions  Submission[]
+  userProgress ProblemSolution[]
 
   @@map("problems")
   @@schema("public")
 }
 
-model ProblemLanguageDetails {
-  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  problemId String @map("problem_id") @db.Uuid
+model CodingProblemStarterTemplate {
+  id        String  @id @default(uuid()) @db.Uuid
+  problemId String  @map("problem_id") @db.Uuid
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
-  language           String
-  languageId         Int     @map("language_id")
-  starterCode        String  @map("starter_code")
-  driverCodeTemplate String? @map("driver_code_template")
+  language String // e.g. "javascript", "python", "cpp"
+  code     String @db.Text // The boilerplate code
 
-  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([problemId, languageId])
-  @@map("problem_language_details")
+  @@unique([problemId, language])
+  @@map("coding_problem_starter_templates")
   @@schema("public")
 }
 
-model Example {
-  id        Int     @id @default(autoincrement())
-  input     String?
-  output    String?
-  problem   Problem @relation(fields: [problemId], references: [id])
-  problemId String  @db.Uuid
+model CodingProblemSolution {
+  id        String  @id @default(uuid()) @db.Uuid
+  problemId String  @map("problem_id") @db.Uuid
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
-  @@map("examples")
+  language    String // e.g. "java"
+  code        String  @db.Text
+  explanation String? @db.Text // Markdown explanation if needed
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("coding_problem_solutions")
   @@schema("public")
 }
 
-model TestCase {
-  id          Int     @id @default(autoincrement())
-  input       String?
-  expected    String?
-  description String?
-  problem     Problem @relation(fields: [problemId], references: [id])
-  problemId   String  @db.Uuid
+model CodingProblemHint {
+  id        String  @id @default(uuid()) @db.Uuid
+  problemId String  @map("problem_id") @db.Uuid
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
-  @@map("test_cases")
+  text  String @db.Text
+  order Int    @default(1)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("coding_problem_hints")
+  @@schema("public")
+}
+
+model CodingProblemTestCase {
+  id        String  @id @default(uuid()) @db.Uuid
+  problemId String  @map("problem_id") @db.Uuid
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  input          String  @db.Text // JSON string or raw input
+  expectedOutput String  @map("expected_output") @db.Text
+  isHidden       Boolean @default(false) @map("is_hidden")
+  order          Int     @default(1)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("coding_problem_test_cases")
   @@schema("public")
 }
 
@@ -549,11 +581,12 @@ enum SolutionStatus {
 }
 
 model Submission {
-  id              String           @id @default(uuid()) @db.Uuid
-  userId          String           @map("user_id") @db.Uuid
-  problemId       String           @map("problem_id") @db.Uuid
-  code            String           @db.Text
-  languageId      Int              @map("language_id")
+  id        String @id @default(uuid()) @db.Uuid
+  userId    String @map("user_id") @db.Uuid
+  problemId String @map("problem_id") @db.Uuid
+  code      String @db.Text
+  language  String
+
   status          SubmissionStatus
   executionTime   Float?           @map("execution_time")
   executionMemory Int?             @map("execution_memory")
@@ -815,13 +848,13 @@ model InternshipAlgoProblemTestCase {
 }
 
 model InternshipProject {
-  id               String         @id @default(uuid())
-  title            String
-  description      String
+  id          String @id @default(uuid())
+  title       String
+  description String
 
-   customTitle      String?        @map("custom_title")      // Student's custom name
-  shortDescription String?        @map("short_description") // Student's one-liner
-  tags        String[]       @default([]) @map("tags") 
+  customTitle      String?  @map("custom_title") // Student's custom name
+  shortDescription String?  @map("short_description") // Student's one-liner
+  tags             String[] @default([]) @map("tags")
 
   isCompleted      Boolean        @default(false) @map("is_completed")
   githubLink       String?        @map("github_link")

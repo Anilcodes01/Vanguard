@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import {
   fetchMoreSubmissions,
-  fetchMoreProjects,
 } from "@/app/actions/ProfileActions";
 
 interface SubmissionItem {
@@ -70,6 +69,7 @@ export default function ActivityTabs({
             Accepted
           </span>
         );
+      case "WrongAnswer": // Ensure this matches DB Enum string
       case "Wrong Answer":
         return (
           <span className="flex items-center gap-1.5 text-xs font-medium text-red-600">
@@ -87,20 +87,24 @@ export default function ActivityTabs({
     }
   };
 
+  // UPDATED: Handle EASY, MEDIUM, HARD
   const getDifficultyBadge = (difficulty: string) => {
     let colorClass = "bg-gray-100 text-gray-600";
     let label = difficulty;
 
     switch (difficulty) {
-      case "Beginner":
+      case "EASY":
+      case "Beginner": // Fallback for old data
         colorClass = "bg-emerald-50 text-emerald-700";
         label = "Easy";
         break;
-      case "Intermediate":
+      case "MEDIUM":
+      case "Intermediate": // Fallback
         colorClass = "bg-amber-50 text-amber-700";
         label = "Med";
         break;
-      case "Advanced":
+      case "HARD":
+      case "Advanced": // Fallback
         colorClass = "bg-rose-50 text-rose-700";
         label = "Hard";
         break;
@@ -258,13 +262,6 @@ export default function ActivityTabs({
                 </div>
               ))}
             </div>
-
-            {projects.length === 0 && (
-              <div className="flex-1 flex flex-col items-center justify-center py-12 text-gray-400">
-                <Briefcase size={24} className="mb-2 opacity-50" />
-                <p className="text-sm">No project history</p>
-              </div>
-            )}
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center py-12 text-gray-400">

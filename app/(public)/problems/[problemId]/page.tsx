@@ -12,7 +12,7 @@ import {
   ProblemDetails,
   SubmissionResult,
   RewardData,
-  ProblemLanguageDetail,
+  ProblemStarterTemplate,
 } from "@/types";
 import { LoadingSpinner } from "@/app/components/Profile/ProfilePanel";
 import dynamic from "next/dynamic";
@@ -24,6 +24,7 @@ const DynamicCodeEditorPanel = dynamic(
     ssr: false,
   }
 );
+
 type TestCaseStatus = "pending" | "running" | "passed" | "failed";
 type TestCaseResultItem = {
   status: string;
@@ -38,14 +39,17 @@ export default function ProblemPage() {
   const [problem, setProblem] = useState<ProblemDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const [selectedLanguage, setSelectedLanguage] =
-    useState<ProblemLanguageDetail | null>(null);
+    useState<ProblemStarterTemplate | null>(null);
   const [code, setCode] = useState<string>("");
 
   const [submissionResult, setSubmissionResult] =
     useState<SubmissionResult | null>(null);
   const [runResult, setRunResult] = useState<SubmissionResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [startTime, setStartTime] = useState<number | null>(null);
 
   const [rewardData, setRewardData] = useState<RewardData | null>(null);
   const [submissionProgress, setSubmissionProgress] = useState(0);
@@ -80,10 +84,17 @@ export default function ProblemPage() {
           `/api/problems/${problemId}`
         );
         setProblem(response.data);
-        if (response.data.problemLanguageDetails?.length > 0) {
-          const lang = response.data.problemLanguageDetails[0];
-          setSelectedLanguage(lang);
-          setCode(lang.starterCode);
+
+        setStartTime(Date.now());
+
+        if (response.data.starterTemplates?.length > 0) {
+          const defaultLang =
+            response.data.starterTemplates.find(
+              (t) => t.language === "javascript"
+            ) || response.data.starterTemplates[0];
+
+          setSelectedLanguage(defaultLang);
+          setCode(defaultLang.code);
         }
       } catch (err) {
         setError(
@@ -100,7 +111,7 @@ export default function ProblemPage() {
 
   useEffect(() => {
     if (selectedLanguage) {
-      setCode(selectedLanguage.starterCode);
+      setCode(selectedLanguage.code);
     }
   }, [selectedLanguage]);
 
@@ -131,8 +142,8 @@ export default function ProblemPage() {
         problemId,
         code,
         input: currentTestCase.input,
-        expectedOutput: currentTestCase.expected,
-        languageId: selectedLanguage.languageId,
+        expectedOutput: currentTestCase.expectedOutput,
+        language: selectedLanguage.language,
       });
       setRunResult(response.data);
       const finalStatuses = [...newStatuses];
@@ -150,9 +161,10 @@ export default function ProblemPage() {
     }
   };
 
-  const handleSubmit = async (startTime: number | null) => {
-    if (!startTime || !problem || !selectedLanguage) {
-      alert("Please click 'Start' before submitting.");
+  const handleSubmit = async (submitTime: number | null) => {
+    const validStartTime = submitTime || Date.now();
+
+    if (!problem || !selectedLanguage) {
       return;
     }
 
@@ -189,8 +201,8 @@ export default function ProblemPage() {
       const response = await axios.post("/api/submissions/batch", {
         problemId,
         code,
-        startTime,
-        languageId: selectedLanguage.languageId,
+        startTime: validStartTime,
+        language: selectedLanguage.language,
       });
       clearProgressInterval();
       setSubmissionResult(response.data);
@@ -281,17 +293,16 @@ export default function ProblemPage() {
       <div className="w-full lg:w-1/2  flex-grow">
         <DynamicCodeEditorPanel
           problemId={problem.id}
-          maxTimeInMinutes={problem.maxTime}
           code={code}
           setCode={setCode}
-          handleSubmit={handleSubmit}
+          handleSubmit={() => handleSubmit(startTime)}
           handleRunCode={handleRunCode}
           isSubmitting={isSubmitting}
           isCodeRunning={isCodeRunning}
           submissionResult={submissionResult}
           runResult={runResult}
           testCases={problem.testCases || []}
-          availableLanguages={problem.problemLanguageDetails}
+          starterTemplates={problem.starterTemplates}
           selectedLanguage={selectedLanguage}
           onLanguageChange={setSelectedLanguage}
           submissionProgress={submissionProgress}

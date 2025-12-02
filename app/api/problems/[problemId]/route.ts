@@ -11,38 +11,79 @@ export async function GET(
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const {problemId} =await params;
+
+    const { problemId } = await params;
 
     const problem = await prisma.problem.findUnique({
       where: { id: problemId },
       include: {
-        examples: true,
-        testCases: true, 
-        problemLanguageDetails: {
+        testCases: {
           orderBy: {
-            languageId: 'desc', 
-          }
-        }, 
+            order: "asc",
+          },
+        },
+
+        starterTemplates: {
+          select: {
+            id: true,
+            language: true,
+            code: true,
+          },
+        },
+
+        hints: {
+          orderBy: {
+            order: "asc",
+          },
+          select: {
+            id: true,
+            text: true,
+            order: true,
+          },
+        },
       },
     });
 
     if (!problem) {
-      return NextResponse.json({ message: "Problem not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Problem not found" },
+        { status: 404 }
+      );
     }
+
+    const sanitizedTestCases = problem.testCases.map((tc) => {
+      if (tc.isHidden) {
+        return {
+          ...tc,
+          input: null,
+          expectedOutput: null,
+        };
+      }
+      return tc;
+    });
 
     let solutionStatus = null;
     if (user) {
-        const solution = await prisma.problemSolution.findUnique({
-            where: { userId_problemId: { userId: user.id, problemId } },
-            select: { status: true },
-        });
-        if (solution) {
-            solutionStatus = solution.status;
-        }
-    }
-    
-    return NextResponse.json({ ...problem, solutionStatus });
+      const solution = await prisma.problemSolution.findUnique({
+        where: {
+          userId_problemId: {
+            userId: user.id,
+            problemId,
+          },
+        },
+        select: { status: true },
+      });
 
+      if (solution) {
+        solutionStatus = solution.status;
+      }
+    }
+
+    return NextResponse.json({
+      ...problem,
+      testCases: sanitizedTestCases,
+      solutionStatus,
+    });
   } catch (error) {
     console.error("Failed to fetch problem:", error);
     return NextResponse.json(

@@ -5,19 +5,16 @@ import ProblemsList from "@/app/components/Problems/ProblemsList.tsx/ProblemsLis
 import { unstable_cache } from "next/cache";
 
 const PAGE_SIZE = 12;
-const VALID_DIFFICULTIES: Difficulty[] = [
-  "Beginner",
-  "Intermediate",
-  "Advanced",
-];
+
+const VALID_DIFFICULTIES: Difficulty[] = ["Easy", "Medium", "Hard"];
 
 const getXpForDifficulty = (difficulty: Difficulty): number => {
   switch (difficulty) {
-    case "Beginner":
+    case "Easy":
       return 100;
-    case "Intermediate":
+    case "Medium":
       return 250;
-    case "Advanced":
+    case "Hard":
       return 500;
     default:
       return 0;
@@ -42,11 +39,13 @@ const getCachedProblemData = unstable_cache(
           select: {
             id: true,
             title: true,
+            slug: true,
             difficulty: true,
-            maxTime: true,
-            topic: true,
+            acceptanceRate: true,
+            tags: true,
           },
-          orderBy: { id: "asc" },
+
+          orderBy: { createdAt: "desc" },
         }),
         prisma.problem.count({ where: whereCondition }),
       ]);
@@ -97,10 +96,11 @@ async function getProblems(difficulty: Difficulty | "All", page: number) {
   const problems = rawProblems.map((p) => ({
     id: p.id,
     title: p.title,
+    slug: p.slug,
     difficulty: p.difficulty,
-    maxTime: p.maxTime,
+    acceptanceRate: p.acceptanceRate,
     xp: getXpForDifficulty(p.difficulty),
-    topic: p.topic,
+    tags: p.tags,
     solved: solvedProblemIds.has(p.id),
   }));
 
@@ -110,10 +110,18 @@ async function getProblems(difficulty: Difficulty | "All", page: number) {
 export default async function ProblemsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ difficulty?: Difficulty | "All" }>;
+  searchParams: Promise<{ difficulty?: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const difficulty = resolvedSearchParams.difficulty || "All";
+
+  const difficultyInput = resolvedSearchParams.difficulty || "All";
+
+  const upperDiff = difficultyInput.toUpperCase();
+  const difficulty: Difficulty | "All" = VALID_DIFFICULTIES.includes(
+    upperDiff as Difficulty
+  )
+    ? (upperDiff as Difficulty)
+    : "All";
 
   const initialData = await getProblems(difficulty, 1);
 

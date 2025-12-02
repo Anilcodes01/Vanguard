@@ -6,14 +6,15 @@ import { ArrowLeft, Loader2, Save, X } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
-// 1. We import the isolated component we created in the previous step
-// Make sure the path matches where you saved TextEditor.tsx
-const TextEditor = dynamic(() => import("../../../components/journal/TextEditor"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-full w-full bg-gray-50 animate-pulse rounded-xl border border-gray-100" />
-  ),
-});
+const TextEditor = dynamic(
+  () => import("../../../components/journal/TextEditor"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full w-full bg-gray-50 animate-pulse rounded-xl border border-gray-100" />
+    ),
+  }
+);
 
 export default function Publish() {
   const router = useRouter();
@@ -149,11 +150,7 @@ export default function Publish() {
         </div>
 
         <div className="h-[60vh] pb-12">
-          {/* 
-             2. CRITICAL CHANGE: 
-             Use <TextEditor> instead of <ReactQuill>.
-             This ensures the heavy JS is lazy-loaded.
-          */}
+          {}
           <TextEditor
             theme="snow"
             value={formData.content}
@@ -173,12 +170,7 @@ export default function Publish() {
         </div>
       </div>
 
-      {/* 
-         3. KEEP THESE STYLES:
-         Even though we moved the library CSS to TextEditor.tsx,
-         these are your custom overrides for this specific page.
-         They are fine to stay here.
-      */}
+      {}
       <style jsx global>{`
         .ql-toolbar.ql-snow {
           border: none !important;
