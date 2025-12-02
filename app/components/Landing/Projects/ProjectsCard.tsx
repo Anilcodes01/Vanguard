@@ -47,7 +47,7 @@ export default function ProjectCard({
             className="object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
             priority={priority}
             placeholder="blur"
-            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg==" // A simple grey pixel
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
           />
         ) : (
           <PlaceholderIcon />

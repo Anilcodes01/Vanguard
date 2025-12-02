@@ -4,15 +4,14 @@ import Link from "next/link";
 import { BarChart3, Tag, CheckCircle2, Percent, Star } from "lucide-react";
 import { Difficulty } from "@prisma/client";
 
-// Updated Type Definition based on new Schema
 type Problem = {
   id: string;
   title: string;
-  slug?: string | null; // Added slug if you want to use it in the URL
+  slug?: string | null;
   difficulty: Difficulty;
-  acceptanceRate: number; // Replaced maxTime
+  acceptanceRate: number;
   xp: number;
-  tags: string[]; // Renamed from topic
+  tags: string[];
   solved?: boolean;
 };
 
@@ -30,18 +29,18 @@ const Stat = ({
   <div className="flex flex-col items-center gap-1 text-center">
     <Icon size={20} className={`mb-1 ${className}`} />
     <span className="font-bold text-sm text-black">{value}</span>
-    <span className="text-[10px] uppercase tracking-wide text-gray-500">{label}</span>
+    <span className="text-[10px] uppercase tracking-wide text-gray-500">
+      {label}
+    </span>
   </div>
 );
 
-// Helper to format difficulty (EASY -> Easy)
 const formatDifficulty = (diff: string) => {
   if (!diff) return "";
   return diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase();
 };
 
 export default function ProblemCard({ problem }: { problem: Problem }) {
-  // Use slug for URL if available, otherwise fallback to ID
   const linkHref = `/problems/${problem.id}`;
 
   return (
@@ -62,8 +61,8 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
             />
           )}
         </div>
-        
-        {/* Tags Section */}
+
+        {}
         <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
           <Tag size={14} className="flex-shrink-0 text-gray-400" />
           <p className="truncate" title={problem.tags.join(", ")}>
@@ -72,7 +71,7 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {}
       <div className="mt-auto pt-4 border-t border-gray-100 grid grid-cols-3 gap-2">
         <Stat
           icon={Star}
@@ -111,11 +110,11 @@ export const ProblemCardSkeleton = () => (
         <div className="h-5 w-5 bg-gray-100 rounded-full"></div>
       </div>
       <div className="flex gap-2 items-center mt-2">
-         <div className="h-4 w-4 bg-gray-100 rounded"></div>
-         <div className="h-4 w-1/2 bg-gray-100 rounded"></div>
+        <div className="h-4 w-4 bg-gray-100 rounded"></div>
+        <div className="h-4 w-1/2 bg-gray-100 rounded"></div>
       </div>
     </div>
-    
+
     <div className="mt-6 pt-4 border-t border-gray-100 grid grid-cols-3 gap-2">
       {[1, 2, 3].map((i) => (
         <div key={i} className="flex flex-col items-center gap-1">

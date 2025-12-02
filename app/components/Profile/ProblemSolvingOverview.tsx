@@ -9,7 +9,6 @@ type StatDetail = {
   acceptedSubmissions: number;
 };
 
-// Updated to match Prisma Enum
 type DifficultyStats = {
   all: StatDetail;
   Easy: StatDetail;
@@ -22,7 +21,6 @@ interface Props {
 }
 
 export default function ProblemSolvingOverview({ stats }: Props) {
-  // Updated state type
   const [hovered, setHovered] = useState<"Easy" | "Medium" | "Hard" | null>(
     null
   );
@@ -54,13 +52,13 @@ export default function ProblemSolvingOverview({ stats }: Props) {
       </div>
 
       <div className="flex items-center justify-between gap-6">
-        {/* Chart Section */}
+        {}
         <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
           <svg
             className="w-full h-full transform -rotate-90"
             viewBox="0 0 100 100"
           >
-            {/* Background Circle */}
+            {}
             <circle
               cx="50"
               cy="50"
@@ -69,7 +67,7 @@ export default function ProblemSolvingOverview({ stats }: Props) {
               stroke="#f9fafb"
               strokeWidth="5"
             />
-            {/* Progress Circle */}
+            {}
             <circle
               cx="50"
               cy="50"
@@ -84,7 +82,7 @@ export default function ProblemSolvingOverview({ stats }: Props) {
             />
           </svg>
 
-          {/* Center Text */}
+          {}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             {hovered ? (
               <div className="flex flex-col items-center animate-in fade-in zoom-in duration-200">
@@ -113,7 +111,7 @@ export default function ProblemSolvingOverview({ stats }: Props) {
           </div>
         </div>
 
-        {/* Legend / Stats Rows */}
+        {}
         <div className="flex-1 space-y-1">
           <DifficultyRow
             label="Easy"
@@ -179,7 +177,7 @@ function DifficultyRow({
       className="group flex items-center justify-between py-2 px-2 cursor-default rounded-md transition-colors"
     >
       <div className="flex items-center gap-3">
-        {/* Dot Indicator */}
+        {}
         <div
           className={`w-2 h-2 rounded-full transition-colors duration-200 ${
             isHovered ? activeColor : "bg-gray-200"
@@ -209,16 +207,15 @@ function DifficultyRow({
   );
 }
 
-// Updated Helper for Enum Keys
 function getHoverColor(difficulty: "Easy" | "Medium" | "Hard") {
   switch (difficulty) {
     case "Easy":
-      return "#10b981"; // Emerald
+      return "#10b981";
     case "Medium":
-      return "#f59e0b"; // Amber
+      return "#f59e0b";
     case "Hard":
-      return "#f43f5e"; // Rose
+      return "#f43f5e";
     default:
-      return "#f59120"; // Brand Orange
+      return "#f59120";
   }
 }

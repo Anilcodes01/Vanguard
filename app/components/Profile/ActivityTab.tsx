@@ -8,17 +8,15 @@ import {
   Link as LinkIcon,
   Loader2,
 } from "lucide-react";
-import {
-  fetchMoreSubmissions,
-} from "@/app/actions/ProfileActions";
+import { fetchMoreSubmissions } from "@/app/actions/ProfileActions";
 
 interface SubmissionItem {
   id: string;
   status: string;
   createdAt: string;
-  problem: { 
+  problem: {
     title: string;
-    difficulty: string; 
+    difficulty: string;
   };
 }
 
@@ -46,8 +44,11 @@ export default function ActivityTabs({
   totalProjectsCount,
   userId,
 }: ActivityTabsProps) {
-  const [activeTab, setActiveTab] = useState<"problems" | "projects">("problems");
-  const [submissions, setSubmissions] = useState<SubmissionItem[]>(initialSubmissions);
+  const [activeTab, setActiveTab] = useState<"problems" | "projects">(
+    "problems"
+  );
+  const [submissions, setSubmissions] =
+    useState<SubmissionItem[]>(initialSubmissions);
   const [submissionsPage, setSubmissionsPage] = useState(1);
   const [isLoadingSubmissions, setIsLoadingSubmissions] = useState(false);
   const [projects] = useState<ProjectItem[]>(initialProjects);
@@ -69,7 +70,7 @@ export default function ActivityTabs({
             Accepted
           </span>
         );
-      case "WrongAnswer": // Ensure this matches DB Enum string
+      case "WrongAnswer":
       case "Wrong Answer":
         return (
           <span className="flex items-center gap-1.5 text-xs font-medium text-red-600">
@@ -87,31 +88,32 @@ export default function ActivityTabs({
     }
   };
 
-  // UPDATED: Handle EASY, MEDIUM, HARD
   const getDifficultyBadge = (difficulty: string) => {
     let colorClass = "bg-gray-100 text-gray-600";
     let label = difficulty;
 
     switch (difficulty) {
       case "EASY":
-      case "Beginner": // Fallback for old data
+      case "Beginner":
         colorClass = "bg-emerald-50 text-emerald-700";
         label = "Easy";
         break;
       case "MEDIUM":
-      case "Intermediate": // Fallback
+      case "Intermediate":
         colorClass = "bg-amber-50 text-amber-700";
         label = "Med";
         break;
       case "HARD":
-      case "Advanced": // Fallback
+      case "Advanced":
         colorClass = "bg-rose-50 text-rose-700";
         label = "Hard";
         break;
     }
 
     return (
-      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${colorClass}`}>
+      <span
+        className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${colorClass}`}
+      >
         {label}
       </span>
     );
@@ -196,7 +198,11 @@ export default function ActivityTabs({
                     disabled={isLoadingSubmissions}
                     className="text-xs font-medium text-gray-500 hover:text-black transition-colors"
                   >
-                    {isLoadingSubmissions ? <Loader2 className="animate-spin" /> : "Load More"}
+                    {isLoadingSubmissions ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      "Load More"
+                    )}
                   </button>
                 </div>
               )}

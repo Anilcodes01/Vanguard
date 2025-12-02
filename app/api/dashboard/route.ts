@@ -30,14 +30,12 @@ type LeaderboardData = {
 
 const getDailyProblem = unstable_cache(
   async (userId: string) => {
-    // 1. Get IDs of problems the user has already solved
     const solvedProblems = await prisma.problemSolution.findMany({
       where: { userId, status: "Solved" },
       select: { problemId: true },
     });
     const solvedProblemIds = solvedProblems.map((p) => p.problemId);
 
-    // 2. Count available unsolved problems
     const unsolvedProblemsCount = await prisma.problem.count({
       where: { id: { notIn: solvedProblemIds } },
     });
@@ -46,9 +44,8 @@ const getDailyProblem = unstable_cache(
       return null;
     }
 
-    // 3. Pick a random unsolved problem
     const randomSkip = Math.floor(Math.random() * unsolvedProblemsCount);
-    
+
     return prisma.problem.findFirst({
       where: { id: { notIn: solvedProblemIds } },
       skip: randomSkip,
@@ -57,15 +54,15 @@ const getDailyProblem = unstable_cache(
         slug: true,
         title: true,
         difficulty: true,
-        tags: true,            // Updated: Renamed from 'topic'
-        acceptanceRate: true,  // Updated: Replaced 'maxTime'
+        tags: true,
+        acceptanceRate: true,
       },
     });
   },
   ["daily-problem"],
   {
     tags: ["daily-problem"],
-    // Revalidate at the end of the day (midnight)
+
     revalidate: (() => {
       const now = new Date();
       const endOfDay = new Date();
@@ -86,7 +83,7 @@ const getInProgressProjects = unstable_cache(
             name: true,
             description: true,
             domain: true,
-            maxTime: true, // Note: Project model still has maxTime (String), unlike Problem model
+            maxTime: true,
             coverImage: true,
           },
         },

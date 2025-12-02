@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { cache } from "react";
-// Remove unused import if present, though needed for logic check
+
 import { Difficulty } from "@prisma/client";
 
 export const getProfileData = cache(async (username: string) => {
@@ -68,7 +68,6 @@ export const getProfileData = cache(async (username: string) => {
     acceptedSubmissions: 0,
   });
 
-  // Explicitly structure this to match DifficultyStats expected by the UI
   const stats = {
     all: createStat(),
     Easy: createStat(),
@@ -77,7 +76,6 @@ export const getProfileData = cache(async (username: string) => {
   };
 
   allProblems.forEach((p) => {
-    // p.difficulty is "Easy" | "Medium" | "Hard" from Prisma
     if (stats[p.difficulty]) {
       stats[p.difficulty].total++;
       stats.all.total++;

@@ -4,7 +4,7 @@ import {
 } from "@/app/components/Profile/ProfilePanel";
 import ActivityTabs from "@/app/components/Profile/ActivityTab";
 import ProblemSolvingOverview from "@/app/components/Profile/ProblemSolvingOverview";
-import { getProfileData } from "@/app/lib/data/profile"; 
+import { getProfileData } from "@/app/lib/data/profile";
 import { ProfileData } from "@/types";
 
 export default async function ProfilePage({
@@ -42,14 +42,13 @@ export default async function ProfilePage({
       : "Unranked",
   };
 
-  // Format submissions for Client Component
   const formattedSubmissions = submissions.map((s) => ({
     id: s.id,
     status: s.status,
     createdAt: s.createdAt.toISOString(),
-    problem: { 
-      title: s.problem.title,  
-      difficulty: s.problem.difficulty // Passed as "EASY" | "MEDIUM" | "HARD"
+    problem: {
+      title: s.problem.title,
+      difficulty: s.problem.difficulty,
     },
   }));
 
@@ -88,10 +87,7 @@ export default async function ProfilePage({
 
         <div className="flex flex-col-reverse lg:flex-row gap-6 items-start">
           <div className="flex-1 space-y-6 w-full">
-            {/* 
-               Pass stats directly. 
-               Ensure ProblemSolvingOverview component can handle keys: EASY, MEDIUM, HARD
-            */}
+            {}
             <ProblemSolvingOverview stats={difficultyStats} />
 
             <ActivityTabs

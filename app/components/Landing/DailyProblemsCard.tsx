@@ -3,31 +3,29 @@ import { ArrowRight, BarChart3, Code, Percent, Tag, Zap } from "lucide-react";
 import Link from "next/link";
 
 export const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
-  // Map Prisma Enums to UI styles
   const difficultyMap: {
     [key: string]: { color: string; xp: number; label: string; bg: string };
   } = {
-    EASY: { 
-      color: "text-emerald-500", 
+    EASY: {
+      color: "text-emerald-500",
       bg: "bg-emerald-100",
-      xp: 100, 
-      label: "Easy" 
+      xp: 100,
+      label: "Easy",
     },
-    MEDIUM: { 
-      color: "text-yellow-500", 
+    MEDIUM: {
+      color: "text-yellow-500",
       bg: "bg-yellow-100",
-      xp: 250, 
-      label: "Medium" 
+      xp: 250,
+      label: "Medium",
     },
-    HARD: { 
-      color: "text-red-500", 
+    HARD: {
+      color: "text-red-500",
       bg: "bg-red-100",
-      xp: 500, 
-      label: "Hard" 
+      xp: 500,
+      label: "Hard",
     },
   };
 
-  // Fallback for safety
   const details = difficultyMap[problem.difficulty] || {
     color: "text-gray-400",
     bg: "bg-gray-100",
@@ -48,13 +46,15 @@ export const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
               {problem.title}
             </h2>
           </div>
-          {/* Difficulty Badge */}
-          <span className={`px-3 py-1 rounded-full text-xs font-bold ${details.bg} ${details.color}`}>
+          {}
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-bold ${details.bg} ${details.color}`}
+          >
             {details.label}
           </span>
         </div>
 
-        {/* Tags */}
+        {}
         <div className="flex flex-wrap gap-2 mb-6">
           {problem.tags.length > 0 ? (
             problem.tags.map((t, index) => (
@@ -74,13 +74,13 @@ export const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
 
       <div className="pt-4 border-t border-gray-100 flex items-center justify-between gap-4">
         <div className="flex items-center gap-x-6 gap-y-2 text-sm flex-wrap">
-          {/* XP Stat */}
+          {}
           <div className="flex items-center gap-1.5" title="Experience Points">
             <Zap size={16} className="text-yellow-500 fill-yellow-500" />
             <span className="font-bold text-gray-700">{details.xp} XP</span>
           </div>
-          
-          {/* Acceptance Rate Stat (Replaces Max Time) */}
+
+          {}
           <div className="flex items-center gap-1.5" title="Acceptance Rate">
             <Percent size={16} className="text-blue-500" />
             <span className="font-bold text-gray-700">
@@ -88,7 +88,7 @@ export const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
             </span>
           </div>
         </div>
-        
+
         <Link href={`/problems/${problem.id}`}>
           <button className="bg-[#f59120] hover:bg-orange-600 text-white cursor-pointer font-bold py-2.5 px-5 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm group shadow-md shadow-[#f59120]/20">
             Solve Problem
@@ -106,13 +106,12 @@ export const DailyProblemCard = ({ problem }: { problem: DailyProblem }) => {
 export const AllProblemsSolvedCard = () => (
   <div className="bg-gray-50 p-8 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col justify-center items-center text-center">
     <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-       <span className="text-2xl">🔥</span>
+      <span className="text-2xl">🔥</span>
     </div>
-    <h3 className="text-xl font-bold text-black mb-2">
-      You&apos;re on Fire!
-    </h3>
+    <h3 className="text-xl font-bold text-black mb-2">You&apos;re on Fire!</h3>
     <p className="text-gray-600 text-sm mb-6 max-w-md">
-      You&apos;ve solved the daily challenge and all available problems. Check back later for more!
+      You&apos;ve solved the daily challenge and all available problems. Check
+      back later for more!
     </p>
     <Link href="/problems" className="w-full max-w-xs">
       <button className="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">

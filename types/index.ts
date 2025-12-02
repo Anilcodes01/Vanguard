@@ -13,7 +13,6 @@ export type SubmissionResult = {
   starsEarned?: number;
 };
 
-// types.ts (Ensure these match your new schema)
 export interface ProblemStarterTemplate {
   id: string;
   language: string;
@@ -81,21 +80,6 @@ export type Example = {
   input: string;
   output: string;
 };
-
-// export type ProblemDetails = {
-//   id: string;
-//   slug: string;
-//   title: string;
-//   maxTime: number;
-//   description: string;
-//   difficulty: "Beginner" | "Intermediate" | "Advanced";
-//   starterCode: string;
-//   examples: Example[];
-//   testCases: TestCase[];
-//   topic: string[];
-//   solutionStatus?: "Solved" | "Attempted" | null;
-//   problemLanguageDetails: ProblemLanguageDetail[];
-// };
 
 export type RewardData = {
   xpEarned: number;
@@ -202,8 +186,8 @@ export type DailyProblem = {
   slug: string | null;
   title: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
-  acceptanceRate: number; // Replaced maxTime
-  tags: string[];   
+  acceptanceRate: number;
+  tags: string[];
 };
 
 export type User = {
@@ -218,8 +202,8 @@ export type Comment = {
 
   parentId: string | null;
   replies?: Comment[];
-    likesCount: number; 
-  hasLiked: boolean; 
+  likesCount: number;
+  hasLiked: boolean;
 };
 
 export type Project = {
@@ -252,7 +236,6 @@ export type ProjectSubmission = {
   bookmarksCount: number;
 };
 
-
 export interface InProgressProject {
   id: string;
   name: string;
@@ -276,10 +259,10 @@ export type SubmissionModalProps = {
   onClose: () => void;
   handleSubmit: (e: FormEvent) => void;
   description: string;
-  name: string
+  name: string;
   setName: (value: string) => void;
   shortDescription: string;
-  setShortDescription: (value: string) => void
+  setShortDescription: (value: string) => void;
   setDescription: (value: string) => void;
   builtWith: string;
   setBuiltWith: (value: string) => void;
@@ -324,9 +307,9 @@ export type SubmissionFormProps = {
   coverImageFile: File | null;
   screenshotFiles: File[];
   name: string;
-  setName: (value: string) => void,
-  shortDescription: string,
-  setShortDescription: (value: string) => void,
+  setName: (value: string) => void;
+  shortDescription: string;
+  setShortDescription: (value: string) => void;
 };
 
 export type SubmissionStatus = {
@@ -348,15 +331,13 @@ export type ProjectDataResponse = {
   completionCount: number;
 };
 
-
 export type ExploreUser = {
   name: string | null;
   avatar_url: string | null;
 };
 
-
 type SubmittedProjectInfo = {
-  coverImage: string | null; 
+  coverImage: string | null;
   user: {
     profiles: ExploreUser[] | null;
   };

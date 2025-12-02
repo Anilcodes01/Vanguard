@@ -3,13 +3,13 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/server";
 import Link from "next/link";
 import { Prisma } from "@prisma/client";
-import { 
-  BookOpen, 
-  Code2, 
-  FileText, 
-  Layers, 
+import {
+  BookOpen,
+  Code2,
+  FileText,
+  Layers,
   Calendar,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react";
 
 async function getAuthenticatedUser() {
@@ -63,7 +63,7 @@ export default async function NotesPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-8 min-h-screen">
-      {/* Header Section - Matches Journal Page */}
+      {}
       <div className="flex justify-between items-end mb-12 border-b border-gray-100 pb-8">
         <div>
           <p className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">
@@ -78,7 +78,7 @@ export default async function NotesPage() {
         </div>
       </div>
 
-      {/* Grid Section */}
+      {}
       {notes.length === 0 ? (
         <EmptyState />
       ) : (
@@ -93,10 +93,9 @@ export default async function NotesPage() {
 }
 
 function NoteCard({ note }: { note: NoteWithDetails }) {
-  // Determine Context
   const isProject = !!note.project;
   const isProblem = !!note.problem;
-  
+
   const contextTitle =
     note.project?.title ||
     note.problem?.title ||
@@ -112,7 +111,7 @@ function NoteCard({ note }: { note: NoteWithDetails }) {
   const formattedDate = new Date(note.updatedAt).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-    year: "numeric"
+    year: "numeric",
   });
 
   return (
@@ -121,21 +120,31 @@ function NoteCard({ note }: { note: NoteWithDetails }) {
       className="group relative flex flex-col justify-between bg-white border border-gray-200 p-6 rounded-3xl hover:border-orange-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 min-h-[240px]"
     >
       <div>
-        {/* Header: Icon + Date (Mimics Journal Avatar + Name) */}
+        {}
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
-            {/* Icon Box */}
-            <div className={`h-8 w-8 rounded-full border flex items-center justify-center flex-shrink-0 relative
-              ${isProject ? 'bg-blue-50 border-blue-100 text-blue-500' : ''}
-              ${isProblem ? 'bg-purple-50 border-purple-100 text-purple-500' : ''}
-              ${!isProject && !isProblem ? 'bg-orange-50 border-orange-100 text-orange-500' : ''}
-            `}>
+            {}
+            <div
+              className={`h-8 w-8 rounded-full border flex items-center justify-center flex-shrink-0 relative
+              ${isProject ? "bg-blue-50 border-blue-100 text-blue-500" : ""}
+              ${
+                isProblem
+                  ? "bg-purple-50 border-purple-100 text-purple-500"
+                  : ""
+              }
+              ${
+                !isProject && !isProblem
+                  ? "bg-orange-50 border-orange-100 text-orange-500"
+                  : ""
+              }
+            `}
+            >
               {isProject && <Layers className="w-4 h-4" />}
               {isProblem && <Code2 className="w-4 h-4" />}
               {!isProject && !isProblem && <FileText className="w-4 h-4" />}
             </div>
-            
-            {/* Meta Info */}
+
+            {}
             <div className="flex flex-col">
               <span className="text-xs font-semibold text-gray-900 line-clamp-1">
                 {contextType}
@@ -147,26 +156,26 @@ function NoteCard({ note }: { note: NoteWithDetails }) {
           </div>
         </div>
 
-        {/* Title */}
+        {}
         <h2 className="text-xl font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-orange-500 transition-colors">
           {contextTitle}
         </h2>
 
-        {/* Description / Content Preview */}
+        {}
         <p className="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4 font-normal">
           {note.content.replace(/<[^>]*>?/gm, "").substring(0, 150)}
         </p>
       </div>
 
-      {/* Footer (Mimics Journal Tags) */}
+      {}
       <div className="flex items-center justify-between pt-4 border-t border-dashed border-gray-100 mt-auto">
-         <span className="text-[10px] uppercase tracking-wider bg-gray-50 border border-gray-100 text-gray-500 px-2 py-1 rounded-md">
-            {isProject ? 'Development' : isProblem ? 'Algorithm' : 'Learning'}
-         </span>
-         
-         <span className="text-xs font-medium text-gray-400 group-hover:text-orange-500 transition-colors flex items-center gap-1">
-            Read <ArrowRight className="w-3 h-3" />
-         </span>
+        <span className="text-[10px] uppercase tracking-wider bg-gray-50 border border-gray-100 text-gray-500 px-2 py-1 rounded-md">
+          {isProject ? "Development" : isProblem ? "Algorithm" : "Learning"}
+        </span>
+
+        <span className="text-xs font-medium text-gray-400 group-hover:text-orange-500 transition-colors flex items-center gap-1">
+          Read <ArrowRight className="w-3 h-3" />
+        </span>
       </div>
     </Link>
   );

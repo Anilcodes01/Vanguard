@@ -48,7 +48,7 @@ export default function ProblemDetailsPanel({
 
   return (
     <div className="w-full p-4 lg:p-6 flex flex-col gap-4 rounded-lg lg:overflow-y-auto bg-white">
-      {/* Header */}
+      {}
       <div className="flex flex-col border-b border-gray-100 pb-4">
         <h1 className="text-3xl lg:text-4xl font-bold text-black mb-3">
           {problem.title}
@@ -63,7 +63,7 @@ export default function ProblemDetailsPanel({
         </div>
       </div>
 
-      {/* Description */}
+      {}
       <div className="text-gray-800 leading-relaxed">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
@@ -101,8 +101,11 @@ export default function ProblemDetailsPanel({
               <li className="mb-1 text-gray-700" {...props} />
             ),
 
-            // FIXED: Replaced 'any' with specific React Props type
-            code: ({ className, children, ...props }: React.ComponentPropsWithoutRef<"code">) => {
+            code: ({
+              className,
+              children,
+              ...props
+            }: React.ComponentPropsWithoutRef<"code">) => {
               const isInline = !String(children).includes("\n");
 
               if (isInline) {
@@ -145,7 +148,7 @@ export default function ProblemDetailsPanel({
         </ReactMarkdown>
       </div>
 
-      {/* Tags */}
+      {}
       <div className="mt-4 border-t border-gray-200 pt-6">
         <button
           onClick={() => setIsTagsOpen(!isTagsOpen)}

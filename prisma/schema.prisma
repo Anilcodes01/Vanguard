@@ -496,6 +496,7 @@ model CodingProblemStarterTemplate {
 
   language String // e.g. "javascript", "python", "cpp"
   code     String @db.Text // The boilerplate code
+  driverCode String? @db.Text
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
