@@ -88,7 +88,7 @@ export default function NavbarSignedIn({
       <div className="lg:hidden flex items-center z-30">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="text-white p-1 hover:bg-neutral-700/50 rounded-md transition-colors"
+          className="text-black p-1 hover:bg-gray-100 rounded-md transition-colors"
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         >
           {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -106,7 +106,7 @@ export default function NavbarSignedIn({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="fixed inset-0 bg-black/50 z-10 lg:hidden"
+                className="fixed inset-0 bg-black/20 z-10 lg:hidden"
                 onClick={() => setIsMenuOpen(false)}
               />
               <m.div
@@ -114,19 +114,19 @@ export default function NavbarSignedIn({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="absolute top-full left-0 w-full bg-black lg:hidden z-20 shadow-lg border-t border-neutral-700"
+                className="absolute top-full left-0 w-full bg-white lg:hidden z-20 shadow-lg border-t border-gray-100"
               >
                 <div className="flex flex-col items-center gap-3 py-4 px-4">
                   <m.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="flex flex-col items-center gap-3 mt-2 border-t border-neutral-700 pt-4 w-full"
+                    className="flex flex-col items-center gap-3 mt-2 w-full"
                   >
                     {leagueImage && (
                       <button
                         onClick={() => handleMobileNavClick("/leaderboard")}
-                        className="flex items-center gap-2 bg-neutral-700/50 border border-neutral-600/60 p-2.5 rounded-full text-sm hover:bg-neutral-700 transition-colors"
+                        className="flex items-center gap-2 bg-gray-50 border border-gray-200 p-2.5 rounded-full text-sm hover:bg-gray-100 transition-colors"
                       >
                         <Image
                           src={leagueImage.imagePath}
@@ -135,7 +135,7 @@ export default function NavbarSignedIn({
                           height={20}
                           className="w-5 h-5"
                         />
-                        <span className="text-white font-medium">
+                        <span className="text-gray-900 font-medium">
                           {displayProfile.league} League
                         </span>
                       </button>
@@ -146,17 +146,17 @@ export default function NavbarSignedIn({
                         className="text-orange-400"
                         fill="currentColor"
                       />
-                      <span className="font-bold text-white">
+                      <span className="font-bold text-black">
                         {displayProfile.stars}
                       </span>
-                      <span className="text-gray-400">Stars</span>
+                      <span className="text-gray-500">Stars</span>
                     </div>
                     <div className="flex items-center gap-2 bg-orange-600/10 border border-orange-600/20 px-4 py-2 rounded-full text-sm">
                       <Zap size={16} className="text-[#f59120]" />
-                      <span className="font-bold text-white">
+                      <span className="font-bold text-black">
                         {displayProfile.xp}
                       </span>
-                      <span className="text-gray-400">XP</span>
+                      <span className="text-gray-500">XP</span>
                     </div>
                     <UserAvatar
                       user={displayProfile}
