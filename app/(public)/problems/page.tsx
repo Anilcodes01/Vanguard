@@ -112,12 +112,11 @@ export default async function ProblemsPage({
 
   const difficultyInput = resolvedSearchParams.difficulty || "All";
 
-  const upperDiff = difficultyInput.toUpperCase();
-  const difficulty: Difficulty | "All" = VALID_DIFFICULTIES.includes(
-    upperDiff as Difficulty
-  )
-    ? (upperDiff as Difficulty)
-    : "All";
+  const matchedDifficulty = VALID_DIFFICULTIES.find(
+    (d) => d.toLowerCase() === difficultyInput.toLowerCase()
+  );
+
+  const difficulty: Difficulty | "All" = matchedDifficulty || "All";
 
   const initialData = await getProblems(difficulty, 1);
 
