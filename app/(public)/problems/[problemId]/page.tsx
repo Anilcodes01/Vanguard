@@ -8,6 +8,7 @@ import { AppDispatch } from "@/app/store/store";
 import ProblemDetailsPanel from "@/app/components/Problems/ProblemsDetailsPanle";
 import { problemSolved } from "@/app/store/actions";
 import { SuccessModal } from "@/app/components/Problems/CodeEditor/SuccessModal";
+import { useRouter } from "next/navigation";
 import {
   ProblemDetails,
   SubmissionResult,
@@ -34,6 +35,7 @@ type TestCaseResultItem = {
 export default function ProblemPage() {
   const params = useParams();
   const problemId = params.problemId as string;
+   const router = useRouter(); 
   const dispatch: AppDispatch = useDispatch();
 
   const [problem, setProblem] = useState<ProblemDetails | null>(null);
@@ -43,6 +45,7 @@ export default function ProblemPage() {
   const [selectedLanguage, setSelectedLanguage] =
     useState<ProblemStarterTemplate | null>(null);
   const [code, setCode] = useState<string>("");
+   const [nextProblemId, setNextProblemId] = useState<string | null>(null);
 
   const [submissionResult, setSubmissionResult] =
     useState<SubmissionResult | null>(null);
@@ -84,6 +87,7 @@ export default function ProblemPage() {
           `/api/problems/${problemId}`
         );
         setProblem(response.data);
+        setNextProblemId(response.data.nextProblemId || null);
 
         setStartTime(Date.now());
 
@@ -109,6 +113,31 @@ export default function ProblemPage() {
     fetchProblem();
   }, [problemId]);
 
+  const handleNextProblem = () => {
+    if (nextProblemId) {
+      router.push(`/problems/${nextProblemId}`);
+    }
+  };
+
+  const handleRandomProblem = async () => {
+    try {
+      const response = await axios.get("/api/problems/random");
+      if (response.data?.id) {
+        // Prevent reloading if random picks the same current problem
+        if (response.data.id !== problemId) {
+            router.push(`/problems/${response.data.id}`);
+        } else {
+            // Optional: Recursively retry or just alert
+            // For now, simple re-fetch or ignore
+            const retry = await axios.get("/api/problems/random");
+             if (retry.data?.id) router.push(`/problems/${retry.data.id}`);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch random problem", error);
+    }
+  };
+
   useEffect(() => {
     if (selectedLanguage) {
       setCode(selectedLanguage.code);
@@ -128,37 +157,43 @@ export default function ProblemPage() {
     setRunResult(null);
     setSubmissionResult(null);
 
-    const newStatuses = new Array(problem.testCases.length).fill(
-      "pending"
-    ) as TestCaseStatus[];
-    newStatuses[activeCaseIndex] = "running";
-    setTestCaseStatuses(newStatuses);
+    setTestCaseStatuses(new Array(problem.testCases.length).fill("running"));
 
-    const currentTestCase = problem.testCases[activeCaseIndex];
-    if (!currentTestCase) return;
+    problem.testCases.forEach(async (testCase, index) => {
+      try {
+        const response = await axios.post("/api/run", {
+          problemId,
+          code,
+          input: testCase.input,
+          expectedOutput: testCase.expectedOutput,
+          language: selectedLanguage.language,
+        });
 
-    try {
-      const response = await axios.post("/api/run", {
-        problemId,
-        code,
-        input: currentTestCase.input,
-        expectedOutput: currentTestCase.expectedOutput,
-        language: selectedLanguage.language,
-      });
-      setRunResult(response.data);
-      const finalStatuses = [...newStatuses];
-      finalStatuses[activeCaseIndex] =
-        response.data.status === "Accepted" ? "passed" : "failed";
-      setTestCaseStatuses(finalStatuses);
-    } catch {
-      setRunResult({
-        status: "Error",
-        message: "Failed to connect to the server.",
-      });
-      const finalStatuses = [...newStatuses];
-      finalStatuses[activeCaseIndex] = "failed";
-      setTestCaseStatuses(finalStatuses);
-    }
+        setTestCaseStatuses((prevStatuses) => {
+          const newStatuses = [...prevStatuses];
+          newStatuses[index] =
+            response.data.status === "Accepted" ? "passed" : "failed";
+          return newStatuses;
+        });
+
+        if (index === activeCaseIndex) {
+          setRunResult(response.data);
+        }
+      } catch (err) {
+        setTestCaseStatuses((prevStatuses) => {
+          const newStatuses = [...prevStatuses];
+          newStatuses[index] = "failed";
+          return newStatuses;
+        });
+
+        if (index === activeCaseIndex) {
+          setRunResult({
+            status: "Error",
+            message: "Failed to connect to the server.",
+          });
+        }
+      }
+    });
   };
 
   const handleSubmit = async (submitTime: number | null) => {
@@ -310,6 +345,9 @@ export default function ProblemPage() {
           problemTitle={problem.title}
           isMobileDetailsVisible={isMobileDetailsVisible}
           onToggleMobileDetails={toggleMobileDetails}
+           onNextProblem={handleNextProblem} // Pass handler
+          onRandomProblem={handleRandomProblem} // Pass handler
+          hasNext={!!nextProblemId}
         />
       </div>
 

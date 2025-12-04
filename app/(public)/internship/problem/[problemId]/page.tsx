@@ -332,6 +332,9 @@ export default function IndividualInternshipProblemPage() {
           onToggleMobileDetails={() =>
             setIsMobileDetailsVisible(!isMobileDetailsVisible)
           }
+           onNextProblem={() => {}} 
+          onRandomProblem={() => {}} 
+          hasNext={false}
         />
       </div>
 

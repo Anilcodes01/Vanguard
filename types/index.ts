@@ -37,6 +37,7 @@ export interface ProblemDetails {
   starterTemplates: ProblemStarterTemplate[];
   testCases: ProblemTestCase[];
   solutionStatus?: "Solved" | "Attempted" | null;
+   nextProblemId?: string | null;
 }
 
 export interface UserProfile {

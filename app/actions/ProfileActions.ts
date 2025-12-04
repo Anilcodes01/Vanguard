@@ -41,3 +41,26 @@ export async function fetchMoreProjects(userId: string, page: number) {
     createdAt: p.createdAt.toISOString(),
   }));
 }
+
+
+export async function fetchSubmissionDetails(submissionId: string) {
+  const submission = await prisma.submission.findUnique({
+    where: { id: submissionId },
+    include: {
+      problem: {
+        select: {
+          title: true,
+          difficulty: true,
+          slug: true,
+        },
+      },
+    },
+  });
+
+  if (!submission) return null;
+
+  return {
+    ...submission,
+    createdAt: submission.createdAt.toISOString(),
+  };
+}

@@ -2,7 +2,6 @@ import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { Difficulty } from "@prisma/client";
 import ProblemsList from "@/app/components/Problems/ProblemsList.tsx/ProblemsList";
-
 import { getRawProblemData, getXpForDifficulty } from "@/app/utils/problems";
 
 export const dynamic = "force-dynamic";
@@ -58,6 +57,20 @@ export default async function ProblemsPage({
 }: {
   searchParams: Promise<{ difficulty?: string }>;
 }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let displayName = "Developer";
+  if (user) {
+    const profile = await prisma.profiles.findUnique({
+      where: { id: user.id },
+      select: { name: true },
+    });
+    displayName = profile?.name || user.user_metadata?.full_name || "Developer";
+  }
+
   const resolvedSearchParams = await searchParams;
   const difficultyInput = resolvedSearchParams.difficulty || "All";
 
@@ -66,27 +79,15 @@ export default async function ProblemsPage({
   );
 
   const difficulty: Difficulty | "All" = matchedDifficulty || "All";
-
   const initialData = await getProblems(difficulty, 1);
 
   return (
-    <div className="bg-white min-h-screen">
-      <div className="w-full max-w-6xl mx-auto px-4 py-12 md:px-8 md:py-16">
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-black mb-3 tracking-tight">
-            Practice Problems
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Sharpen your skills with our curated collection of coding
-            challenges.
-          </p>
-        </div>
-
-        <ProblemsList
-          initialProblems={initialData.problems}
-          initialTotalCount={initialData.totalCount}
-        />
-      </div>
+    <div className="max-w-6xl mx-auto p-8 min-h-screen">
+      <ProblemsList
+        initialProblems={initialData.problems}
+        initialTotalCount={initialData.totalCount}
+        userDisplayName={displayName}
+      />
     </div>
   );
 }

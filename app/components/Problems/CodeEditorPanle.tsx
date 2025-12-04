@@ -1,9 +1,8 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import Editor from "@monaco-editor/react";
+import Editor, { OnMount } from "@monaco-editor/react";
 import { BsCheck2Circle } from "react-icons/bs";
 import {
   ChevronUp,
-  Maximize,
   Loader2,
   ChevronDown,
   X,
@@ -171,12 +170,18 @@ export const RenderOutput = ({
 
 type TestCaseStatus = "pending" | "running" | "passed" | "failed";
 
+// Define a helper type for the Editor instance to avoid 'any'
+type MonacoEditor = Parameters<OnMount>[0];
+
 interface CodeEditorPanelProps {
   problemId: string;
   code: string;
   setCode: (code: string) => void;
   handleSubmit: (startTime: number | null) => void;
   handleRunCode: (activeCaseIndex: number) => void;
+  onNextProblem: () => void;
+  onRandomProblem: () => void;
+  hasNext: boolean;
   isSubmitting: boolean;
   isCodeRunning: boolean;
   submissionResult: SubmissionResult | null;
@@ -215,10 +220,15 @@ export default function CodeEditorPanel({
   problemTitle,
   isMobileDetailsVisible,
   onToggleMobileDetails,
+  onNextProblem,
+  onRandomProblem,
+  hasNext,
 }: CodeEditorPanelProps) {
   const [activeTab, setActiveTab] = useState<"testcase" | "result">("testcase");
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
 
+  // Note: isStarted and setStartTime are used for internal timer logic,
+  // but currently not triggered by a specific user action in this snippet.
   const [isStarted, setIsStarted] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -226,11 +236,21 @@ export default function CodeEditorPanel({
   const [editorHeight, setEditorHeight] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleStart = () => {
-    setIsStarted(true);
-    setStartTime(Date.now());
-    setElapsedTime(0);
+  // FIX: Use the inferred MonacoEditor type instead of any
+  const editorRef = useRef<MonacoEditor | null>(null);
+
+  // FIX: Removed unused 'monaco' parameter
+  const handleEditorDidMount: OnMount = (editor) => {
+    editorRef.current = editor;
   };
+
+  const handleFormat = () => {
+    if (editorRef.current) {
+      editorRef.current.getAction("editor.action.formatDocument")?.run();
+    }
+  };
+
+  // FIX: Removed unused handleStart function
 
   useEffect(() => {
     if (containerRef.current && editorHeight === null) {
@@ -294,19 +314,6 @@ export default function CodeEditorPanel({
     }
   }, [runResult, submissionResult]);
 
-  const getTestCaseStatusStyle = (status: TestCaseStatus) => {
-    switch (status) {
-      case "running":
-        return "bg-gray-100 text-black border-orange-400 border";
-      case "passed":
-        return "bg-green-50 text-green-700 border-green-400 border";
-      case "failed":
-        return "bg-red-50 text-red-700 border-red-400 border";
-      default:
-        return "bg-gray-100 text-gray-600 hover:bg-gray-200 border-transparent border";
-    }
-  };
-
   const getTestCaseStatusIcon = (status: TestCaseStatus) => {
     switch (status) {
       case "running":
@@ -325,7 +332,7 @@ export default function CodeEditorPanel({
 
   return (
     <div ref={containerRef} className="flex flex-col h-full bg-white">
-      {}
+      {/* Mobile Header */}
       <button
         onClick={onToggleMobileDetails}
         className="lg:hidden flex items-center justify-between w-full p-3 bg-gray-50 rounded-t-lg border-b border-gray-200 text-left"
@@ -341,7 +348,7 @@ export default function CodeEditorPanel({
         />
       </button>
 
-      {}
+      {/* Editor Section */}
       <div
         className="bg-gray-50 rounded-lg shadow-sm flex flex-col overflow-hidden flex-shrink-0 border border-gray-200"
         style={{ height: editorHeight ? `${editorHeight}px` : "60%" }}
@@ -349,21 +356,28 @@ export default function CodeEditorPanel({
         <EditorHeader
           onRun={() => handleRunCode(activeCaseIndex)}
           onSubmit={() => handleSubmit(startTime)}
+          onFormat={handleFormat}
           isRunning={isCodeRunning && !isSubmitting}
           isSubmitting={isSubmitting}
           starterTemplates={starterTemplates}
           selectedLanguage={selectedLanguage}
           onLanguageChange={onLanguageChange}
           submissionProgress={submissionProgress}
+          onNext={onNextProblem}
+          onRandom={onRandomProblem}
+          hasNext={hasNext}
         />
 
         <div className="flex-grow relative">
           <Editor
             height="100%"
-            language={mapLanguageToMonaco(selectedLanguage.language)}
+            language={mapLanguageToMonaco(
+              selectedLanguage?.language || "javascript"
+            )}
             theme="vs-dark"
             value={code}
             onChange={(value) => setCode(value || "")}
+            onMount={handleEditorDidMount}
             options={{
               readOnly: false,
               fontSize: 14,
@@ -372,6 +386,8 @@ export default function CodeEditorPanel({
               padding: { top: 16, bottom: 16 },
               contextmenu: true,
               automaticLayout: true,
+              formatOnPaste: true,
+              formatOnType: true,
             }}
           />
         </div>
@@ -381,7 +397,7 @@ export default function CodeEditorPanel({
         </div>
       </div>
 
-      {}
+      {/* Resizer Handle */}
       <div
         onMouseDown={handleMouseDown}
         className="w-full h-3 cursor-row-resize flex items-center justify-center group hover:bg-gray-50 -my-1.5 z-10"
@@ -389,9 +405,9 @@ export default function CodeEditorPanel({
         <div className="w-12 h-1 bg-gray-300 rounded-full group-hover:bg-[#f59120] transition-colors duration-200"></div>
       </div>
 
-      {}
+      {/* Test Cases / Output Section */}
       <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col min-h-0 overflow-hidden mt-2">
-        {}
+        {/* Tabs */}
         <div className="flex items-center justify-between px-2 pt-2 border-b border-gray-200 bg-gray-50/50">
           <div className="flex gap-1">
             <button
@@ -437,33 +453,48 @@ export default function CodeEditorPanel({
           </div>
         </div>
 
-        {}
+        {/* Content Area */}
         <div className="flex-grow overflow-y-auto bg-white">
           {activeTab === "testcase" && (
             <div className="h-full flex flex-col">
               <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 overflow-x-auto no-scrollbar">
-                {visibleTestCases.map((tc, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setActiveCaseIndex(index)}
-                    disabled={isCodeRunning}
-                    className={`flex-shrink-0 flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-                      activeCaseIndex === index
-                        ? "bg-gray-800 text-white shadow-md"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    } ${
-                      testCaseStatuses[index] !== "pending"
-                        ? getTestCaseStatusStyle(
-                            testCaseStatuses[index]
-                          ).replace("bg-gray-100", "bg-white")
-                        : ""
-                    }`}
-                  >
-                    {getTestCaseStatusIcon(testCaseStatuses[index])}
-                    <span>Case {index + 1}</span>
-                    {}
-                  </button>
-                ))}
+                {visibleTestCases.map((tc, index) => {
+                  const isActive = activeCaseIndex === index;
+                  const status = testCaseStatuses[index];
+
+                  let statusClasses = "";
+
+                  if (status === "passed") {
+                    statusClasses = isActive
+                      ? "bg-green-100 text-green-800 border-green-500 ring-1 ring-green-500 shadow-sm"
+                      : "bg-green-50 text-green-700 border-green-400 opacity-90 hover:opacity-100";
+                  } else if (status === "failed") {
+                    statusClasses = isActive
+                      ? "bg-red-100 text-red-800 border-red-500 ring-1 ring-red-500 shadow-sm"
+                      : "bg-red-50 text-red-700 border-red-400 opacity-90 hover:opacity-100";
+                  } else if (status === "running") {
+                    statusClasses = isActive
+                      ? "bg-orange-100 text-orange-900 border-orange-500 shadow-sm"
+                      : "bg-gray-50 text-black border-orange-400";
+                  } else {
+                    // pending
+                    statusClasses = isActive
+                      ? "bg-gray-100 text-black border-gray-400 shadow-sm ring-1 ring-gray-300"
+                      : "bg-gray-100 text-gray-500 border-transparent hover:bg-gray-200";
+                  }
+
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => setActiveCaseIndex(index)}
+                      disabled={isCodeRunning}
+                      className={`flex-shrink-0 flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all border ${statusClasses}`}
+                    >
+                      {getTestCaseStatusIcon(status)}
+                      <span>Case {index + 1}</span>
+                    </button>
+                  );
+                })}
               </div>
               <div className="flex-grow overflow-y-auto">
                 <TestCaseInput

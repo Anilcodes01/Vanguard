@@ -102,6 +102,7 @@ function mapJudge0StatusToEnum(description: string): SubmissionStatus {
     "Runtime Error (NZEC)": SubmissionStatus.RuntimeError,
     "Internal Error": SubmissionStatus.InternalError,
   };
+
   return mapping[description] || SubmissionStatus.InternalError;
 }
 
@@ -120,7 +121,6 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-
     const { problemId, code, startTime, language } = body;
 
     if (!problemId || !code || !startTime || !language) {
@@ -175,7 +175,6 @@ export async function POST(request: NextRequest) {
 
       if (template.driverCode) {
         finalSourceCode = template.driverCode.replace("{{USER_CODE}}", code);
-
         if (testCase.input) {
           finalSourceCode = finalSourceCode.replace(
             "{{INPUT}}",
@@ -199,7 +198,6 @@ export async function POST(request: NextRequest) {
     });
 
     const judgeBaseUrl = process.env.JUDGE0_API_URL;
-
     const judgeResponse = await axios.post(
       `${judgeBaseUrl}/submissions/batch`,
       { submissions },
@@ -236,11 +234,7 @@ export async function POST(request: NextRequest) {
         );
 
         const pollData = pollResponse.data;
-        if (pollData && pollData.submissions) {
-          results = pollData.submissions;
-        } else {
-          results = pollData;
-        }
+        results = pollData.submissions || pollData;
 
         const allFinished = results.every(
           (r: Judge0SubmissionResult) =>
@@ -263,7 +257,6 @@ export async function POST(request: NextRequest) {
     let allTestsPassed = true;
     let maxExecutionTime = 0;
     let maxMemory = 0;
-
     let firstFailedResult: Judge0SubmissionResult | null = null;
     let firstFailedIndex = -1;
 
@@ -327,7 +320,6 @@ export async function POST(request: NextRequest) {
 
     if (allTestsPassed && !previouslySolved) {
       isFirstSolve = true;
-
       switch (problem.difficulty) {
         case Difficulty.Easy:
           xpEarned = 100;
