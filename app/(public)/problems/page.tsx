@@ -47,7 +47,7 @@ const getRawProblemData = async (
           acceptanceRate: true,
           tags: true,
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: "asc" },
       }),
       prisma.problem.count({ where: whereCondition }),
     ]);

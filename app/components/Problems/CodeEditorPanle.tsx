@@ -1,12 +1,173 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { BsCheck2Circle } from "react-icons/bs";
-import { ChevronUp, Maximize, Loader2, ChevronDown, X } from "lucide-react";
+import {
+  ChevronUp,
+  Maximize,
+  Loader2,
+  ChevronDown,
+  X,
+  Clock,
+  Cpu,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import { EditorHeader } from "./CodeEditor/EditorHeader";
-import { RenderOutput } from "./CodeEditor/RenderOutput";
-import { TestCaseInput } from "./CodeEditor/TestCaseInput";
 import { mapLanguageToMonaco } from "@/lib/languageMappings";
 import { SubmissionResult, ProblemStarterTemplate } from "@/types";
+
+export const TestCaseInput = ({
+  input,
+  expectedOutput,
+}: {
+  input: string | null;
+  expectedOutput: string | null;
+}) => {
+  return (
+    <div className="p-4 space-y-4">
+      <div>
+        <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
+          Input
+        </p>
+        <div className="bg-gray-100 rounded-lg p-3 font-mono text-sm text-gray-800 border border-gray-200">
+          {input || "No input"}
+        </div>
+      </div>
+      <div>
+        <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
+          Expected Output
+        </p>
+        <div className="bg-gray-100 rounded-lg p-3 font-mono text-sm text-gray-800 border border-gray-200">
+          {expectedOutput || "No expected output"}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface StatCardProps {
+  icon: React.ComponentType<{ className: string }>;
+  label: string;
+  value: string;
+  colorClass: string;
+}
+
+const StatCard = ({ icon: Icon, label, value, colorClass }: StatCardProps) => (
+  <div className="flex items-center gap-3 bg-gray-100 p-3 rounded-lg flex-1">
+    <Icon className={`w-5 h-5 ${colorClass}`} />
+    <div>
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="text-sm font-semibold text-black">{value}</p>
+    </div>
+  </div>
+);
+
+export const RenderOutput = ({
+  result,
+}: {
+  result: SubmissionResult | null;
+}) => {
+  if (!result) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-gray-400 p-4">
+        <div className="text-sm">Run your code to see results</div>
+      </div>
+    );
+  }
+
+  const isAccepted = result.status === "Accepted";
+  const isError =
+    result.status === "Error" ||
+    result.status === "Runtime Error" ||
+    result.status === "Compilation Error";
+
+  return (
+    <div className="p-4 space-y-4 text-black overflow-y-auto h-full pb-20">
+      <div className="flex items-center gap-3 mb-6">
+        {isAccepted ? (
+          <CheckCircle className="text-green-500" size={28} />
+        ) : (
+          <XCircle className="text-red-500" size={28} />
+        )}
+        <div>
+          <h3
+            className={`text-xl font-bold ${
+              isAccepted ? "text-green-600" : "text-red-500"
+            }`}
+          >
+            {result.status}
+          </h3>
+          {result.message && isError && (
+            <p className="text-sm text-red-500 mt-1">{result.message}</p>
+          )}
+        </div>
+      </div>
+
+      {(result.executionTime != null || result.executionMemory != null) && (
+        <div className="flex flex-wrap gap-3">
+          {result.executionTime != null && (
+            <StatCard
+              icon={Clock}
+              label="Runtime"
+              value={`${(result.executionTime * 1000).toFixed(0)} ms`}
+              colorClass="text-blue-500"
+            />
+          )}
+          {result.executionMemory != null && (
+            <StatCard
+              icon={Cpu}
+              label="Memory"
+              value={`${(result.executionMemory / 1024).toFixed(2)} MB`}
+              colorClass="text-purple-500"
+            />
+          )}
+        </div>
+      )}
+
+      {}
+      <div className="space-y-4 pt-2">
+        {result.input && (
+          <div>
+            <p className="text-xs font-semibold text-gray-500 mb-1 uppercase">
+              Input
+            </p>
+            <pre className="bg-gray-100 p-3 rounded-lg text-sm text-gray-800 font-mono whitespace-pre-wrap border border-gray-200">
+              {result.input}
+            </pre>
+          </div>
+        )}
+
+        {result.userOutput && (
+          <div>
+            <p className="text-xs font-semibold text-gray-500 mb-1 uppercase">
+              Your Output
+            </p>
+            <pre
+              className={`p-3 rounded-lg text-sm font-mono whitespace-pre-wrap border ${
+                isAccepted
+                  ? "bg-green-50 text-green-800 border-green-200"
+                  : "bg-red-50 text-red-800 border-red-200"
+              }`}
+            >
+              {result.userOutput}
+            </pre>
+          </div>
+        )}
+
+        {result.expectedOutput && (
+          <div>
+            <p className="text-xs font-semibold text-gray-500 mb-1 uppercase">
+              Expected Output
+            </p>
+            <pre className="bg-gray-100 p-3 rounded-lg text-sm text-gray-800 font-mono whitespace-pre-wrap border border-gray-200">
+              {result.expectedOutput}
+            </pre>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 type TestCaseStatus = "pending" | "running" | "passed" | "failed";
 
@@ -20,7 +181,6 @@ interface CodeEditorPanelProps {
   isCodeRunning: boolean;
   submissionResult: SubmissionResult | null;
   runResult: SubmissionResult | null;
-
   testCases: {
     id: string;
     input: string | null;
@@ -74,7 +234,7 @@ export default function CodeEditorPanel({
 
   useEffect(() => {
     if (containerRef.current && editorHeight === null) {
-      setEditorHeight(containerRef.current.offsetHeight * 0.8);
+      setEditorHeight(containerRef.current.offsetHeight * 0.6);
     }
   }, [editorHeight]);
 
@@ -137,24 +297,24 @@ export default function CodeEditorPanel({
   const getTestCaseStatusStyle = (status: TestCaseStatus) => {
     switch (status) {
       case "running":
-        return "bg-gray-200 text-black border border-[#f59120]";
+        return "bg-gray-100 text-black border-orange-400 border";
       case "passed":
-        return "bg-orange-100/60 text-orange-600 border border-orange-400";
+        return "bg-green-50 text-green-700 border-green-400 border";
       case "failed":
-        return "bg-red-100/60 text-red-600 border border-red-400";
+        return "bg-red-50 text-red-700 border-red-400 border";
       default:
-        return "bg-gray-100 text-gray-500 hover:bg-gray-200";
+        return "bg-gray-100 text-gray-600 hover:bg-gray-200 border-transparent border";
     }
   };
 
   const getTestCaseStatusIcon = (status: TestCaseStatus) => {
     switch (status) {
       case "running":
-        return <Loader2 className="h-4 w-4 animate-spin" />;
+        return <Loader2 className="h-3.5 w-3.5 animate-spin text-orange-500" />;
       case "passed":
-        return <BsCheck2Circle className="h-4 w-4 text-orange-400" />;
+        return <BsCheck2Circle className="h-3.5 w-3.5 text-green-500" />;
       case "failed":
-        return <X className="h-4 w-4 text-red-400" />;
+        return <X className="h-3.5 w-3.5 text-red-500" />;
       default:
         return null;
     }
@@ -164,7 +324,8 @@ export default function CodeEditorPanel({
   const visibleTestCases = testCases;
 
   return (
-    <div ref={containerRef} className=" flex flex-col h-full">
+    <div ref={containerRef} className="flex flex-col h-full bg-white">
+      {}
       <button
         onClick={onToggleMobileDetails}
         className="lg:hidden flex items-center justify-between w-full p-3 bg-gray-50 rounded-t-lg border-b border-gray-200 text-left"
@@ -179,8 +340,10 @@ export default function CodeEditorPanel({
           }`}
         />
       </button>
+
+      {}
       <div
-        className="bg-gray-50 rounded-lg shadow-2xl flex flex-col overflow-hidden flex-shrink-0"
+        className="bg-gray-50 rounded-lg shadow-sm flex flex-col overflow-hidden flex-shrink-0 border border-gray-200"
         style={{ height: editorHeight ? `${editorHeight}px` : "60%" }}
       >
         <EditorHeader
@@ -195,7 +358,6 @@ export default function CodeEditorPanel({
         />
 
         <div className="flex-grow relative">
-          {}
           <Editor
             height="100%"
             language={mapLanguageToMonaco(selectedLanguage.language)}
@@ -207,91 +369,110 @@ export default function CodeEditorPanel({
               fontSize: 14,
               minimap: { enabled: false },
               scrollBeyondLastLine: false,
-              padding: { top: 10 },
+              padding: { top: 16, bottom: 16 },
               contextmenu: true,
+              automaticLayout: true,
             }}
           />
         </div>
-        <div className="flex justify-between items-center px-4 py-1 bg-gray-100 border-t border-gray-200 text-xs text-gray-600">
-          <span>{isStarted ? "Timer Running" : "Timer Stopped"}</span>
+        <div className="flex justify-between items-center px-4 py-1.5 bg-gray-100 border-t border-gray-200 text-xs text-gray-500 font-mono">
+          <span>{isStarted ? `Time: ${elapsedTime}s` : "Ready"}</span>
           <span>Ln 1, Col 1</span>
         </div>
       </div>
 
+      {}
       <div
         onMouseDown={handleMouseDown}
-        className="w-full h-2 cursor-row-resize flex items-center justify-center group"
+        className="w-full h-3 cursor-row-resize flex items-center justify-center group hover:bg-gray-50 -my-1.5 z-10"
       >
-        <div className="w-full h-[3px] bg-transparent group-hover:bg-[#f59120]/50 transition-colors duration-200"></div>
+        <div className="w-12 h-1 bg-gray-300 rounded-full group-hover:bg-[#f59120] transition-colors duration-200"></div>
       </div>
 
-      <div className="flex-1 bg-white rounded-lg shadow-2xl flex flex-col min-h-0 overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
-          <div className="flex items-center gap-4 text-sm font-medium">
+      {}
+      <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col min-h-0 overflow-hidden mt-2">
+        {}
+        <div className="flex items-center justify-between px-2 pt-2 border-b border-gray-200 bg-gray-50/50">
+          <div className="flex gap-1">
             <button
               onClick={() => setActiveTab("testcase")}
-              className={`flex items-center gap-2 p-1 rounded-md ${
-                activeTab === "testcase" ? "text-black" : "text-gray-600"
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                activeTab === "testcase"
+                  ? "bg-white text-black border-t border-x border-gray-200 shadow-[0_-2px_4px_rgba(0,0,0,0.02)]"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
               }`}
             >
               <BsCheck2Circle
                 className={`${
-                  activeTab === "testcase" ? "text-orange-400" : ""
+                  activeTab === "testcase" ? "text-green-500" : ""
                 }`}
+                size={16}
               />
-              Testcase
+              Testcases
             </button>
-            <span className="text-gray-300">|</span>
             <button
               onClick={() => setActiveTab("result")}
-              className={`p-1 rounded-md ${
-                activeTab === "result" ? "text-black" : "text-gray-600"
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                activeTab === "result"
+                  ? "bg-white text-black border-t border-x border-gray-200 shadow-[0_-2px_4px_rgba(0,0,0,0.02)]"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
               }`}
             >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  displayResult
+                    ? displayResult.status === "Accepted"
+                      ? "bg-green-500"
+                      : "bg-red-500"
+                    : "bg-gray-300"
+                }`}
+              ></span>
               Test Result
             </button>
           </div>
-          <div className="flex items-center gap-2 text-gray-500">
-            <button className="hover:text-gray-900">
-              <Maximize size={16} />
-            </button>
-            <button className="hover:text-gray-900">
-              <ChevronUp size={20} />
+          <div className="flex items-center gap-2 pr-2">
+            <button className="p-1 text-gray-400 hover:text-gray-600 transition-colors">
+              <ChevronUp size={18} />
             </button>
           </div>
         </div>
 
-        <div className="flex-grow overflow-y-auto">
+        {}
+        <div className="flex-grow overflow-y-auto bg-white">
           {activeTab === "testcase" && (
-            <div>
-              <div className="flex items-center gap-2 px-4 pt-2 flex-wrap">
+            <div className="h-full flex flex-col">
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 overflow-x-auto no-scrollbar">
                 {visibleTestCases.map((tc, index) => (
                   <button
                     key={index}
                     onClick={() => setActiveCaseIndex(index)}
                     disabled={isCodeRunning}
-                    className={`flex justify-center items-center gap-2 w-24 h-8 px-3 py-1 text-sm rounded-lg transition-colors border ${
-                      activeCaseIndex === index &&
-                      testCaseStatuses[index] === "pending"
-                        ? "bg-gray-200 text-black border-transparent"
-                        : getTestCaseStatusStyle(testCaseStatuses[index])
-                    } disabled:opacity-70 disabled:cursor-not-allowed`}
+                    className={`flex-shrink-0 flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                      activeCaseIndex === index
+                        ? "bg-gray-800 text-white shadow-md"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    } ${
+                      testCaseStatuses[index] !== "pending"
+                        ? getTestCaseStatusStyle(
+                            testCaseStatuses[index]
+                          ).replace("bg-gray-100", "bg-white")
+                        : ""
+                    }`}
                   >
                     {getTestCaseStatusIcon(testCaseStatuses[index])}
                     <span>Case {index + 1}</span>
-                    {tc.isHidden && (
-                      <span className="text-xs text-gray-400 ml-1">
-                        (Hidden)
-                      </span>
-                    )}
+                    {}
                   </button>
                 ))}
               </div>
-              <TestCaseInput
-                input={
-                  visibleTestCases[activeCaseIndex]?.input || "Hidden Input"
-                }
-              />
+              <div className="flex-grow overflow-y-auto">
+                <TestCaseInput
+                  input={visibleTestCases[activeCaseIndex]?.input}
+                  expectedOutput={
+                    visibleTestCases[activeCaseIndex]?.expectedOutput
+                  }
+                />
+              </div>
             </div>
           )}
           {activeTab === "result" && <RenderOutput result={displayResult} />}

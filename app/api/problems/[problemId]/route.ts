@@ -22,7 +22,6 @@ export async function GET(
             order: "asc",
           },
         },
-
         starterTemplates: {
           select: {
             id: true,
@@ -30,7 +29,6 @@ export async function GET(
             code: true,
           },
         },
-
         hints: {
           orderBy: {
             order: "asc",
@@ -51,16 +49,7 @@ export async function GET(
       );
     }
 
-    const sanitizedTestCases = problem.testCases.map((tc) => {
-      if (tc.isHidden) {
-        return {
-          ...tc,
-          input: null,
-          expectedOutput: null,
-        };
-      }
-      return tc;
-    });
+    const testCases = problem.testCases;
 
     let solutionStatus = null;
     if (user) {
@@ -81,7 +70,7 @@ export async function GET(
 
     return NextResponse.json({
       ...problem,
-      testCases: sanitizedTestCases,
+      testCases: testCases,
       solutionStatus,
     });
   } catch (error) {
