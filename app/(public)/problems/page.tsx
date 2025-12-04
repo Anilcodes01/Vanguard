@@ -2,7 +2,8 @@ import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { Difficulty } from "@prisma/client";
 import ProblemsList from "@/app/components/Problems/ProblemsList.tsx/ProblemsList";
-import { unstable_cache } from "next/cache";
+
+export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 12;
 
@@ -21,47 +22,42 @@ const getXpForDifficulty = (difficulty: Difficulty): number => {
   }
 };
 
-const getCachedProblemData = unstable_cache(
-  async (difficulty: Difficulty | "All", page: number) => {
-    const skip = (page - 1) * PAGE_SIZE;
-    const whereCondition: { difficulty?: Difficulty } = {};
+const getRawProblemData = async (
+  difficulty: Difficulty | "All",
+  page: number
+) => {
+  const skip = (page - 1) * PAGE_SIZE;
+  const whereCondition: { difficulty?: Difficulty } = {};
 
-    if (difficulty !== "All" && VALID_DIFFICULTIES.includes(difficulty)) {
-      whereCondition.difficulty = difficulty;
-    }
-
-    try {
-      const [problems, totalCount] = await prisma.$transaction([
-        prisma.problem.findMany({
-          where: whereCondition,
-          skip: skip,
-          take: PAGE_SIZE,
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            difficulty: true,
-            acceptanceRate: true,
-            tags: true,
-          },
-
-          orderBy: { createdAt: "desc" },
-        }),
-        prisma.problem.count({ where: whereCondition }),
-      ]);
-
-      return { problems, totalCount };
-    } catch (error) {
-      console.error("Prisma cached query error:", error);
-      return { problems: [], totalCount: 0 };
-    }
-  },
-  ["problems-list-data"],
-  {
-    revalidate: 3600,
-    tags: ["problems-list"],
+  if (difficulty !== "All" && VALID_DIFFICULTIES.includes(difficulty)) {
+    whereCondition.difficulty = difficulty;
   }
-);
+
+  try {
+    const [problems, totalCount] = await prisma.$transaction([
+      prisma.problem.findMany({
+        where: whereCondition,
+        skip: skip,
+        take: PAGE_SIZE,
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          difficulty: true,
+          acceptanceRate: true,
+          tags: true,
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.problem.count({ where: whereCondition }),
+    ]);
+
+    return { problems, totalCount };
+  } catch (error) {
+    console.error("Prisma query error:", error);
+    return { problems: [], totalCount: 0 };
+  }
+};
 
 async function getProblems(difficulty: Difficulty | "All", page: number) {
   const supabase = await createClient();
@@ -69,7 +65,7 @@ async function getProblems(difficulty: Difficulty | "All", page: number) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { problems: rawProblems, totalCount } = await getCachedProblemData(
+  const { problems: rawProblems, totalCount } = await getRawProblemData(
     difficulty,
     page
   );
