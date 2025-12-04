@@ -78,7 +78,10 @@ export const RenderOutput = ({
   const isError =
     result.status === "Error" ||
     result.status === "Runtime Error" ||
-    result.status === "Compilation Error";
+    result.status === "Compilation Error" ||
+    result.status === "Wrong Answer";
+
+  const showDetails = result.details && result.details !== result.message;
 
   return (
     <div className="p-4 space-y-4 text-black overflow-y-auto h-full pb-20">
@@ -96,14 +99,31 @@ export const RenderOutput = ({
           >
             {result.status}
           </h3>
+          {}
           {result.message && isError && (
-            <p className="text-sm text-red-500 mt-1">{result.message}</p>
+            <p className="text-sm text-red-500 mt-1 font-medium">
+              {result.message}
+            </p>
           )}
         </div>
       </div>
 
+      {}
+      {showDetails && isError && (
+        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <p className="text-xs font-semibold text-red-500 mb-2 uppercase tracking-wide">
+            Error Details
+          </p>
+          <pre className="bg-red-50 p-3 rounded-lg text-sm text-red-800 font-mono whitespace-pre-wrap border border-red-200 overflow-x-auto">
+            {result.details}
+          </pre>
+        </div>
+      )}
+      {}
+
       {(result.executionTime != null || result.executionMemory != null) && (
         <div className="flex flex-wrap gap-3">
+          {}
           {result.executionTime != null && (
             <StatCard
               icon={Clock}
@@ -125,6 +145,7 @@ export const RenderOutput = ({
 
       {}
       <div className="space-y-4 pt-2">
+        {}
         {result.input && (
           <div>
             <p className="text-xs font-semibold text-gray-500 mb-1 uppercase">
@@ -170,7 +191,6 @@ export const RenderOutput = ({
 
 type TestCaseStatus = "pending" | "running" | "passed" | "failed";
 
-// Define a helper type for the Editor instance to avoid 'any'
 type MonacoEditor = Parameters<OnMount>[0];
 
 interface CodeEditorPanelProps {
@@ -227,8 +247,6 @@ export default function CodeEditorPanel({
   const [activeTab, setActiveTab] = useState<"testcase" | "result">("testcase");
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
 
-  // Note: isStarted and setStartTime are used for internal timer logic,
-  // but currently not triggered by a specific user action in this snippet.
   const [isStarted, setIsStarted] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -236,10 +254,8 @@ export default function CodeEditorPanel({
   const [editorHeight, setEditorHeight] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // FIX: Use the inferred MonacoEditor type instead of any
   const editorRef = useRef<MonacoEditor | null>(null);
 
-  // FIX: Removed unused 'monaco' parameter
   const handleEditorDidMount: OnMount = (editor) => {
     editorRef.current = editor;
   };
@@ -249,8 +265,6 @@ export default function CodeEditorPanel({
       editorRef.current.getAction("editor.action.formatDocument")?.run();
     }
   };
-
-  // FIX: Removed unused handleStart function
 
   useEffect(() => {
     if (containerRef.current && editorHeight === null) {
@@ -332,7 +346,7 @@ export default function CodeEditorPanel({
 
   return (
     <div ref={containerRef} className="flex flex-col h-full bg-white">
-      {/* Mobile Header */}
+      {}
       <button
         onClick={onToggleMobileDetails}
         className="lg:hidden flex items-center justify-between w-full p-3 bg-gray-50 rounded-t-lg border-b border-gray-200 text-left"
@@ -348,7 +362,7 @@ export default function CodeEditorPanel({
         />
       </button>
 
-      {/* Editor Section */}
+      {}
       <div
         className="bg-gray-50 rounded-lg shadow-sm flex flex-col overflow-hidden flex-shrink-0 border border-gray-200"
         style={{ height: editorHeight ? `${editorHeight}px` : "60%" }}
@@ -397,7 +411,7 @@ export default function CodeEditorPanel({
         </div>
       </div>
 
-      {/* Resizer Handle */}
+      {}
       <div
         onMouseDown={handleMouseDown}
         className="w-full h-3 cursor-row-resize flex items-center justify-center group hover:bg-gray-50 -my-1.5 z-10"
@@ -405,9 +419,9 @@ export default function CodeEditorPanel({
         <div className="w-12 h-1 bg-gray-300 rounded-full group-hover:bg-[#f59120] transition-colors duration-200"></div>
       </div>
 
-      {/* Test Cases / Output Section */}
+      {}
       <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col min-h-0 overflow-hidden mt-2">
-        {/* Tabs */}
+        {}
         <div className="flex items-center justify-between px-2 pt-2 border-b border-gray-200 bg-gray-50/50">
           <div className="flex gap-1">
             <button
@@ -453,7 +467,7 @@ export default function CodeEditorPanel({
           </div>
         </div>
 
-        {/* Content Area */}
+        {}
         <div className="flex-grow overflow-y-auto bg-white">
           {activeTab === "testcase" && (
             <div className="h-full flex flex-col">
@@ -477,7 +491,6 @@ export default function CodeEditorPanel({
                       ? "bg-orange-100 text-orange-900 border-orange-500 shadow-sm"
                       : "bg-gray-50 text-black border-orange-400";
                   } else {
-                    // pending
                     statusClasses = isActive
                       ? "bg-gray-100 text-black border-gray-400 shadow-sm ring-1 ring-gray-300"
                       : "bg-gray-100 text-gray-500 border-transparent hover:bg-gray-200";

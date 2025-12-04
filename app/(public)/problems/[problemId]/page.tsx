@@ -35,7 +35,7 @@ type TestCaseResultItem = {
 export default function ProblemPage() {
   const params = useParams();
   const problemId = params.problemId as string;
-   const router = useRouter(); 
+  const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
 
   const [problem, setProblem] = useState<ProblemDetails | null>(null);
@@ -45,7 +45,7 @@ export default function ProblemPage() {
   const [selectedLanguage, setSelectedLanguage] =
     useState<ProblemStarterTemplate | null>(null);
   const [code, setCode] = useState<string>("");
-   const [nextProblemId, setNextProblemId] = useState<string | null>(null);
+  const [nextProblemId, setNextProblemId] = useState<string | null>(null);
 
   const [submissionResult, setSubmissionResult] =
     useState<SubmissionResult | null>(null);
@@ -123,14 +123,11 @@ export default function ProblemPage() {
     try {
       const response = await axios.get("/api/problems/random");
       if (response.data?.id) {
-        // Prevent reloading if random picks the same current problem
         if (response.data.id !== problemId) {
-            router.push(`/problems/${response.data.id}`);
+          router.push(`/problems/${response.data.id}`);
         } else {
-            // Optional: Recursively retry or just alert
-            // For now, simple re-fetch or ignore
-            const retry = await axios.get("/api/problems/random");
-             if (retry.data?.id) router.push(`/problems/${retry.data.id}`);
+          const retry = await axios.get("/api/problems/random");
+          if (retry.data?.id) router.push(`/problems/${retry.data.id}`);
         }
       }
     } catch (error) {
@@ -159,41 +156,39 @@ export default function ProblemPage() {
 
     setTestCaseStatuses(new Array(problem.testCases.length).fill("running"));
 
-    problem.testCases.forEach(async (testCase, index) => {
-      try {
-        const response = await axios.post("/api/run", {
-          problemId,
-          code,
-          input: testCase.input,
-          expectedOutput: testCase.expectedOutput,
-          language: selectedLanguage.language,
-        });
+    try {
+      const response = await axios.post("/api/run", {
+        problemId,
+        code,
+        language: selectedLanguage.language,
+      });
 
-        setTestCaseStatuses((prevStatuses) => {
-          const newStatuses = [...prevStatuses];
-          newStatuses[index] =
-            response.data.status === "Accepted" ? "passed" : "failed";
-          return newStatuses;
-        });
+      const results = response.data.results || [];
 
-        if (index === activeCaseIndex) {
-          setRunResult(response.data);
-        }
-      } catch (err) {
-        setTestCaseStatuses((prevStatuses) => {
-          const newStatuses = [...prevStatuses];
-          newStatuses[index] = "failed";
-          return newStatuses;
-        });
+      if (Array.isArray(results)) {
+        const newStatuses = results.map((res: any) =>
+          res.isAccepted || res.status === "Accepted" ? "passed" : "failed"
+        );
+        setTestCaseStatuses(newStatuses as TestCaseStatus[]);
 
-        if (index === activeCaseIndex) {
-          setRunResult({
-            status: "Error",
-            message: "Failed to connect to the server.",
-          });
-        }
+        const resultToDisplay = results[activeCaseIndex] || results[0];
+        setRunResult(resultToDisplay);
+      } else {
+        setTestCaseStatuses(new Array(problem.testCases.length).fill("failed"));
+        setRunResult(response.data);
       }
-    });
+    } catch (err) {
+      console.error("Run code error:", err);
+
+      setTestCaseStatuses(new Array(problem.testCases.length).fill("failed"));
+
+      setRunResult({
+        status: "Error",
+        message: axios.isAxiosError(err)
+          ? err.response?.data?.message || "Execution failed"
+          : "Failed to connect to the server.",
+      });
+    }
   };
 
   const handleSubmit = async (submitTime: number | null) => {
@@ -345,8 +340,8 @@ export default function ProblemPage() {
           problemTitle={problem.title}
           isMobileDetailsVisible={isMobileDetailsVisible}
           onToggleMobileDetails={toggleMobileDetails}
-           onNextProblem={handleNextProblem} // Pass handler
-          onRandomProblem={handleRandomProblem} // Pass handler
+          onNextProblem={handleNextProblem}
+          onRandomProblem={handleRandomProblem}
           hasNext={!!nextProblemId}
         />
       </div>
