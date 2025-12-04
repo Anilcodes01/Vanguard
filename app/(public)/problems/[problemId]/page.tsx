@@ -32,6 +32,8 @@ type TestCaseResultItem = {
   testCaseId: string;
 };
 
+type RunResultItem = SubmissionResult & { isAccepted?: boolean };
+
 export default function ProblemPage() {
   const params = useParams();
   const problemId = params.problemId as string;
@@ -166,7 +168,7 @@ export default function ProblemPage() {
       const results = response.data.results || [];
 
       if (Array.isArray(results)) {
-        const newStatuses = results.map((res: any) =>
+        const newStatuses = results.map((res: RunResultItem) =>
           res.isAccepted || res.status === "Accepted" ? "passed" : "failed"
         );
         setTestCaseStatuses(newStatuses as TestCaseStatus[]);

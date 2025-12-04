@@ -16,17 +16,31 @@ const JUDGE0_LANGUAGE_IDS: Record<string, number> = {
   go: 60,
 };
 
+interface Judge0SubmissionResult {
+  token: string;
+  status: {
+    id: number;
+    description: string;
+  };
+  stdout: string | null;
+  stderr: string | null;
+  compile_output: string | null;
+  message: string | null;
+  time: string;
+  memory: number;
+}
+
 const safeDecode = (str: string | null) => {
   if (!str) return null;
   try {
     return Buffer.from(str, "base64").toString("utf-8");
-  } catch (e) {
+  } catch (_e) {
     return str;
   }
 };
 
 const formatResult = (
-  result: any,
+  result: Judge0SubmissionResult,
   input: string | null,
   expectedOutput: string | null
 ) => {
@@ -103,8 +117,11 @@ export async function POST(request: NextRequest) {
     }
 
     const isCustomRun = input !== undefined && input !== null;
-    let submissions = [];
-    let testCasesMeta: { input: string; expectedOutput: string | null }[] = [];
+
+    const submissions: Record<string, unknown>[] = [];
+
+    const testCasesMeta: { input: string; expectedOutput: string | null }[] =
+      [];
 
     if (isCustomRun) {
       let finalSourceCode = code;
@@ -136,7 +153,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      submissions = problem.testCases.map((tc) => {
+      const batchSubmissions = problem.testCases.map((tc) => {
         let finalSourceCode = code;
         if (template.driverCode) {
           finalSourceCode = template.driverCode.replace("{{USER_CODE}}", code);
@@ -158,6 +175,8 @@ export async function POST(request: NextRequest) {
           cpu_time_limit: DEFAULT_CPU_TIME_LIMIT,
         };
       });
+
+      submissions.push(...batchSubmissions);
     }
 
     const judgeBaseUrl = process.env.JUDGE0_API_URL;
@@ -180,8 +199,16 @@ export async function POST(request: NextRequest) {
       results = results.submissions;
     }
 
-    if (Array.isArray(results) && results.length > 0 && !results[0].status) {
-      const tokens = results.map((r: any) => r.token).join(",");
+    let typedResults = results as Judge0SubmissionResult[];
+
+    if (
+      Array.isArray(typedResults) &&
+      typedResults.length > 0 &&
+      !typedResults[0].status
+    ) {
+      const tokens = typedResults
+        .map((r: Judge0SubmissionResult) => r.token)
+        .join(",");
 
       let attempts = 0;
       let isComplete = false;
@@ -203,10 +230,12 @@ export async function POST(request: NextRequest) {
         );
 
         const pollData = pollResponse.data;
-        results = pollData.submissions || pollData;
+        typedResults = (pollData.submissions ||
+          pollData) as Judge0SubmissionResult[];
 
-        const allFinished = results.every(
-          (r: any) => r.status && r.status.id !== 1 && r.status.id !== 2
+        const allFinished = typedResults.every(
+          (r: Judge0SubmissionResult) =>
+            r.status && r.status.id !== 1 && r.status.id !== 2
         );
 
         if (allFinished) {
@@ -215,16 +244,17 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (!Array.isArray(results)) {
+    if (!Array.isArray(typedResults)) {
       throw new Error("Invalid response format from execution engine");
     }
 
-    const formattedResults = results.map((res: any, index: number) =>
-      formatResult(
-        res,
-        testCasesMeta[index]?.input || "",
-        testCasesMeta[index]?.expectedOutput || null
-      )
+    const formattedResults = typedResults.map(
+      (res: Judge0SubmissionResult, index: number) =>
+        formatResult(
+          res,
+          testCasesMeta[index]?.input || "",
+          testCasesMeta[index]?.expectedOutput || null
+        )
     );
 
     if (isCustomRun) {
