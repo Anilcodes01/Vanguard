@@ -908,35 +908,7 @@
       }
     ]
   },
-  {
-    "slug": "JS-043",
-    "title": "Event Emitter Class",
-    "description": "Create an `EventEmitter` class that mimics the behavior of event emitters in Node.js. The class should have three main methods: `on(eventName, callback)` to register a listener, `emit(eventName, ...args)` to trigger all listeners for an event, and `off(eventName, callback)` to remove a specific listener.",
-    "difficulty": "Advanced",
-    "minTime": 25,
-    "maxTime": 50,
-    "starterCode": "class EventEmitter {\n  constructor() {\n    // your code here\n  }\n\n  on(eventName, callback) {\n    // your code here\n  }\n\n  emit(eventName, ...args) {\n    // your code here\n  }\n\n  off(eventName, callback) {\n    // your code here\n  }\n}",
-    "languageId": 93,
-    "testStrategy": "DRIVER_CODE",
-    "driverCodeTemplate": "{{USER_CODE}}\n\ntry {\n  {{TEST_INPUT}}\n} catch (e) {\n  console.error(e.toString());\n}",
-    "examples": [
-      { "input": "const emitter = new EventEmitter(); emitter.on('hello', name => console.log(`Hello ${name}!`)); emitter.emit('hello', 'World');", "output": "Logs 'Hello World!'" }
-    ],
-    "testCases": [
-      {
-        "input": "const emitter = new EventEmitter(); let result = ''; const listener = name => { result = `Hello ${name}!`; }; emitter.on('greet', listener); emitter.emit('greet', 'Alice'); console.log(JSON.stringify(result));",
-        "expected": "\"Hello Alice!\""
-      },
-      {
-        "input": "const emitter = new EventEmitter(); let count = 0; emitter.on('increment', val => { count += val; }); emitter.on('increment', val => { count += val; }); emitter.emit('increment', 5); console.log(JSON.stringify(count));",
-        "expected": "10"
-      },
-      {
-        "input": "const emitter = new EventEmitter(); let result = 'fail'; const listener = () => { result = 'pass'; }; emitter.on('test', listener); emitter.off('test', listener); emitter.emit('test'); console.log(JSON.stringify(result));",
-        "expected": "\"fail\""
-      }
-    ]
-  },
+
   {
     "slug": "JS-044",
     "title": "Currying Function",

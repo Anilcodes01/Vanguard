@@ -1,25 +1,9 @@
 "use server";
 
+import { getRawProblemData, getXpForDifficulty } from "@/app/utils/problems";
 import { createClient } from "@/app/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { Difficulty } from "@prisma/client";
-
-const PAGE_SIZE = 12;
-
-const VALID_DIFFICULTIES: Difficulty[] = ["Easy", "Medium", "Hard"];
-
-const getXpForDifficulty = (difficulty: Difficulty): number => {
-  switch (difficulty) {
-    case "Easy":
-      return 100;
-    case "Medium":
-      return 250;
-    case "Hard":
-      return 500;
-    default:
-      return 0;
-  }
-};
 
 export async function fetchMoreProblems({
   page,
@@ -33,40 +17,28 @@ export async function fetchMoreProblems({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const skip = (page - 1) * PAGE_SIZE;
+  const { problems: rawProblems } = await getRawProblemData(difficulty, page);
 
-  const whereCondition: { difficulty?: Difficulty } = {};
-  if (difficulty !== "All" && VALID_DIFFICULTIES.includes(difficulty)) {
-    whereCondition.difficulty = difficulty;
+  let solvedProblemIds = new Set<string>();
+
+  if (user && rawProblems.length > 0) {
+    const problemIds = rawProblems.map((p) => p.id);
+
+    const userSolutions = await prisma.problemSolution.findMany({
+      where: {
+        userId: user.id,
+        problemId: { in: problemIds },
+        status: "Solved",
+      },
+      select: {
+        problemId: true,
+      },
+    });
+
+    solvedProblemIds = new Set(userSolutions.map((s) => s.problemId));
   }
 
-  const problemsData = await prisma.problem.findMany({
-    where: whereCondition,
-    skip: skip,
-    take: PAGE_SIZE,
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      difficulty: true,
-      acceptanceRate: true,
-      tags: true,
-      _count: {
-        select: {
-          userProgress: {
-            where: {
-              userId: user?.id,
-              status: "Solved",
-            },
-          },
-        },
-      },
-    },
-
-    orderBy: { createdAt: "desc" },
-  });
-
-  return problemsData.map((p) => ({
+  const problems = rawProblems.map((p) => ({
     id: p.id,
     title: p.title,
     slug: p.slug,
@@ -74,6 +46,8 @@ export async function fetchMoreProblems({
     acceptanceRate: p.acceptanceRate,
     xp: getXpForDifficulty(p.difficulty),
     tags: p.tags,
-    solved: p._count.userProgress > 0,
+    solved: solvedProblemIds.has(p.id),
   }));
+
+  return problems;
 }

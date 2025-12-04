@@ -32,7 +32,7 @@ const difficultyStyles = {
 export default function ProblemDetailsPanel({
   problem,
 }: ProblemDetailsPanelProps) {
-  const [isTagsOpen, setIsTagsOpen] = useState(true);
+  const [isTagsOpen, setIsTagsOpen] = useState(false);
   const [isHintsOpen, setIsHintsOpen] = useState(false);
   const [isCompaniesOpen, setIsCompaniesOpen] = useState(false);
 
