@@ -20,7 +20,7 @@ export default function ProjectBanner({
   showSpecs,
   onToggle,
   onOpenSubmitModal,
-  weekCreatedAt,
+ timerStartDate,
   weekNumber = 1,
   journalCount,
   problemsCompleted,
@@ -72,7 +72,7 @@ export default function ProjectBanner({
             journalCount={journalCount}
             problemsCompleted={problemsCompleted}
             interactionsCount={interactionsCount}
-            createdAt={weekCreatedAt}
+            createdAt={timerStartDate} 
             weekNumber={weekNumber}
           />
         ) : (

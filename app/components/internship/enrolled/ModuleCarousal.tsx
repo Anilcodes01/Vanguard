@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useState, useMemo, useEffect } from "react";
+import { InternshipProject } from "@/app/(public)/internship/types";
 import {
   ArrowLeft,
   ArrowRight,
@@ -11,6 +14,8 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  Rocket,
+  CheckCircle,
 } from "lucide-react";
 import { WalkthroughCardData } from "@/app/(public)/internship/types";
 
@@ -127,6 +132,12 @@ const getCardStyle = (type: string) => {
         icon: <Layers className="w-5 h-5" />,
         color: "text-blue-600 bg-blue-50 border-blue-100",
       };
+
+    case "START_PROJECT":
+      return {
+        icon: <Rocket className="w-5 h-5" />,
+        color: "text-orange-600 bg-orange-50 border-orange-100",
+      };
     default:
       return {
         icon: <BookOpen className="w-5 h-5" />,
@@ -138,21 +149,83 @@ const getCardStyle = (type: string) => {
 interface ModuleCarouselProps {
   modules: WalkthroughCardData[];
   onClose: () => void;
+  projectId?: string;
+  project?: InternshipProject;
+  onProjectStart?: () => void;
 }
+
+const StartProjectCard = ({
+  onStart,
+  isLoading,
+  hasStarted,
+}: {
+  onStart: () => void;
+  isLoading: boolean;
+  hasStarted: boolean;
+}) => (
+  <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col max-h-full items-center justify-center text-center p-8">
+    <div
+      className={`w-16 h-16 rounded-2xl flex items-center justify-center border shadow-sm mb-6 ${
+        hasStarted
+          ? "bg-green-50 border-green-100"
+          : "bg-orange-50 border-orange-100"
+      }`}
+    >
+      {hasStarted ? (
+        <CheckCircle className="w-8 h-8 text-green-600" />
+      ) : (
+        <Rocket className="w-8 h-8 text-orange-600" />
+      )}
+    </div>
+    <h3 className="font-bold text-gray-900 text-2xl mb-2">
+      {hasStarted ? "Project In Progress!" : "You're All Set!"}
+    </h3>
+    <p className="text-gray-500 max-w-sm mb-8">
+      {hasStarted
+        ? "The countdown has begun. You can now close this guide and start working."
+        : "You've reviewed the project specifications. Now it's time to start building. Good luck!"}
+    </p>
+
+    {!hasStarted && (
+      <button
+        onClick={onStart}
+        disabled={isLoading}
+        className="bg-orange-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-orange-700 transition-all shadow-lg hover:shadow-xl disabled:bg-orange-300 disabled:cursor-not-allowed flex items-center gap-2"
+      >
+        {isLoading ? "Starting..." : "Start the Project"}
+      </button>
+    )}
+  </div>
+);
 
 export default function ModuleCarousel({
   modules,
   onClose,
+  projectId,
+  project,
+  onProjectStart,
 }: ModuleCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
 
-  const currentModule = modules[currentIndex];
+  const modulesWithStartCard = useMemo(() => {
+    const startCard: WalkthroughCardData = {
+      id: "start-card",
+      cardType: "START_PROJECT",
+      title: "Ready to Begin?",
+      content: "",
+      internshipWeekId: modules[0]?.internshipWeekId || "",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    return [...modules, startCard];
+  }, [modules]);
+
+  const currentModule = modulesWithStartCard[currentIndex];
   const style = getCardStyle(currentModule.cardType);
 
   const handleNext = () => {
-    if (currentIndex < modules.length - 1) {
+    if (currentIndex < modulesWithStartCard.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     }
   };
@@ -171,22 +244,39 @@ export default function ModuleCarousel({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex]);
+  }, [currentIndex, handleNext, handlePrev, onClose]);
 
-  const minSwipeDistance = 50;
-  const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-  const onTouchMove = (e: React.TouchEvent) =>
-    setTouchEnd(e.targetTouches[0].clientX);
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-    if (isLeftSwipe) handleNext();
-    if (isRightSwipe) handlePrev();
+  const handleStartProject = async () => {
+    if (!projectId) {
+      alert("Error: Project ID is missing.");
+      return;
+    }
+    setIsStarting(true);
+    try {
+      const res = await fetch("/api/internship/startProject", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectId }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to start the project.");
+      }
+
+      if (onProjectStart) {
+        onProjectStart();
+      }
+
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert(
+        error instanceof Error ? error.message : "An unknown error occurred."
+      );
+    } finally {
+      setIsStarting(false);
+    }
   };
 
   return (
@@ -205,35 +295,34 @@ export default function ModuleCarousel({
               Project Walkthrough
             </h2>
             <p className="text-xs text-gray-500">
-              Step {currentIndex + 1} of {modules.length}
+              Step {currentIndex + 1} of {modulesWithStartCard.length}
             </p>
           </div>
         </div>
-
         <div className="hidden md:flex flex-col w-64 gap-1.5">
           <div className="flex justify-between text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
             <span>Progress</span>
             <span>
-              {Math.round(((currentIndex + 1) / modules.length) * 100)}%
+              {Math.round(
+                ((currentIndex + 1) / modulesWithStartCard.length) * 100
+              )}
+              %
             </span>
           </div>
           <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <div
               className="h-full bg-orange-500 transition-all duration-300 ease-out rounded-full"
               style={{
-                width: `${((currentIndex + 1) / modules.length) * 100}%`,
+                width: `${
+                  ((currentIndex + 1) / modulesWithStartCard.length) * 100
+                }%`,
               }}
             />
           </div>
         </div>
       </div>
 
-      <div
-        className="flex-1 overflow-hidden relative flex flex-col items-center justify-center bg-gray-50/50"
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-      >
+      <div className="flex-1 overflow-hidden relative flex flex-col items-center justify-center bg-gray-50/50">
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
@@ -245,12 +334,11 @@ export default function ModuleCarousel({
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
-
         <button
           onClick={handleNext}
-          disabled={currentIndex === modules.length - 1}
+          disabled={currentIndex === modulesWithStartCard.length - 1}
           className={`hidden md:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 p-3 lg:p-4 rounded-full shadow-lg border border-gray-100 transition-all z-20 ${
-            currentIndex === modules.length - 1
+            currentIndex === modulesWithStartCard.length - 1
               ? "bg-gray-100 text-gray-300 cursor-not-allowed"
               : "bg-white text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:scale-105"
           }`}
@@ -259,57 +347,65 @@ export default function ModuleCarousel({
         </button>
 
         <div className="w-full max-w-3xl h-full p-4 md:p-6 overflow-hidden flex flex-col justify-center">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col max-h-full">
-            <div
-              className={`px-6 py-5 flex items-center justify-between border-b border-gray-100 ${
-                style.color.split(" ")[1]
-              } bg-opacity-30 flex-shrink-0`}
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${style.color}`}
-                >
-                  {style.icon}
+          {currentModule.cardType === "START_PROJECT" ? (
+           <StartProjectCard
+              onStart={handleStartProject}
+              isLoading={isStarting}
+              hasStarted={!!project?.startedAt} // CORRECTED
+            />
+          ) : (
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col max-h-full">
+              <div
+                className={`px-6 py-5 flex items-center justify-between border-b border-gray-100 ${
+                  style.color.split(" ")[1]
+                } bg-opacity-30 flex-shrink-0`}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${style.color}`}
+                  >
+                    {style.icon}
+                  </div>
+                  <h3 className="font-bold text-gray-900 text-xl">
+                    {currentModule.title}
+                  </h3>
                 </div>
-                <h3 className="font-bold text-gray-900 text-xl">
-                  {currentModule.title}
-                </h3>
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 bg-white px-2 py-1 rounded border border-gray-100 hidden sm:inline-block">
+                  {currentModule.cardType.replace("_", " ")}
+                </span>
               </div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 bg-white px-2 py-1 rounded border border-gray-100 hidden sm:inline-block">
-                {currentModule.cardType.replace("_", " ")}
-              </span>
+              <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
+                <ContentParser content={currentModule.content} />
+              </div>
             </div>
+          )}
 
-            <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
-              <ContentParser content={currentModule.content} />
-            </div>
-            <div className="md:hidden border-t border-gray-100 p-4 bg-gray-50 flex justify-between items-center flex-shrink-0">
-              <button
-                onClick={handlePrev}
-                disabled={currentIndex === 0}
-                className={`p-2 rounded-lg ${
-                  currentIndex === 0
-                    ? "text-gray-300"
-                    : "text-gray-700 bg-white shadow-sm border border-gray-200"
-                }`}
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <span className="text-xs font-semibold text-gray-400">
-                {currentIndex + 1} / {modules.length}
-              </span>
-              <button
-                onClick={handleNext}
-                disabled={currentIndex === modules.length - 1}
-                className={`p-2 rounded-lg ${
-                  currentIndex === modules.length - 1
-                    ? "text-gray-300"
-                    : "text-gray-700 bg-white shadow-sm border border-gray-200"
-                }`}
-              >
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
+          <div className="md:hidden mt-4 bg-white border border-gray-200 shadow-sm p-3 rounded-xl flex justify-between items-center flex-shrink-0">
+            <button
+              onClick={handlePrev}
+              disabled={currentIndex === 0}
+              className={`p-2 rounded-lg ${
+                currentIndex === 0
+                  ? "text-gray-300"
+                  : "text-gray-700 bg-gray-50 shadow-sm border border-gray-200"
+              }`}
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <span className="text-xs font-semibold text-gray-400">
+              {currentIndex + 1} / {modulesWithStartCard.length}
+            </span>
+            <button
+              onClick={handleNext}
+              disabled={currentIndex === modulesWithStartCard.length - 1}
+              className={`p-2 rounded-lg ${
+                currentIndex === modulesWithStartCard.length - 1
+                  ? "text-gray-300"
+                  : "text-gray-700 bg-gray-50 shadow-sm border border-gray-200"
+              }`}
+            >
+              <ArrowRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>

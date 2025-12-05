@@ -857,6 +857,7 @@ model InternshipProject {
   customTitle      String?  @map("custom_title") // Student's custom name
   shortDescription String?  @map("short_description") // Student's one-liner
   tags             String[] @default([]) @map("tags")
+  startedAt       DateTime? @map("started_at")
 
   isCompleted      Boolean        @default(false) @map("is_completed")
   githubLink       String?        @map("github_link")

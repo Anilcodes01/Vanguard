@@ -183,7 +183,7 @@ export default function WeekJournalModal({
           {}
           <div className="h-16 flex items-center px-4 border-b border-gray-200 bg-gray-100">
             <h3 className="font-bold text-gray-800 flex items-center gap-2">
-              <BookOpen className="w-4 h-4" /> Notebook
+              <BookOpen className="w-4 h-4" /> Journal
             </h3>
           </div>
 

@@ -11,6 +11,9 @@ export interface WalkthroughCardData {
   cardType: string;
   title: string;
   content: string;
+  internshipWeekId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface InternshipWeekData {
@@ -48,6 +51,7 @@ export interface ProjectBannerProps {
   onToggle: () => void;
   onOpenSubmitModal: () => void;
   weekCreatedAt?: string | Date;
+  timerStartDate?: string | Date; 
   weekNumber?: number;
   journalCount: number;
   problemsCompleted: number;
@@ -62,7 +66,7 @@ export interface InternshipProject {
   isCompleted: boolean;
   githubLink?: string | null;
   liveLink?: string | null;
-
+ startedAt?: string | Date | null;
   aiReviewStatus?: "PENDING" | "COMPLETED" | "FAILED";
   aiScore?: number | null;
   aiFeedback?: string | null;

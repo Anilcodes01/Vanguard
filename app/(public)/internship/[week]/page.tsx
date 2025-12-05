@@ -48,42 +48,48 @@ export default function IndividualInternshipWeek() {
 
   const hasFetched = useRef(false);
 
+  const fetchData = async () => {
+    try {
+      if (!data) setLoading(true);
+
+      const res = await fetch("/api/internship/generateWeekData", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          week: weekNumberInt,
+          topic: topicParam || "Web Development",
+          projectTitle: projectTitleParam || "Weekly Project",
+          projectDescription:
+            "Focus on the core concepts and build the project.",
+        }),
+      });
+
+      const jsonData = await res.json();
+      if (!res.ok)
+        throw new Error(jsonData.error || "Failed to load curriculum");
+
+      setData(jsonData.data || jsonData);
+    } catch (err) {
+      console.error(err);
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (hasFetched.current) return;
+    if (hasFetched.current) return;
+    if (weekNumberInt) {
       hasFetched.current = true;
-
-      try {
-        setLoading(true);
-        const res = await fetch("/api/internship/generateWeekData", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            week: weekNumberInt,
-            topic: topicParam || "Web Development",
-            projectTitle: projectTitleParam || "Weekly Project",
-            projectDescription:
-              "Focus on the core concepts and build the project.",
-          }),
-        });
-
-        const jsonData = await res.json();
-        if (!res.ok)
-          throw new Error(jsonData.error || "Failed to load curriculum");
-
-        setData(jsonData.data || jsonData);
-      } catch (err) {
-        console.error(err);
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (weekNumberInt) fetchData();
+      fetchData();
+    }
   }, [weekNumberInt, topicParam, projectTitleParam]);
+
+  const handleProjectStarted = () => {
+    fetchData();
+  };
 
   useEffect(() => {
     if (!weekNumberInt) return;
@@ -293,6 +299,9 @@ export default function IndividualInternshipWeek() {
           <ModuleCarousel
             modules={sortedWalkthroughs}
             onClose={() => setShowSpecs(false)}
+            projectId={data.projects[0]?.id}
+            project={data.projects[0]}
+            onProjectStart={handleProjectStarted}
           />
         ) : (
           <div className="space-y-8 animate-in fade-in duration-300">
@@ -301,18 +310,7 @@ export default function IndividualInternshipWeek() {
               showSpecs={showSpecs}
               onToggle={() => setShowSpecs(true)}
               onOpenSubmitModal={() => setIsSubmitModalOpen(true)}
-              weekCreatedAt={
-                (
-                  data.projects[0] as InternshipProject & {
-                    createdAt?: string | Date;
-                  }
-                )?.createdAt ||
-                (
-                  data as InternshipWeekData & {
-                    createdAt?: string | Date;
-                  }
-                ).createdAt
-              }
+               timerStartDate={data.projects[0]?.startedAt || undefined}
               weekNumber={data.weekNumber || weekNumberInt}
               journalCount={fetchedNotes.length}
               problemsCompleted={progressStats.completed}

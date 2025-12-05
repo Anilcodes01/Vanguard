@@ -1,4 +1,5 @@
-'use client'
+"use client";
+
 import { ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -73,9 +74,7 @@ export default function ProgressView({
 
   return (
     <div className="flex flex-col md:flex-row h-full w-full gap-6 animate-in fade-in zoom-in duration-300">
-      {}
       <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center">
-        {}
         <div className="flex flex-col items-center justify-center p-6 bg-white rounded-xl border border-gray-200 shadow-sm h-48 relative">
           <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">
             Journals
@@ -87,7 +86,6 @@ export default function ProgressView({
           {renderBoxes(journalCount)}
         </div>
 
-        {}
         <div className="flex flex-col items-center justify-center p-6 bg-white rounded-xl border border-gray-200 shadow-sm h-48 relative">
           <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">
             Problems
@@ -99,7 +97,6 @@ export default function ProgressView({
           {renderBoxes(problemsCompleted)}
         </div>
 
-        {}
         <div className="flex flex-col items-center justify-center p-6 bg-white rounded-xl border border-gray-200 shadow-sm h-48 relative">
           <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">
             Activity
@@ -112,9 +109,7 @@ export default function ProgressView({
         </div>
       </div>
 
-      {}
       <div className="w-full md:w-1/3 bg-orange-600 rounded-xl flex flex-col items-center justify-center p-6 relative overflow-hidden shadow-md text-white">
-        {}
         <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full blur-3xl -mr-10 -mt-10"></div>
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-black opacity-10 rounded-full blur-3xl -ml-10 -mb-10"></div>
 
