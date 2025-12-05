@@ -88,16 +88,8 @@ export default function UserLoggedInLanding() {
 
       {}
       <div className="space-y-16">
-        {}
         <section>
-          <div className="flex items-center gap-2 mb-6">
-            <div className="p-2 bg-orange-50 rounded-lg">
-              <Target className="w-5 h-5 text-orange-500" />
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Daily Challenge
-            </h2>
-          </div>
+     
 
           <div className="w-full">
             {dailyProblem ? (

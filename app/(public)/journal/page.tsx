@@ -109,7 +109,7 @@ export default async function JournalPage() {
             Welcome, {displayName}
           </p>
           <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-gray-900">
-            Community Notes
+            Community Journals
           </h1>
           <p className="text-gray-400 mt-2 text-sm">
             {notesToDisplay.length} weekly summaries from the community.

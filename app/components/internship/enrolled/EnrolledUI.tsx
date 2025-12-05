@@ -21,12 +21,14 @@ interface InternshipWeekData {
 
 interface InternshipApiResponse {
   internship: InternshipWeekData[];
+  startDate: string;
 }
 
 export default function EnrolledUI({ userName }: EnrolledUIProps) {
   const [internshipWeeks, setInternshipWeeks] = useState<InternshipWeekData[]>(
     []
   );
+  const [startDate, setStartDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasFetched = useRef(false);
@@ -42,6 +44,7 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
           "/api/internship/generateInternshipWeeks"
         );
         setInternshipWeeks(response.data.internship);
+        setStartDate(response.data.startDate);
       } catch (err) {
         console.error("Failed to fetch internship data:", err);
         setError("Could not load curriculum.");
@@ -52,6 +55,18 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
 
     fetchInternshipData();
   }, []);
+
+  const currentAllowedWeek = useMemo(() => {
+    if (!startDate) return 1;
+
+    const start = new Date(startDate).getTime();
+    const now = new Date().getTime();
+    const diffInMs = now - start;
+
+    const daysPassed = diffInMs / (1000 * 60 * 60 * 24);
+
+    return Math.floor(daysPassed / 7) + 1;
+  }, [startDate]);
 
   const { overallProgress, completedWeeksCount, totalTasksCompleted } =
     useMemo(() => {
@@ -108,7 +123,6 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 px-6 py-12 md:px-12 max-w-7xl mx-auto font-sans">
-      {}
       <header className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-10">
         <div className="space-y-2">
           <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">
@@ -119,7 +133,6 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
           </h1>
         </div>
 
-        {}
         <div className="w-full md:w-64 space-y-3">
           <div className="flex justify-between items-baseline text-sm">
             <span className="text-gray-500">Completion</span>
@@ -142,7 +155,6 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
         </div>
       </header>
 
-      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
         {internshipWeeks.map((weekData) => {
           const totalProblems = weekData.problems?.length || 0;
@@ -154,6 +166,8 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
             weekData.projects?.filter((p) => p.isCompleted).length || 0;
           const completedCount = completedProblems + completedProjects;
 
+          const isLocked = weekData.weekNumber > currentAllowedWeek;
+
           return (
             <InternshipWeekCard
               key={weekData.id}
@@ -163,6 +177,7 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
               topics={weekData.topics}
               completedCount={completedCount}
               totalCount={totalItems}
+              isLocked={isLocked}
             />
           );
         })}

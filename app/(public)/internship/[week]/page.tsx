@@ -317,7 +317,10 @@ export default function IndividualInternshipWeek() {
               problemsTotal={progressStats.total}
               interactionsCount={totalActivity}
             />
-            <ProblemGrid problems={data.problems} />
+           <ProblemGrid 
+              problems={data.problems} 
+              startDate={data.projects[0]?.startedAt} 
+            />
           </div>
         )}
       </main>

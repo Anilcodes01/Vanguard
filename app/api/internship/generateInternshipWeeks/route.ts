@@ -137,7 +137,8 @@ export async function GET() {
     });
 
     if (existingWeeks.length > 0) {
-      return NextResponse.json({ internship: existingWeeks }, { status: 200 });
+       const startDate = existingWeeks[0].createdAt; 
+      return NextResponse.json({ internship: existingWeeks, startDate: startDate }, { status: 200 });
     }
 
     const userProfile = await prisma.profiles.findUnique({
@@ -167,7 +168,9 @@ export async function GET() {
       orderBy: { weekNumber: "asc" },
     });
 
-    return NextResponse.json({ internship: savedWeeks }, { status: 201 });
+    const startDate = savedWeeks[0]?.createdAt || new Date();
+
+    return NextResponse.json({ internship: savedWeeks, startDate: startDate }, { status: 201 });
 
   } catch (error) {
     console.error("API Error:", error);
