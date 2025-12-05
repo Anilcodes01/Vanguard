@@ -1,46 +1,34 @@
-"use client";
+'use client';
 
-import { Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { deleteNoteAction } from "@/app/actions/notes";
+import { Trash2 } from "lucide-react";
+import { useTransition } from "react";
+import toast from "react-hot-toast";
 
-export default function DeleteButton({ journalId }: { journalId: string }) {
-  const router = useRouter();
-  const [isDeleting, setIsDeleting] = useState(false);
+export default function DeleteNoteButton({ noteId }: { noteId: string }) {
+  const [isPending, startTransition] = useTransition();
 
-  const handleDelete = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete this journal?");
-    if (!confirmed) return;
-
-    setIsDeleting(true);
-
-    try {
-      const res = await fetch(`/api/journal/${journalId}`, {
-        method: "DELETE",
+  const handleClick = () => {
+    if (confirm("Are you sure you want to delete this note? This action cannot be undone.")) {
+      startTransition(async () => {
+        try {
+          await deleteNoteAction(noteId);
+          toast.success("Note deleted successfully.");
+        } catch (error) {
+          toast.error(error instanceof Error ? error.message : "Failed to delete note.");
+        }
       });
-
-      if (res.ok) {
-        router.push("/journal");
-        router.refresh();
-      } else {
-        alert("Failed to delete journal.");
-        setIsDeleting(false);
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Error deleting journal.");
-      setIsDeleting(false);
     }
   };
 
   return (
     <button
-      onClick={handleDelete}
-      disabled={isDeleting}
-      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50"
-      title="Delete Journal"
+      onClick={handleClick}
+      disabled={isPending}
+      className="bg-red-50 text-red-600 gap-2 flex px-4 py-2 justify-center items-center hover:bg-red-100 transition-all shadow-sm cursor-pointer rounded-lg font-medium text-sm disabled:opacity-50"
     >
-      <Trash className="w-4 h-4" />
+      <Trash2 className="w-4 h-4" />
+      {isPending ? "Deleting..." : "Delete"}
     </button>
   );
 }
