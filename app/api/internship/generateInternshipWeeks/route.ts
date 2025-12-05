@@ -21,41 +21,44 @@ interface RawWeekData {
 }
 
 function parseAIResponse(rawText: string): unknown {
-  const cleanText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-
+  const cleanText = rawText
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
   try {
     return JSON.parse(cleanText);
   } catch {
+    const firstBrace = cleanText.indexOf("{");
+    const firstBracket = cleanText.indexOf("[");
+    let startIndex = -1;
+    let endIndex = -1;
 
-  }
-  
-  const firstBrace = cleanText.indexOf('{');
-  const firstBracket = cleanText.indexOf('[');
-  
-  let startIndex = -1;
-  let endIndex = -1;
-
-  if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
-    startIndex = firstBrace;
-    endIndex = cleanText.lastIndexOf('}');
-  } else if (firstBracket !== -1) {
-    startIndex = firstBracket;
-    endIndex = cleanText.lastIndexOf(']');
-  }
-
-  if (startIndex !== -1 && endIndex !== -1) {
-    try {
-      const jsonSubstring = cleanText.substring(startIndex, endIndex + 1);
-      return JSON.parse(jsonSubstring);
-    } catch (error) {
-      console.error("Failed to parse extracted JSON string:", error);
+    if (
+      firstBrace !== -1 &&
+      (firstBracket === -1 || firstBrace < firstBracket)
+    ) {
+      startIndex = firstBrace;
+      endIndex = cleanText.lastIndexOf("}");
+    } else if (firstBracket !== -1) {
+      startIndex = firstBracket;
+      endIndex = cleanText.lastIndexOf("]");
     }
-  }
 
-  throw new Error("Could not extract valid JSON from AI response");
+    if (startIndex !== -1 && endIndex !== -1) {
+      try {
+        const jsonSubstring = cleanText.substring(startIndex, endIndex + 1);
+        return JSON.parse(jsonSubstring);
+      } catch (error) {
+        console.error("Failed to parse extracted JSON string:", error);
+      }
+    }
+    throw new Error("Could not extract valid JSON from AI response");
+  }
 }
 
-async function generateInternshipWeeksOnly(userProfile: Profiles): Promise<GeneratedWeek[]> {
+async function generateInternshipWeeksOnly(
+  userProfile: Profiles
+): Promise<GeneratedWeek[]> {
   const prompt = `
     You are an API that outputs raw JSON only.
     Based on the following user profile, generate a high-level 12-week internship roadmap.
@@ -75,39 +78,38 @@ async function generateInternshipWeeksOnly(userProfile: Profiles): Promise<Gener
 
   try {
     const response = await genAI.models.generateContent({
-      model: "gemini-2.5-flash", 
+      model: "gemini-2.0-flash",
       contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-      },
+      config: { responseMimeType: "application/json" },
     });
 
     const text = response.text;
     if (!text) throw new Error("No text generated.");
 
     const parsedData = parseAIResponse(text);
-
     let weeksArray: RawWeekData[] = [];
 
     const dataAsObject = parsedData as { weeks?: RawWeekData[] };
     const dataAsArray = parsedData as RawWeekData[];
 
-    if (dataAsObject && dataAsObject.weeks && Array.isArray(dataAsObject.weeks)) {
+    if (
+      dataAsObject &&
+      dataAsObject.weeks &&
+      Array.isArray(dataAsObject.weeks)
+    ) {
       weeksArray = dataAsObject.weeks;
     } else if (Array.isArray(dataAsArray)) {
       weeksArray = dataAsArray;
     } else {
-      console.error("AI returned:", parsedData);
-      throw new Error("AI returned valid JSON but invalid schema (missing 'weeks' array)");
+      throw new Error("AI returned valid JSON but invalid schema");
     }
 
     return weeksArray.slice(0, 12).map((w, index) => ({
       weekNumber: w.weekNumber || index + 1,
       title: w.title || `Week ${index + 1}`,
       description: w.description || "",
-      topics: w.topics || []
+      topics: w.topics || [],
     }));
-
   } catch (error) {
     console.error("AI Generation Error:", error);
     throw new Error("Failed to generate valid internship weeks.");
@@ -117,7 +119,9 @@ async function generateInternshipWeeksOnly(userProfile: Profiles): Promise<Gener
 export async function GET() {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -126,19 +130,24 @@ export async function GET() {
     const existingWeeks = await prisma.internshipWeek.findMany({
       where: { userId: user.id },
       include: {
-        problems: {
-          select: { isCompleted: true }
-        },
-        projects: {
-          select: { isCompleted: true }
-        }
+        problems: { select: { isCompleted: true } },
+        projects: { select: { isCompleted: true } },
       },
       orderBy: { weekNumber: "asc" },
     });
 
+    const now = new Date();
+
     if (existingWeeks.length > 0) {
-       const startDate = existingWeeks[0].createdAt; 
-      return NextResponse.json({ internship: existingWeeks, startDate: startDate }, { status: 200 });
+      const weeksWithLockStatus = existingWeeks.map((week) => ({
+        ...week,
+        isLocked: now < new Date(week.unlockAt),
+      }));
+
+      return NextResponse.json(
+        { internship: weeksWithLockStatus },
+        { status: 200 }
+      );
     }
 
     const userProfile = await prisma.profiles.findUnique({
@@ -146,17 +155,27 @@ export async function GET() {
     });
 
     if (!userProfile) {
-      return NextResponse.json({ message: "Profile not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Profile not found" },
+        { status: 404 }
+      );
     }
+
     const generatedWeeks = await generateInternshipWeeksOnly(userProfile);
 
-    const weeksToCreate = generatedWeeks.map((week) => ({
-      userId: user.id,
-      weekNumber: week.weekNumber, 
-      title: week.title,
-      description: week.description,
-      topics: week.topics,
-    }));
+    const weeksToCreate = generatedWeeks.map((week, index) => {
+      const unlockDate = new Date(now);
+      unlockDate.setDate(now.getDate() + index * 7);
+
+      return {
+        userId: user.id,
+        weekNumber: week.weekNumber,
+        title: week.title,
+        description: week.description,
+        topics: week.topics,
+        unlockAt: unlockDate,
+      };
+    });
 
     await prisma.internshipWeek.createMany({
       data: weeksToCreate,
@@ -168,10 +187,15 @@ export async function GET() {
       orderBy: { weekNumber: "asc" },
     });
 
-    const startDate = savedWeeks[0]?.createdAt || new Date();
+    const weeksWithLockStatus = savedWeeks.map((week) => ({
+      ...week,
+      isLocked: now < new Date(week.unlockAt),
+    }));
 
-    return NextResponse.json({ internship: savedWeeks, startDate: startDate }, { status: 201 });
-
+    return NextResponse.json(
+      { internship: weeksWithLockStatus },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("API Error:", error);
     return NextResponse.json(

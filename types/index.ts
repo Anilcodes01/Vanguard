@@ -242,9 +242,15 @@ export interface InProgressProject {
   name: string;
   description: string;
   domain: string;
-  maxTime: string;
+  maxTime?: string; // Make optional as Internship projects might not have this
   coverImage: string | null;
-  startedAt?: string;
+  startedAt: string;
+  
+  // New fields for Internship integration
+  isInternship: boolean;
+  weekNumber?: number;
+  progress?: number;
+  totalTasks?: number;
 }
 
 export interface LeaderboardEntry {

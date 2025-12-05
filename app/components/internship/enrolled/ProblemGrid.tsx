@@ -1,24 +1,20 @@
 import { ChevronRight, Code2, Lock, Clock } from "lucide-react";
 import { InternshipProblem } from "@/app/(public)/internship/types";
 import Link from "next/link";
-import { useMemo } from "react";
+
+interface ExtendedInternshipProblem extends InternshipProblem {
+  isLocked?: boolean;
+  unlockAt?: string | null;
+  originalProblemId?: string;
+}
 
 interface ProblemGridProps {
-  problems: InternshipProblem[];
+  problems: ExtendedInternshipProblem[];
+
   startDate?: string | Date | null;
 }
 
-export default function ProblemGrid({ problems, startDate }: ProblemGridProps) {
-  const daysPassed = useMemo(() => {
-    if (!startDate) return -1;
-
-    const start = new Date(startDate).getTime();
-    const now = Date.now();
-    const diffInMs = now - start;
-
-    return Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-  }, [startDate]);
-
+export default function ProblemGrid({ problems }: ProblemGridProps) {
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center justify-between mb-6">
@@ -35,13 +31,23 @@ export default function ProblemGrid({ problems, startDate }: ProblemGridProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {problems.map((problem, idx) => {
-          const isUnlocked = daysPassed !== -1 && idx <= daysPassed;
-          const daysToUnlock = Math.max(0, idx - daysPassed);
+          const isUnlocked = !problem.isLocked;
 
-          const problemId =
-            (problem as InternshipProblem & { originalProblemId?: string })
-              .originalProblemId || problem.id;
+          const problemId = problem.originalProblemId || problem.id;
           const href = `/problems/${problemId}`;
+
+          let lockMessage = "Locked";
+          if (problem.isLocked) {
+            if (!problem.unlockAt) {
+              lockMessage = "Start project to unlock";
+            } else {
+              const diffMs = new Date(problem.unlockAt).getTime() - Date.now();
+              const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+              lockMessage = `Unlocks in ${daysLeft} ${
+                daysLeft === 1 ? "day" : "days"
+              }`;
+            }
+          }
 
           const Content = (
             <div
@@ -49,11 +55,10 @@ export default function ProblemGrid({ problems, startDate }: ProblemGridProps) {
               ${
                 isUnlocked
                   ? "bg-white border-gray-200 shadow-sm hover:shadow-lg hover:border-orange-200 cursor-pointer group"
-                  : "bg-gray-50 border-gray-200 opacity-75 grayscale-[0.2] cursor-not-allowed"
+                  : "bg-gray-50 border-gray-200 opacity-80 grayscale-[0.2] cursor-not-allowed"
               }`}
             >
               <div className="p-6 flex-1">
-                {}
                 <div className="flex justify-between items-start mb-4">
                   <span
                     className={`inline-flex items-center justify-center w-8 h-8 rounded-lg text-xs font-mono font-bold transition-colors
@@ -82,7 +87,6 @@ export default function ProblemGrid({ problems, startDate }: ProblemGridProps) {
                   </div>
                 </div>
 
-                {}
                 <h4
                   className={`text-lg font-bold mb-2 line-clamp-2 transition-colors
                   ${
@@ -94,13 +98,11 @@ export default function ProblemGrid({ problems, startDate }: ProblemGridProps) {
                   {problem.title}
                 </h4>
 
-                {}
                 <p className="text-sm text-gray-500 line-clamp-3 leading-relaxed">
                   {problem.description}
                 </p>
               </div>
 
-              {}
               <div
                 className={`p-4 border-t rounded-b-xl flex justify-between items-center transition-colors
                 ${
@@ -125,8 +127,7 @@ export default function ProblemGrid({ problems, startDate }: ProblemGridProps) {
                     </span>
                     <span className="text-xs font-semibold text-gray-500 flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      Unlocks in {daysToUnlock}{" "}
-                      {daysToUnlock === 1 ? "day" : "days"}
+                      {lockMessage}
                     </span>
                   </>
                 )}

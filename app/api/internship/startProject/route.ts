@@ -30,6 +30,15 @@ export async function POST(req: NextRequest) {
           userId: user.id,
         },
       },
+      include: {
+        internshipWeek: {
+          include: {
+            problems: {
+              orderBy: { createdAt: "asc" },
+            },
+          },
+        },
+      },
     });
 
     if (!projectToUpdate) {
@@ -46,16 +55,32 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const updatedProject = await prisma.internshipProject.update({
-      where: {
-        id: projectId,
-      },
-      data: {
-        startedAt: new Date(),
-      },
+    const now = new Date();
+
+    const result = await prisma.$transaction(async (tx) => {
+      const updatedProject = await tx.internshipProject.update({
+        where: { id: projectId },
+        data: { startedAt: now },
+      });
+
+      const problems = projectToUpdate.internshipWeek.problems;
+
+      const problemUpdates = problems.map((problem, index) => {
+        const unlockDate = new Date(now);
+        unlockDate.setDate(now.getDate() + index);
+
+        return tx.internshipProblem.update({
+          where: { id: problem.id },
+          data: { unlockAt: unlockDate },
+        });
+      });
+
+      await Promise.all(problemUpdates);
+
+      return updatedProject;
     });
 
-    return NextResponse.json({ success: true, project: updatedProject });
+    return NextResponse.json({ success: true, project: result });
   } catch (error: unknown) {
     console.error("Start Project Error:", error);
     const errorMessage =

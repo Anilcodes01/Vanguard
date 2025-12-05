@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/app/utils/supabase/server";
-import { CardType } from "@prisma/client";
+import {
+  CardType,
+  InternshipProblem,
+  InternshipProject,
+  InternshipWeek,
+  WalkthroughCard,
+} from "@prisma/client";
 
 const genAI = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
 
@@ -40,6 +46,51 @@ interface GeneratedData {
   walkthrough_cards: GeneratedCard[];
 }
 
+type WeekDataWithRelations =
+  | (InternshipWeek & {
+      projects: InternshipProject[];
+      problems: InternshipProblem[];
+      walkthroughs: WalkthroughCard[];
+    })
+  | null;
+
+const processDataWithLocks = (weekData: WeekDataWithRelations) => {
+  const now = new Date();
+
+  if (!weekData) return null;
+
+  const processedProblems = weekData.problems.map((p) => {
+    let isLocked = true;
+    const unlockAt = p.unlockAt;
+
+    if (!unlockAt) {
+      isLocked = true;
+    } else {
+      isLocked = now < new Date(unlockAt);
+    }
+
+    return {
+      ...p,
+      isLocked,
+      unlockAt: unlockAt ? new Date(unlockAt).toISOString() : null,
+    };
+  });
+
+  const processedWalkthroughs = [...weekData.walkthroughs].sort((a, b) => {
+    const indexA = CARD_ORDER.indexOf(a.cardType);
+    const indexB = CARD_ORDER.indexOf(b.cardType);
+    const safeIndexA = indexA === -1 ? 999 : indexA;
+    const safeIndexB = indexB === -1 ? 999 : indexB;
+    return safeIndexA - safeIndexB;
+  });
+
+  return {
+    ...weekData,
+    problems: processedProblems,
+    walkthroughs: processedWalkthroughs,
+  };
+};
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
@@ -72,7 +123,7 @@ export async function POST(req: NextRequest) {
       },
       include: {
         projects: true,
-        problems: true,
+        problems: { orderBy: { createdAt: "asc" } },
         walkthroughs: true,
       },
     });
@@ -82,13 +133,11 @@ export async function POST(req: NextRequest) {
       existingWeek.problems.length > 0 &&
       existingWeek.walkthroughs.length > 0
     ) {
-      existingWeek.walkthroughs.sort((a, b) => {
-        return CARD_ORDER.indexOf(a.cardType) - CARD_ORDER.indexOf(b.cardType);
-      });
+      const processedData = processDataWithLocks(existingWeek);
 
       return NextResponse.json({
         message: "Week data already exists",
-        data: existingWeek,
+        data: processedData,
       });
     }
 
@@ -147,11 +196,10 @@ export async function POST(req: NextRequest) {
           "description": "String"
         },
         "selected_problem_ids": [
-          "uuid-1", "uuid-2", ... // Exactly 7 IDs from the provided pool
+          "uuid-1", "uuid-2", ... 
         ],
         "walkthrough_cards": [
-          { "card_type": "case_study", "title": "Case Study: ...", "content": "String" },
-          // ... (other card types)
+          { "card_type": "case_study", "title": "...", "content": "..." }
         ]
       }
     `;
@@ -168,7 +216,6 @@ export async function POST(req: NextRequest) {
     const generatedData = JSON.parse(rawText) as GeneratedData;
 
     const selectedIds = generatedData.selected_problem_ids || [];
-
     let selectedProblemsData = candidateProblems.filter((p) =>
       selectedIds.includes(p.id)
     );
@@ -183,7 +230,6 @@ export async function POST(req: NextRequest) {
         ...unselected.slice(0, remainingNeeded),
       ];
     }
-
     selectedProblemsData = selectedProblemsData.slice(0, 7);
 
     const result = await prisma.$transaction(
@@ -227,6 +273,7 @@ export async function POST(req: NextRequest) {
           description: p.description,
           isCompleted: false,
           originalProblemId: p.id,
+          unlockAt: null,
         }));
 
         if (problemsToInsert.length > 0) {
@@ -268,28 +315,18 @@ export async function POST(req: NextRequest) {
           where: { id: weekRecord.id },
           include: {
             projects: true,
-            problems: true,
+            problems: {
+              orderBy: { createdAt: "asc" },
+            },
             walkthroughs: true,
           },
         });
       },
-      {
-        maxWait: 5000,
-        timeout: 20000,
-      }
+      { maxWait: 5000, timeout: 20000 }
     );
 
-    if (result && result.walkthroughs) {
-      result.walkthroughs.sort((a, b) => {
-        const indexA = CARD_ORDER.indexOf(a.cardType);
-        const indexB = CARD_ORDER.indexOf(b.cardType);
-        const safeIndexA = indexA === -1 ? 999 : indexA;
-        const safeIndexB = indexB === -1 ? 999 : indexB;
-        return safeIndexA - safeIndexB;
-      });
-    }
-
-    return NextResponse.json({ data: result });
+    const processedResult = processDataWithLocks(result);
+    return NextResponse.json({ data: processedResult });
   } catch (error: unknown) {
     console.error("Generate Week Data Error:", error);
     const errorMessage =

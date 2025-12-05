@@ -310,16 +310,16 @@ export default function IndividualInternshipWeek() {
               showSpecs={showSpecs}
               onToggle={() => setShowSpecs(true)}
               onOpenSubmitModal={() => setIsSubmitModalOpen(true)}
-               timerStartDate={data.projects[0]?.startedAt || undefined}
+              timerStartDate={data.projects[0]?.startedAt || undefined}
               weekNumber={data.weekNumber || weekNumberInt}
               journalCount={fetchedNotes.length}
               problemsCompleted={progressStats.completed}
               problemsTotal={progressStats.total}
               interactionsCount={totalActivity}
             />
-           <ProblemGrid 
-              problems={data.problems} 
-              startDate={data.projects[0]?.startedAt} 
+            <ProblemGrid
+              problems={data.problems}
+              startDate={data.projects[0]?.startedAt}
             />
           </div>
         )}

@@ -3,16 +3,19 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getWeekStartDateUTC } from "@/lib/dateUtils";
 import { unstable_cache } from "next/cache";
-import { League } from "@prisma/client";
 
-type InProgressProject = {
+type DashboardProject = {
   id: string;
   name: string;
   description: string;
   domain: string;
-  maxTime: string;
-  coverImage: string | null;
+  maxTime?: string;
+  coverImage?: string | null;
   startedAt: string;
+  isInternship: boolean;
+  weekNumber?: number;
+  progress?: number;
+  totalTasks?: number;
 };
 
 type LeaderboardMember = {
@@ -24,91 +27,9 @@ type LeaderboardMember = {
 };
 
 type LeaderboardData = {
-  league: League | null;
+  league: string | null;
   leaderboard: LeaderboardMember[];
 };
-
-const getDailyProblem = unstable_cache(
-  async (userId: string) => {
-    const solvedProblems = await prisma.problemSolution.findMany({
-      where: { userId, status: "Solved" },
-      select: { problemId: true },
-    });
-    const solvedProblemIds = solvedProblems.map((p) => p.problemId);
-
-    const unsolvedProblemsCount = await prisma.problem.count({
-      where: { id: { notIn: solvedProblemIds } },
-    });
-
-    if (unsolvedProblemsCount === 0) {
-      return null;
-    }
-
-    const randomSkip = Math.floor(Math.random() * unsolvedProblemsCount);
-
-    return prisma.problem.findFirst({
-      where: { id: { notIn: solvedProblemIds } },
-      skip: randomSkip,
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        difficulty: true,
-        tags: true,
-        acceptanceRate: true,
-      },
-    });
-  },
-  ["daily-problem"],
-  {
-    tags: ["daily-problem"],
-
-    revalidate: (() => {
-      const now = new Date();
-      const endOfDay = new Date();
-      endOfDay.setUTCHours(24, 0, 0, 0);
-      return Math.floor((endOfDay.getTime() - now.getTime()) / 1000);
-    })(),
-  }
-);
-
-const getInProgressProjects = unstable_cache(
-  async (userId: string): Promise<InProgressProject[]> => {
-    const startedProjectsProgress = await prisma.projectProgress.findMany({
-      where: { userId },
-      include: {
-        project: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            domain: true,
-            maxTime: true,
-            coverImage: true,
-          },
-        },
-      },
-    });
-
-    const submittedProjectIds = new Set(
-      (
-        await prisma.submittedProjects.findMany({
-          where: { userId },
-          select: { projectId: true },
-        })
-      ).map((p) => p.projectId)
-    );
-
-    return startedProjectsProgress
-      .filter((progress) => !submittedProjectIds.has(progress.projectId))
-      .map((progress) => ({
-        ...progress.project,
-        startedAt: progress.startedAt.toISOString(),
-      }));
-  },
-  ["in-progress-projects"],
-  { revalidate: 120 }
-);
 
 const getLeaderboardData = unstable_cache(
   async (userId: string): Promise<LeaderboardData> => {
@@ -180,6 +101,177 @@ const getLeaderboardData = unstable_cache(
   { revalidate: 300 }
 );
 
+async function getInternshipDailyProblem(userId: string) {
+  const now = new Date();
+
+  const internshipProblem = await prisma.internshipProblem.findFirst({
+    where: {
+      internshipWeek: { userId },
+      unlockAt: {
+        not: null,
+        lte: now,
+      },
+      isCompleted: false,
+    },
+    orderBy: {
+      unlockAt: "desc",
+    },
+    include: {
+      internshipWeek: {
+        select: {
+          weekNumber: true,
+        },
+      },
+    },
+  });
+
+  if (!internshipProblem || !internshipProblem.originalProblemId) return null;
+
+  const originalProblem = await prisma.problem.findUnique({
+    where: { id: internshipProblem.originalProblemId },
+    select: {
+      id: true,
+      slug: true,
+      difficulty: true,
+      tags: true,
+      acceptanceRate: true,
+    },
+  });
+
+  if (!originalProblem) return null;
+
+  return {
+    id: originalProblem.id,
+    slug: originalProblem.slug,
+    title: internshipProblem.title,
+    difficulty: originalProblem.difficulty,
+    tags: originalProblem.tags,
+    acceptanceRate: originalProblem.acceptanceRate,
+    isInternship: true,
+    weekNumber: internshipProblem.internshipWeek.weekNumber,
+    internshipProblemId: internshipProblem.id,
+  };
+}
+
+async function getInternshipActiveProjects(
+  userId: string
+): Promise<DashboardProject[]> {
+  const activeWeek = await prisma.internshipWeek.findFirst({
+    where: {
+      userId,
+      projects: {
+        some: {
+          startedAt: { not: null },
+          isCompleted: false,
+        },
+      },
+    },
+    include: {
+      projects: {
+        where: {
+          startedAt: { not: null },
+          isCompleted: false,
+        },
+      },
+      problems: true,
+    },
+  });
+
+  if (!activeWeek || !activeWeek.projects[0]) return [];
+
+  const project = activeWeek.projects[0];
+
+  const totalProblems = activeWeek.problems.length;
+  const completedProblems = activeWeek.problems.filter(
+    (p) => p.isCompleted
+  ).length;
+
+  return [
+    {
+      id: project.id,
+      name: project.title,
+      description: project.description,
+      domain: "Internship",
+      startedAt: project.startedAt!.toISOString(),
+      isInternship: true,
+      weekNumber: activeWeek.weekNumber || 1,
+      coverImage: null,
+      progress: completedProblems,
+      totalTasks: totalProblems,
+    },
+  ];
+}
+
+const getStandardDailyProblem = async (userId: string) => {
+  const solvedProblems = await prisma.problemSolution.findMany({
+    where: { userId, status: "Solved" },
+    select: { problemId: true },
+  });
+  const solvedProblemIds = solvedProblems.map((p) => p.problemId);
+
+  const unsolvedProblemsCount = await prisma.problem.count({
+    where: { id: { notIn: solvedProblemIds } },
+  });
+
+  if (unsolvedProblemsCount === 0) return null;
+
+  const randomSkip = Math.floor(Math.random() * unsolvedProblemsCount);
+
+  const problem = await prisma.problem.findFirst({
+    where: { id: { notIn: solvedProblemIds } },
+    skip: randomSkip,
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      difficulty: true,
+      tags: true,
+      acceptanceRate: true,
+    },
+  });
+
+  if (!problem) return null;
+
+  return { ...problem, isInternship: false };
+};
+
+const getStandardInProgressProjects = async (
+  userId: string
+): Promise<DashboardProject[]> => {
+  const startedProjectsProgress = await prisma.projectProgress.findMany({
+    where: { userId },
+    include: {
+      project: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          domain: true,
+          maxTime: true,
+          coverImage: true,
+        },
+      },
+    },
+  });
+
+  const submittedProjectIds = new Set(
+    (
+      await prisma.submittedProjects.findMany({
+        where: { userId },
+        select: { projectId: true },
+      })
+    ).map((p) => p.projectId)
+  );
+
+  return startedProjectsProgress
+    .filter((progress) => !submittedProjectIds.has(progress.projectId))
+    .map((progress) => ({
+      ...progress.project,
+      startedAt: progress.startedAt.toISOString(),
+      isInternship: false,
+    }));
+};
+
 export async function GET() {
   try {
     const supabase = await createClient();
@@ -191,16 +283,43 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const [dailyProblem, inProgressProjects, leaderboardData] =
-      await Promise.all([
-        getDailyProblem(user.id),
-        getInProgressProjects(user.id),
-        getLeaderboardData(user.id),
+    const hasInternship = await prisma.internshipWeek.findFirst({
+      where: { userId: user.id },
+      select: { id: true },
+    });
+
+    let dailyProblem;
+    let projects: DashboardProject[] = [];
+
+    if (hasInternship) {
+      const [internshipProblem, internshipProjects] = await Promise.all([
+        getInternshipDailyProblem(user.id),
+        getInternshipActiveProjects(user.id),
       ]);
+
+      dailyProblem = internshipProblem;
+      projects = internshipProjects;
+
+      if (!dailyProblem) {
+        dailyProblem = await getStandardDailyProblem(user.id);
+      }
+
+      const standardProjects = await getStandardInProgressProjects(user.id);
+      projects = [...projects, ...standardProjects];
+    } else {
+      const [standardProblem, standardProjects] = await Promise.all([
+        getStandardDailyProblem(user.id),
+        getStandardInProgressProjects(user.id),
+      ]);
+      dailyProblem = standardProblem;
+      projects = standardProjects;
+    }
+
+    const leaderboardData = await getLeaderboardData(user.id);
 
     return NextResponse.json({
       dailyProblem,
-      projects: inProgressProjects,
+      projects,
       leaderboard: leaderboardData.leaderboard,
       league: leaderboardData.league,
       currentUserId: user.id,

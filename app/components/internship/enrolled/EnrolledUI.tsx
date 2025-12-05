@@ -17,18 +17,15 @@ interface InternshipWeekData {
   topics: string[];
   problems: { isCompleted: boolean }[];
   projects: { isCompleted: boolean }[];
+  isLocked: boolean; // Field comes directly from API
 }
 
 interface InternshipApiResponse {
   internship: InternshipWeekData[];
-  startDate: string;
 }
 
 export default function EnrolledUI({ userName }: EnrolledUIProps) {
-  const [internshipWeeks, setInternshipWeeks] = useState<InternshipWeekData[]>(
-    []
-  );
-  const [startDate, setStartDate] = useState<string | null>(null);
+  const [internshipWeeks, setInternshipWeeks] = useState<InternshipWeekData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasFetched = useRef(false);
@@ -44,7 +41,6 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
           "/api/internship/generateInternshipWeeks"
         );
         setInternshipWeeks(response.data.internship);
-        setStartDate(response.data.startDate);
       } catch (err) {
         console.error("Failed to fetch internship data:", err);
         setError("Could not load curriculum.");
@@ -55,18 +51,6 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
 
     fetchInternshipData();
   }, []);
-
-  const currentAllowedWeek = useMemo(() => {
-    if (!startDate) return 1;
-
-    const start = new Date(startDate).getTime();
-    const now = new Date().getTime();
-    const diffInMs = now - start;
-
-    const daysPassed = diffInMs / (1000 * 60 * 60 * 24);
-
-    return Math.floor(daysPassed / 7) + 1;
-  }, [startDate]);
 
   const { overallProgress, completedWeeksCount, totalTasksCompleted } =
     useMemo(() => {
@@ -166,8 +150,6 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
             weekData.projects?.filter((p) => p.isCompleted).length || 0;
           const completedCount = completedProblems + completedProjects;
 
-          const isLocked = weekData.weekNumber > currentAllowedWeek;
-
           return (
             <InternshipWeekCard
               key={weekData.id}
@@ -177,7 +159,7 @@ export default function EnrolledUI({ userName }: EnrolledUIProps) {
               topics={weekData.topics}
               completedCount={completedCount}
               totalCount={totalItems}
-              isLocked={isLocked}
+              isLocked={weekData.isLocked} // Logic is handled by DB/API now
             />
           );
         })}

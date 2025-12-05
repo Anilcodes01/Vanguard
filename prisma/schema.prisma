@@ -776,6 +776,7 @@ model InternshipWeek {
   topics      String[]
   userId      String   @map("user_id") @db.Uuid
   user        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unlockAt    DateTime @default(now()) 
 
   problems     InternshipProblem[]
   projects     InternshipProject[]
@@ -796,6 +797,7 @@ model InternshipProblem {
   description                        String
   isCompleted                        Boolean                             @default(false) @map("is_completed")
   internshipWeekId                   String                              @map("internship_week_id")
+  unlockAt    DateTime? 
   internshipWeek                     InternshipWeek                      @relation(fields: [internshipWeekId], references: [id], onDelete: Cascade)
   notes                              Note[]
   createdAt                          DateTime                            @default(now()) @map("created_at")
