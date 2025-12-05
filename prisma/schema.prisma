@@ -803,6 +803,7 @@ model InternshipProblem {
   internshipAlgoProblemDatas         InternshipAlgoProblemData[]
   internshipAlgoProblemExamplesDatas InternshipAlgoProblemExamplesData[]
   internshipAlgoProblemTestCases     InternshipAlgoProblemTestCase[]
+  originalProblemId String?  @map("original_problem_id") @db.Uuid
 
   @@map("internship_problems")
   @@schema("public")

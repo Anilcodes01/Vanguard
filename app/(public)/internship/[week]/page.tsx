@@ -4,33 +4,25 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { AlertCircle, Bell } from "lucide-react";
 import dynamic from "next/dynamic";
-import { InternshipWeekData } from "../types";
+import {
+  InternshipWeekData,
+  NoteEntry,
+  CARD_ORDER,
+  InternshipProject,
+} from "../types";
 import WeekHeader from "@/app/components/internship/enrolled/WeekHeader";
 import ProjectBanner from "@/app/components/internship/enrolled/ProjectBanner";
 import ProblemGrid from "@/app/components/internship/enrolled/ProblemGrid";
 import ModuleCarousel from "@/app/components/internship/enrolled/ModuleCarousal";
 import SubmitProjectModal from "@/app/components/internship/enrolled/SubmitProjectModel";
 import { usePushNotifications } from "@/app/hooks/usePushNotifications";
-const WeekJournalModal = dynamic(() => import("@/app/components/internship/enrolled/WeekJournalModal"), {
-  ssr: false
-});
 
-const CARD_ORDER = [
-  "case_study",
-  "problem_definition",
-  "objective",
-  "prerequisites",
-  "deliverables",
-  "rules",
-  "action_plan",
-];
-
-interface NoteEntry {
-  id: string;
-  content: string;
-  internshipProblemId?: string | null;
-  internshipProjectId?: string | null;
-}
+const WeekJournalModal = dynamic(
+  () => import("@/app/components/internship/enrolled/WeekJournalModal"),
+  {
+    ssr: false,
+  }
+);
 
 export default function IndividualInternshipWeek() {
   const params = useParams();
@@ -93,22 +85,38 @@ export default function IndividualInternshipWeek() {
     if (weekNumberInt) fetchData();
   }, [weekNumberInt, topicParam, projectTitleParam]);
 
+  useEffect(() => {
+    if (!weekNumberInt) return;
+    const fetchNotes = async () => {
+      try {
+        const res = await fetch(`/api/notes?weekNumber=${weekNumberInt}`);
+        if (res.ok) {
+          const json = await res.json();
+          setFetchedNotes(json.notes || []);
+        }
+      } catch (error) {
+        console.error("Error fetching notes for banner:", error);
+      }
+    };
+    fetchNotes();
+  }, [weekNumberInt]);
+
   const handleOpenJournal = async () => {
     setIsJournalOpen(true);
-    if (!data) return;
 
-    try {
+    if (!fetchedNotes.length) {
       setIsFetchingJournal(true);
-      const res = await fetch(`/api/notes?weekNumber=${weekNumberInt}`);
-
-      if (res.ok) {
-        const json = await res.json();
-        setFetchedNotes(json.notes || []);
+      try {
+        const res = await fetch(`/api/notes?weekNumber=${weekNumberInt}`);
+        if (res.ok) {
+          const json = await res.json();
+          setFetchedNotes(json.notes || []);
+        }
+      } catch (error) {
+        console.error("Error fetching notes:", error);
+      } finally {
+        setIsFetchingJournal(false);
       }
-    } catch (error) {
-      console.error("Error fetching notes:", error);
-    } finally {
-      setIsFetchingJournal(false);
     }
   };
 
@@ -190,18 +198,13 @@ export default function IndividualInternshipWeek() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           projectId: data.projects[0].id,
-
           title: submissionData.customTitle,
-
           shortDescription: submissionData.shortDescription,
-
           tags: submissionData.tags,
-
           githubLink: submissionData.githubLink,
           liveLink: submissionData.liveLink,
           overview: submissionData.overview,
           screenshots: submissionData.screenshots,
-
           weekNumber: data.weekNumber || weekNumberInt,
         }),
       });
@@ -214,11 +217,9 @@ export default function IndividualInternshipWeek() {
 
       setData((prevData) => {
         if (!prevData) return null;
-
         const updatedProjects = prevData.projects.map((proj) =>
           proj.id === result.project.id ? result.project : proj
         );
-
         return { ...prevData, projects: updatedProjects };
       });
 
@@ -265,6 +266,8 @@ export default function IndividualInternshipWeek() {
     );
   }
 
+  const totalActivity = fetchedNotes.length + progressStats.completed;
+
   return (
     <div className="min-h-screen bg-[#F9FAFB] text-gray-900 pb-20">
       {!isSubscribed && (
@@ -298,6 +301,23 @@ export default function IndividualInternshipWeek() {
               showSpecs={showSpecs}
               onToggle={() => setShowSpecs(true)}
               onOpenSubmitModal={() => setIsSubmitModalOpen(true)}
+              weekCreatedAt={
+                (
+                  data.projects[0] as InternshipProject & {
+                    createdAt?: string | Date;
+                  }
+                )?.createdAt ||
+                (
+                  data as InternshipWeekData & {
+                    createdAt?: string | Date;
+                  }
+                ).createdAt
+              }
+              weekNumber={data.weekNumber || weekNumberInt}
+              journalCount={fetchedNotes.length}
+              problemsCompleted={progressStats.completed}
+              problemsTotal={progressStats.total}
+              interactionsCount={totalActivity}
             />
             <ProblemGrid problems={data.problems} />
           </div>

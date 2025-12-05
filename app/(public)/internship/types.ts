@@ -3,6 +3,7 @@ export interface InternshipProblem {
   title: string;
   description: string;
   isCompleted: boolean;
+   originalProblemId?: string;
 }
 
 export interface WalkthroughCardData {
@@ -22,6 +23,36 @@ export interface InternshipWeekData {
   problems: InternshipProblem[];
   walkthroughs: WalkthroughCardData[];
   
+}
+
+export const CARD_ORDER = [
+  "case_study",
+  "problem_definition",
+  "objective",
+  "prerequisites",
+  "deliverables",
+  "rules",
+  "action_plan",
+];
+
+ export interface NoteEntry {
+  id: string;
+  content: string;
+  internshipProblemId?: string | null;
+  internshipProjectId?: string | null;
+}
+
+export interface ProjectBannerProps {
+  project: InternshipProject;
+  showSpecs: boolean;
+  onToggle: () => void;
+  onOpenSubmitModal: () => void;
+  weekCreatedAt?: string | Date;
+  weekNumber?: number;
+  journalCount: number;
+  problemsCompleted: number;
+  problemsTotal: number;
+  interactionsCount: number;
 }
 
 export interface InternshipProject {

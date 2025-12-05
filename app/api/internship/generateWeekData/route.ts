@@ -16,10 +16,10 @@ const CARD_ORDER = [
   "action_plan",
 ];
 
-interface GeneratedProblem {
-  title: string;
-  description: string;
-}
+const truncate = (str: string, length: number) => {
+  if (!str) return "";
+  return str.length > length ? str.substring(0, length) + "..." : str;
+};
 
 interface GeneratedCard {
   card_type: string;
@@ -36,7 +36,7 @@ interface GeneratedProject {
 
 interface GeneratedData {
   project: GeneratedProject;
-  problems: GeneratedProblem[];
+  selected_problem_ids: string[];
   walkthrough_cards: GeneratedCard[];
 }
 
@@ -101,6 +101,25 @@ export async function POST(req: NextRequest) {
     const level = userProfile?.comfort_level || "Intermediate";
     const domain = userProfile?.domain || "Software Engineering";
 
+    const candidateProblems = await prisma.problem.findMany({
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        difficulty: true,
+        tags: true,
+      },
+      take: 60,
+    });
+
+    const problemsForPrompt = candidateProblems.map((p) => ({
+      id: p.id,
+      title: p.title,
+      difficulty: p.difficulty,
+      tags: p.tags.join(", "),
+      description: truncate(p.description, 200),
+    }));
+
     const prompt = `
       You are a senior technical mentor. Generate detailed internship content for Week ${weekInt}: "${topic}".
       User Context: Domain: ${domain}, Stack: ${stack}, Level: ${level}.
@@ -111,31 +130,28 @@ export async function POST(req: NextRequest) {
 
       Requirements:
       1. **Project**: Expand the project details.
-      2. **Problems**: Generate exactly 7 algorithmic coding problems.
-         CRITICAL RULES FOR PROBLEMS:
-         - These must be pure **Data Structures & Algorithms** or **Logic** challenges (LeetCode/HackerRank style).
-         - **DO NOT** generate tasks involving HTML, CSS, DOM manipulation, React Components, or UI building.
-         - Even if the topic is frontend (e.g., React), generate logic problems solvable in a console (e.g., "Deep Clone an Object" or "Find duplicates in array") rather than "Create a Button".
-         - Focus on arrays, strings, recursion, sorting, or optimization logic relevant to the level.
+      2. **Problems**: 
+         - I am providing a JSON list of available coding problems below.
+         - **SELECT EXACTLY 7 IDs** from this list that are most relevant to the topic "${topic}" and user level "${level}".
+         - If no problems perfectly match the topic, select the best logic/algo problems for general practice.
+         - Return the IDs in the field "selected_problem_ids".
       3. **Walkthrough Cards**: Generate specific cards with strict types.
       
+      AVAILABLE PROBLEMS POOL:
+      ${JSON.stringify(problemsForPrompt)}
+
       Output JSON ONLY. Structure:
       {
         "project": { 
           "title": "String", 
           "description": "String"
         },
-        "problems": [
-          { "title": "String", "description": "String" } // Exactly 7 items
+        "selected_problem_ids": [
+          "uuid-1", "uuid-2", ... // Exactly 7 IDs from the provided pool
         ],
         "walkthrough_cards": [
           { "card_type": "case_study", "title": "Case Study: ...", "content": "String" },
-          { "card_type": "problem_definition", "title": "Problem Definition", "content": "String" },
-          { "card_type": "objective", "title": "Learning Objective", "content": "String" },
-          { "card_type": "prerequisites", "title": "Prerequisites", "content": ["String"] },
-          { "card_type": "deliverables", "title": "Deliverables", "content": { "key": "value" } },
-          { "card_type": "rules", "title": "Execution Rules", "content": ["String"] },
-          { "card_type": "action_plan", "title": "Step-by-Step Guide", "content": ["String"] }
+          // ... (other card types)
         ]
       }
     `;
@@ -150,7 +166,25 @@ export async function POST(req: NextRequest) {
     if (!rawText) throw new Error("Empty response from AI");
 
     const generatedData = JSON.parse(rawText) as GeneratedData;
-    const problemsData = generatedData.problems?.slice(0, 7) || [];
+
+    const selectedIds = generatedData.selected_problem_ids || [];
+
+    let selectedProblemsData = candidateProblems.filter((p) =>
+      selectedIds.includes(p.id)
+    );
+
+    if (selectedProblemsData.length < 7) {
+      const remainingNeeded = 7 - selectedProblemsData.length;
+      const unselected = candidateProblems.filter(
+        (p) => !selectedIds.includes(p.id)
+      );
+      selectedProblemsData = [
+        ...selectedProblemsData,
+        ...unselected.slice(0, remainingNeeded),
+      ];
+    }
+
+    selectedProblemsData = selectedProblemsData.slice(0, 7);
 
     const result = await prisma.$transaction(
       async (tx) => {
@@ -187,12 +221,14 @@ export async function POST(req: NextRequest) {
           where: { internshipWeekId: weekRecord.id },
         });
 
-        const problemsToInsert = problemsData.map((p: GeneratedProblem) => ({
+        const problemsToInsert = selectedProblemsData.map((p) => ({
           internshipWeekId: weekRecord.id,
           title: p.title,
           description: p.description,
           isCompleted: false,
+          originalProblemId: p.id,
         }));
+
         if (problemsToInsert.length > 0) {
           await tx.internshipProblem.createMany({ data: problemsToInsert });
         }
@@ -249,7 +285,6 @@ export async function POST(req: NextRequest) {
         const indexB = CARD_ORDER.indexOf(b.cardType);
         const safeIndexA = indexA === -1 ? 999 : indexA;
         const safeIndexB = indexB === -1 ? 999 : indexB;
-
         return safeIndexA - safeIndexB;
       });
     }
