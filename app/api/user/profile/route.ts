@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma";
-import { createClient } from '@/app/utils/supabase/server';
-import {  NextResponse } from "next/server";
+import { createClient } from "@/app/utils/supabase/server";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
@@ -20,18 +22,24 @@ export async function GET() {
         xp: true,
         stars: true,
         username: true,
-        league: true
+        league: true,
+        internship_enrolled: true,
       },
     });
 
     if (!userProfile) {
-      return NextResponse.json({ message: "Profile not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Profile not found" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(userProfile);
   } catch (error) {
     console.error("Failed to fetch user profile:", error);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
-

@@ -3,10 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
-import {
-  setInitialProfile,
-  UserProfile,
-} from "@/app/store/features/profile/profileSlice";
+import { setInitialProfile } from "@/app/store/features/profile/profileSlice";
+import { UserProfile } from "@/types";
 import { useEffect, useState } from "react";
 import UserAvatar from "../Avatar";
 import Image from "next/image";

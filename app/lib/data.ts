@@ -7,16 +7,20 @@ export async function fetchDashboardData() {
   noStore();
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return { dailyProblem: null };
     }
 
-    const solvedProblemIds = (await prisma.problemSolution.findMany({
-      where: { userId: user.id, status: "Solved" },
-      select: { problemId: true },
-    })).map((p) => p.problemId);
+    const solvedProblemIds = (
+      await prisma.problemSolution.findMany({
+        where: { userId: user.id, status: "Solved" },
+        select: { problemId: true },
+      })
+    ).map((p) => p.problemId);
 
     const unsolvedProblemsCount = await prisma.problem.count({
       where: { id: { notIn: solvedProblemIds } },
@@ -50,7 +54,9 @@ export async function fetchInProgressProjects() {
   noStore();
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return [];
@@ -60,16 +66,25 @@ export async function fetchInProgressProjects() {
       where: { userId: user.id },
       include: {
         project: {
-          select: { id: true, name: true, description: true, domain: true, maxTime: true, coverImage: true },
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            domain: true,
+            maxTime: true,
+            coverImage: true,
+          },
         },
       },
     });
 
     const submittedProjectIds = new Set(
-      (await prisma.submittedProjects.findMany({
-        where: { userId: user.id },
-        select: { projectId: true },
-      })).map((p) => p.projectId)
+      (
+        await prisma.submittedProjects.findMany({
+          where: { userId: user.id },
+          select: { projectId: true },
+        })
+      ).map((p) => p.projectId)
     );
 
     const inProgressProjects = startedProjectsProgress
@@ -90,21 +105,42 @@ export async function fetchLeaderboardData() {
   noStore();
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-      return { league: null, leaderboard: [], currentUserId: null, message: "Unauthorized" };
+      return {
+        league: null,
+        leaderboard: [],
+        currentUserId: null,
+        message: "Unauthorized",
+      };
     }
 
     const weekStartDate = new Date();
-    weekStartDate.setUTCDate(weekStartDate.getUTCDate() - weekStartDate.getUTCDay());
+    weekStartDate.setUTCDate(
+      weekStartDate.getUTCDate() - weekStartDate.getUTCDay()
+    );
     weekStartDate.setUTCHours(0, 0, 0, 0);
 
     const userProfileWithGroup = await prisma.profiles.findUnique({
       where: { id: user.id },
       select: {
         currentGroup: {
-          select: { id: true, league: true, weekStartDate: true, members: { select: { id: true, name: true, username: true, avatar_url: true } } },
+          select: {
+            id: true,
+            league: true,
+            weekStartDate: true,
+            members: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                avatar_url: true,
+              },
+            },
+          },
         },
       },
     });
@@ -112,37 +148,57 @@ export async function fetchLeaderboardData() {
     const group = userProfileWithGroup?.currentGroup;
 
     if (!group) {
-        return { league: null, leaderboard: [], currentUserId: user.id, message: "You are not in a league." };
+      return {
+        league: null,
+        leaderboard: [],
+        currentUserId: user.id,
+        message: "You are not in a league.",
+      };
     }
 
     const memberIds = group.members.map((member) => member.id);
     const weeklyScores = await prisma.problemSolution.groupBy({
       by: ["userId"],
-      where: { userId: { in: memberIds }, status: "Solved", firstSolvedAt: { gte: weekStartDate } },
+      where: {
+        userId: { in: memberIds },
+        status: "Solved",
+        firstSolvedAt: { gte: weekStartDate },
+      },
       _sum: { xpEarned: true },
     });
 
     const scoreMap = new Map<string, number>(
-      weeklyScores.map(score => [score.userId, score._sum.xpEarned || 0])
+      weeklyScores.map((score) => [score.userId, score._sum.xpEarned || 0])
     );
 
     const leaderboard = group.members
       .map((member) => ({ ...member, weeklyXP: scoreMap.get(member.id) || 0 }))
       .sort((a, b) => b.weeklyXP - a.weeklyXP);
 
-    return { league: group.league, leaderboard, currentUserId: user.id, message: null };
+    return {
+      league: group.league,
+      leaderboard,
+      currentUserId: user.id,
+      message: null,
+    };
   } catch (error) {
     console.error("Database Error (fetchLeaderboardData):", error);
-    return { league: null, leaderboard: [], currentUserId: null, message: "Error fetching leaderboard." };
+    return {
+      league: null,
+      leaderboard: [],
+      currentUserId: null,
+      message: "Error fetching leaderboard.",
+    };
   }
 }
-
 
 export async function fetchUserProfileForNavbar(): Promise<UserProfile | null> {
   noStore();
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return null;
@@ -158,6 +214,7 @@ export async function fetchUserProfileForNavbar(): Promise<UserProfile | null> {
         stars: true,
         username: true,
         league: true,
+        internship_enrolled: true,
       },
     });
 
@@ -171,6 +228,7 @@ export async function fetchUserProfileForNavbar(): Promise<UserProfile | null> {
       stars: userProfile.stars,
       username: userProfile.username ?? "",
       league: userProfile.league,
+      internship_enrolled: userProfile.internship_enrolled,
     };
 
     return mappedProfile;

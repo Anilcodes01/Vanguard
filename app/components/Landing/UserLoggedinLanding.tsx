@@ -1,14 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { fetchDashboard } from "@/app/store/features/dashboard/dashboardSlice";
 import FullProjectCardSkeleton from "./Projects/ProjectCardSkeleton";
 import { DailyProblemCard, AllProblemsSolvedCard } from "./DailyProblemsCard";
 import InProgressProjectCard from "./Projects/InProgressProjectCard";
-import { Calendar, FolderOpen,  Sparkles } from "lucide-react";
+import { Calendar, FolderOpen, Sparkles, GraduationCap } from "lucide-react";
 import Link from "next/link";
+import MiniProgressView from "@/app/components/internship/MiniProgressView";
+
+interface InternshipProgressData {
+  weekNumber: number;
+  startedAt: string;
+  journalCount: number;
+  problemsCompleted: number;
+  totalProblems: number;
+  interactionsCount: number;
+}
 
 export default function UserLoggedInLanding() {
   const dispatch: AppDispatch = useDispatch();
@@ -27,11 +37,38 @@ export default function UserLoggedInLanding() {
     dashboardError: state.dashboard.error,
   }));
 
+  const [internshipData, setInternshipData] =
+    useState<InternshipProgressData | null>(null);
+  const [loadingInternship, setLoadingInternship] = useState(false);
+
   useEffect(() => {
     if (dashboardStatus === "idle") {
       dispatch(fetchDashboard());
     }
   }, [dashboardStatus, dispatch]);
+
+  useEffect(() => {
+    const fetchInternshipProgress = async () => {
+      if (!profile?.internship_enrolled) return;
+
+      setLoadingInternship(true);
+      try {
+        const res = await fetch("/api/internship/current-progress");
+        if (res.ok) {
+          const data = await res.json();
+          setInternshipData(data);
+        }
+      } catch (error) {
+        console.error("Failed to load internship progress", error);
+      } finally {
+        setLoadingInternship(false);
+      }
+    };
+
+    if (profile) {
+      fetchInternshipProgress();
+    }
+  }, [profile]);
 
   const isPageLoading =
     dashboardStatus === "loading" || dashboardStatus === "idle";
@@ -72,7 +109,6 @@ export default function UserLoggedInLanding() {
           </p>
         </div>
 
-        {}
         <div className="flex items-center gap-3 bg-gray-50 px-5 py-2.5 rounded-2xl border border-gray-100">
           <Calendar className="w-5 h-5 text-gray-400" />
           <div className="flex flex-col">
@@ -87,10 +123,38 @@ export default function UserLoggedInLanding() {
       </div>
 
       {}
+      {profile?.internship_enrolled && (
+        <div className="mb-16">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="p-2 bg-orange-50 rounded-lg">
+              <GraduationCap className="w-5 h-5 text-orange-600" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Internship Tracker
+            </h2>
+          </div>
+
+          {loadingInternship ? (
+            <div className="flex flex-col lg:flex-row gap-4 h-[180px]">
+              <div className="flex-1 bg-gray-100 rounded-xl animate-pulse"></div>
+              <div className="lg:w-80 bg-gray-100 rounded-xl animate-pulse"></div>
+            </div>
+          ) : internshipData ? (
+            <MiniProgressView
+              weekNumber={internshipData.weekNumber}
+              startedAt={internshipData.startedAt}
+              journalCount={internshipData.journalCount}
+              problemsCompleted={internshipData.problemsCompleted}
+              totalProblems={internshipData.totalProblems}
+              interactionsCount={internshipData.interactionsCount}
+            />
+          ) : null}
+        </div>
+      )}
+
+      {}
       <div className="space-y-16">
         <section>
-     
-
           <div className="w-full">
             {dailyProblem ? (
               <DailyProblemCard problem={dailyProblem} />
@@ -100,7 +164,6 @@ export default function UserLoggedInLanding() {
           </div>
         </section>
 
-        {}
         <section>
           <div className="flex items-center gap-2 mb-6">
             <div className="p-2 bg-blue-50 rounded-lg">

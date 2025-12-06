@@ -37,7 +37,7 @@ export interface ProblemDetails {
   starterTemplates: ProblemStarterTemplate[];
   testCases: ProblemTestCase[];
   solutionStatus?: "Solved" | "Attempted" | null;
-   nextProblemId?: string | null;
+  nextProblemId?: string | null;
 }
 
 export interface UserProfile {
@@ -48,6 +48,7 @@ export interface UserProfile {
   xp: number;
   league: string;
   stars: number;
+  internship_enrolled: boolean;
 }
 
 export type TestCase = {
@@ -245,7 +246,7 @@ export interface InProgressProject {
   maxTime?: string; // Make optional as Internship projects might not have this
   coverImage: string | null;
   startedAt: string;
-  
+
   // New fields for Internship integration
   isInternship: boolean;
   weekNumber?: number;
