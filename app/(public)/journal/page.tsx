@@ -5,7 +5,7 @@ import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { User as UserIcon, BookOpen } from "lucide-react";
 import CreateJournalModal from "@/app/components/journal/CreateJournalModal";
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtml from "sanitize-html";
 
 type UserMetaData = {
   full_name?: string;
@@ -126,7 +126,19 @@ export default async function JournalPage() {
             const contentToRender = isHtml
               ? post.content
               : post.content.replace(/\n/g, "<br />");
-            const safeContent = DOMPurify.sanitize(contentToRender);
+
+            const safeContent = sanitizeHtml(contentToRender, {
+              allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+                "img",
+                "br",
+                "h1",
+                "h2",
+              ]),
+              allowedAttributes: {
+                ...sanitizeHtml.defaults.allowedAttributes,
+                img: ["src", "alt", "width", "height"],
+              },
+            });
 
             return (
               <div
