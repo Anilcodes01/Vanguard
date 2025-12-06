@@ -35,7 +35,7 @@ const safeDecode = (str: string | null) => {
   try {
     return Buffer.from(str, "base64").toString("utf-8");
   } catch (_e) {
-    console.error("Error decoding string:", str);
+    console.log("Error decoding string:", _e);
     return str;
   }
 };

@@ -253,9 +253,6 @@ export default function CodeEditorPanel({
   const [isResizing, setIsResizing] = useState(false);
   const [editorHeight, setEditorHeight] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  
-
   const editorRef = useRef<MonacoEditor | null>(null);
 
   const handleEditorDidMount: OnMount = (editor) => {
