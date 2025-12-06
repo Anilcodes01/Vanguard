@@ -20,7 +20,7 @@ export default function ProjectBanner({
   showSpecs,
   onToggle,
   onOpenSubmitModal,
- timerStartDate,
+  timerStartDate,
   weekNumber = 1,
   journalCount,
   problemsCompleted,
@@ -36,6 +36,12 @@ export default function ProjectBanner({
   const isReviewReady = reviewAvailableAt
     ? Date.now() >= reviewAvailableAt
     : false;
+
+  useEffect(() => {
+    if (timerStartDate && !project.isCompleted) {
+      setShowProgress(true);
+    }
+  }, [timerStartDate, project.isCompleted]);
 
   useEffect(() => {
     if (!project.isCompleted || isReviewReady || !reviewAvailableAt) return;
@@ -71,7 +77,7 @@ export default function ProjectBanner({
             journalCount={journalCount}
             problemsCompleted={problemsCompleted}
             interactionsCount={interactionsCount}
-            createdAt={timerStartDate} 
+            createdAt={timerStartDate}
             weekNumber={weekNumber}
           />
         ) : (
@@ -244,5 +250,3 @@ export default function ProjectBanner({
     </div>
   );
 }
-
-
