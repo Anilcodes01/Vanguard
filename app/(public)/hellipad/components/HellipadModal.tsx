@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { X, Github, ExternalLink, Calendar, User } from "lucide-react";
 import { ProjectData } from "../types";
+import Image from "next/image";
 
 interface HellipadModalProps {
   project: ProjectData | null;
@@ -84,7 +85,8 @@ export default function HellipadModal({
             <div className="space-y-4">
               <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50 aspect-video flex items-center justify-center relative group">
                 {project.screenshots && project.screenshots.length > 0 ? (
-                  <img
+                  <Image
+                    
                     src={project.screenshots[0]}
                     alt="Project screenshot"
                     className="w-full h-full object-cover"
@@ -180,7 +182,7 @@ export default function HellipadModal({
                     key={idx}
                     className="rounded-lg overflow-hidden border border-gray-200"
                   >
-                    <img
+                    <Image
                       src={shot}
                       alt={`Gallery ${idx}`}
                       className="w-full h-auto object-cover"

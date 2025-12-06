@@ -1,4 +1,4 @@
-import { createClient } from "@/app/utils/supabase/server";
+
 import { prisma } from "@/lib/prisma";
 import {
   ArrowLeft,

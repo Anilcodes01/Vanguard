@@ -24,7 +24,6 @@ export default function ProjectBanner({
   weekNumber = 1,
   journalCount,
   problemsCompleted,
-  problemsTotal,
   interactionsCount,
 }: ProjectBannerProps) {
   const [timeLeft, setTimeLeft] = useState<string | null>(null);

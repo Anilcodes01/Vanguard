@@ -8,7 +8,6 @@ import {
   InternshipWeekData,
   NoteEntry,
   CARD_ORDER,
-  InternshipProject,
 } from "../types";
 import WeekHeader from "@/app/components/internship/enrolled/WeekHeader";
 import ProjectBanner from "@/app/components/internship/enrolled/ProjectBanner";

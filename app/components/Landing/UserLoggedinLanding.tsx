@@ -7,7 +7,7 @@ import { fetchDashboard } from "@/app/store/features/dashboard/dashboardSlice";
 import FullProjectCardSkeleton from "./Projects/ProjectCardSkeleton";
 import { DailyProblemCard, AllProblemsSolvedCard } from "./DailyProblemsCard";
 import InProgressProjectCard from "./Projects/InProgressProjectCard";
-import { Calendar, FolderOpen, Target, Sparkles } from "lucide-react";
+import { Calendar, FolderOpen,  Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export default function UserLoggedInLanding() {

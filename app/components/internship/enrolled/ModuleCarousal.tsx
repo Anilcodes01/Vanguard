@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { InternshipProject } from "@/app/(public)/internship/types";
 import {
   ArrowLeft,
@@ -224,17 +224,17 @@ export default function ModuleCarousel({
   const currentModule = modulesWithStartCard[currentIndex];
   const style = getCardStyle(currentModule.cardType);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentIndex < modulesWithStartCard.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     }
-  };
+  }, [currentIndex, modulesWithStartCard.length]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     }
-  };
+  }, [currentIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -244,7 +244,7 @@ export default function ModuleCarousel({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex, handleNext, handlePrev, onClose]);
+  }, [handleNext, handlePrev, onClose]);
 
   const handleStartProject = async () => {
     if (!projectId) {
@@ -348,10 +348,10 @@ export default function ModuleCarousel({
 
         <div className="w-full max-w-3xl h-full p-4 md:p-6 overflow-hidden flex flex-col justify-center">
           {currentModule.cardType === "START_PROJECT" ? (
-           <StartProjectCard
+            <StartProjectCard
               onStart={handleStartProject}
               isLoading={isStarting}
-              hasStarted={!!project?.startedAt} // CORRECTED
+              hasStarted={!!project?.startedAt}
             />
           ) : (
             <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col max-h-full">

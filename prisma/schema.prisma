@@ -923,10 +923,11 @@ model PushSubscription {
   @@schema("public")
 }
 
+
 model Journal {
   id          String   @id @default(uuid())
-  title       String
-  description String
+  title       String?  
+  description String?
   content     String   @db.Text
   tags        String[] @default([])
 

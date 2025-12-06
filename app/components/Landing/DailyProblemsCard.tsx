@@ -7,19 +7,6 @@ export const DailyProblemCard = ({
 }: {
   problem: DailyProblem & { isInternship?: boolean };
 }) => {
-  const difficultyMap: {
-    [key: string]: { color: string; bg: string; label: string };
-  } = {
-    EASY: { color: "text-emerald-600", bg: "bg-emerald-50", label: "Easy" },
-    MEDIUM: { color: "text-yellow-600", bg: "bg-yellow-50", label: "Medium" },
-    HARD: { color: "text-red-600", bg: "bg-red-50", label: "Hard" },
-  };
-
-  const details = difficultyMap[problem.difficulty] || {
-    color: "text-gray-500",
-    bg: "bg-gray-50",
-    label: "Unknown",
-  };
 
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-200 p-6 transition-all duration-300 hover:shadow-md hover:border-gray-300">

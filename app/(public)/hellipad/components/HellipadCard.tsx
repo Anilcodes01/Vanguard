@@ -1,5 +1,6 @@
 import React from "react";
 import { ProjectData } from "../types";
+import Image from "next/image";
 
 interface HellipadCardProps {
   project: ProjectData;
@@ -55,10 +56,11 @@ export default function HellipadCard({ project, onClick }: HellipadCardProps) {
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 border border-gray-100">
             {authorProfile?.avatar_url ? (
-              <img
+              <Image
                 src={authorProfile.avatar_url}
                 alt={authorName}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-orange-100 text-orange-600 text-xs font-bold">

@@ -10,7 +10,6 @@ import ProblemDetailsPanel from "@/app/components/Problems/ProblemsDetailsPanle"
 import { SuccessModal } from "@/app/components/Problems/CodeEditor/SuccessModal";
 import {
   SubmissionResult,
-  ProblemLanguageDetail,
   ProblemDetails,
   ProblemStarterTemplate,
 } from "@/types";
@@ -222,7 +221,8 @@ export default function IndividualInternshipProblemPage() {
       if (allPassed) {
         setShowSuccess(true);
       }
-    } catch (error) {
+    } catch (err: unknown) {
+      console.error(err);
       clearProgressInterval();
       setSubmissionResult({ status: "Error", message: "Submission Error" });
       setSubmissionProgress(0);

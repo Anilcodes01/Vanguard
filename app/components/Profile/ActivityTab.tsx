@@ -43,7 +43,6 @@ export default function ActivityTabs({
   initialSubmissions,
   initialProjects,
   totalSubmissionsCount,
-  totalProjectsCount,
   userId,
 }: ActivityTabsProps) {
   const [activeTab, setActiveTab] = useState<"problems" | "projects">(

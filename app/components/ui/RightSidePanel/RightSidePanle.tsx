@@ -27,7 +27,7 @@ export default function RightSidePanel() {
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto p-6">
-        <div className="-mt-8">
+        <div className="mt-8">
           <JournalsWidget />
         </div>
       </div>

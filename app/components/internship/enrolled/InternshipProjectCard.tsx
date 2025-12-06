@@ -11,15 +11,9 @@ export type InternshipProjectCardProps = {
   maxTime: string;
 };
 
-const PlaceholderIcon = () => (
-  <div className="w-full h-48 bg-neutral-800 flex items-center justify-center border-b border-neutral-700">
-    <Layers className="w-12 h-12 text-neutral-600" />
-  </div>
-);
 
 export default function InternshipProjectCard({
   project,
-  priority = false,
 }: {
   project: InternshipProjectCardProps;
   priority?: boolean;

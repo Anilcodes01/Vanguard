@@ -36,15 +36,6 @@ const InProgressProjectCardSkeleton = () => (
   </div>
 );
 
-const LeaderboardSkeleton = () => (
-  <div className="bg-white min-h-screen p-6 rounded-xl shadow-md animate-pulse w-full">
-    <div className="w-1/2 h-6 bg-gray-200 rounded mx-auto mb-8"></div>
-    <div className="flex flex-col items-center text-center">
-      <div className="w-16 h-16 bg-gray-200 rounded-full mb-4"></div>
-      <div className="w-3/4 h-4 bg-gray-200 rounded"></div>
-    </div>
-  </div>
-);
 
 export default function DashboardSkeleton() {
   return (

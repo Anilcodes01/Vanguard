@@ -93,7 +93,7 @@ export async function GET(
           ? processComments(comment.replies as CommentFromPrisma[])
           : [];
 
-        const { _count, likes, replies, ...restOfComment } = comment;
+        const { _count, likes, ...restOfComment } = comment;
 
         return {
           ...restOfComment,
@@ -152,7 +152,7 @@ export async function GET(
       hasBookmarked = !!bookmark;
     }
 
-    const { comments, _count, ...restOfProject } = project;
+    const {  _count, ...restOfProject } = project;
 
     const finalProjectData = {
       ...restOfProject,

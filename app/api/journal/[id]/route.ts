@@ -35,6 +35,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error("Error deleting journal:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

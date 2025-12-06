@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { cache } from "react";
 
-import { Difficulty } from "@prisma/client";
-
 export const getProfileData = cache(async (username: string) => {
   const profile = await prisma.profiles.findUnique({
     where: { username: username },

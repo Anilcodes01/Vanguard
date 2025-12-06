@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Loader2 } from "lucide-react";
 import { ProjectSubmission, Comment } from "@/types";
 import ProjectCard from "@/app/components/discussions/DiscussionsProjectCard";
 import dynamic from 'next/dynamic';
